@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -16,7 +16,12 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 1rem; /* Default padding for mobile */
+        }
+        @media (min-width: 768px) { /* Medium screens and up (md) */
+            .container {
+                padding: 2.5rem; /* Larger padding for desktop */
+            }
         }
         .section-title {
             border-bottom: 2px solid #a7d9f7; /* Underline for section titles */
@@ -34,6 +39,12 @@
             display: flex;
             flex-direction: column;
             gap: 0.5rem;
+            width: 100%; /* Full width on mobile */
+        }
+        @media (min-width: 640px) { /* Small screens and up (sm) */
+            .filter-item {
+                width: auto; /* Auto width on larger screens */
+            }
         }
         .filter-item label {
             font-weight: 600;
@@ -65,6 +76,7 @@
             justify-content: space-between;
             cursor: pointer;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+            position: relative; /* Needed for absolute positioning of bookmark */
         }
         .school-card:hover {
             transform: translateY(-5px);
@@ -88,6 +100,24 @@
         .gender-inconsistency {
             color: #e53e3e; /* Red text for inconsistency */
             font-weight: bold;
+        }
+        .bookmark-button {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0.25rem;
+            color: #cbd5e0; /* Default grey star */
+            transition: color 0.2s ease-in-out;
+            z-index: 10; /* Ensure it's above other card content */
+        }
+        .bookmark-button.bookmarked {
+            color: #f59e0b; /* Yellow for bookmarked */
+        }
+        .bookmark-button:hover {
+            color: #fcd34d; /* Lighter yellow on hover */
         }
 
         /* Modal styles */
@@ -194,6 +224,13 @@
                     <option value="">不限</option>
                 </select>
             </div>
+            <div class="filter-item">
+                <label for="bookmarkFilter">書籤</label>
+                <select id="bookmarkFilter" class="rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="全部">全部</option>
+                    <option value="已加書籤">已加書籤</option>
+                </select>
+            </div>
         </div>
         <!-- End Filter Section -->
 
@@ -233,8 +270,8 @@
             <button class="modal-close-button" onclick="closeModal()">×</button>
             <h3 id="modalSchoolName"></h3>
             <p><span id="modalEnglishName" class="text-gray-600 text-sm"></span></p>
-            <p><strong>排名：：</strong> <span id="modalRank"></span></p>
-            <p><strong>地區：：</strong> <span id="modalDistrict"></span></p>
+            <p><strong>排名：</strong> <span id="modalRank"></span></p>
+            <p><strong>地區：</strong> <span id="modalDistrict"></span></p>
             <p><strong>類別：：</strong> <span id="modalSchoolType"></span></p>
             <p><strong>學劵制：：</strong> <span id="modalKgpScheme"></span></p>
             <p><strong>一條龍：：</strong> <span id="modalOneStop"></span></p>
@@ -268,7 +305,8 @@
                 tuitionFeeText: "$5,440(10)",
                 teacherStudentRatio: "1 : 8.6",
                 environmentScore: 94.96,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 2,
@@ -286,7 +324,8 @@
                 tuitionFeeText: "2,112(11)",
                 teacherStudentRatio: "1 : 7.7",
                 environmentScore: 97.08,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 3,
@@ -304,7 +343,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 4,
@@ -322,7 +362,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 5,
@@ -340,7 +381,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 7.5",
                 environmentScore: 94.99,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 6,
@@ -358,7 +400,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 6.2",
                 environmentScore: 93.77,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 7,
@@ -376,7 +419,8 @@
                 tuitionFeeText: "$72,000",
                 teacherStudentRatio: "1 : 8.1",
                 environmentScore: 97.49,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 8,
@@ -394,7 +438,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 9.7",
                 environmentScore: 95.53,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 9,
@@ -412,7 +457,8 @@
                 tuitionFeeText: "$49,880（分10期）",
                 teacherStudentRatio: "1 : 10.1",
                 environmentScore: 98.69,
-                promotionRate: 85
+                promotionRate: 85,
+                bookmarked: false
             },
             {
                 rank: 10,
@@ -430,7 +476,8 @@
                 tuitionFeeText: "$70,268(11)",
                 teacherStudentRatio: "1 : 6.5",
                 environmentScore: 98.87,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 11,
@@ -448,7 +495,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 12,
@@ -466,7 +514,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 8.0",
                 environmentScore: 95.32,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 13,
@@ -484,7 +533,8 @@
                 tuitionFeeText: "$87,996(12)",
                 teacherStudentRatio: "1 : 7.5",
                 environmentScore: 98.59,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 14,
@@ -502,7 +552,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 15,
@@ -520,7 +571,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 16,
@@ -538,7 +590,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 17,
@@ -552,11 +605,12 @@
                 teachingLanguage: "中文",
                 primaryInfo: "嘉諾撒聖心學校私立部，41%畢業生升讀嘉諾撒聖心學校，13%升讀嘉諾撒聖心學校（私立部）。",
                 schoolGender: "男女校",
-                tuitionFee: 0,
-                tuitionFeeText: "免費",
+                tuitionFee: 0, // Updated to free based on new data
+                tuitionFeeText: "免費", // Updated to free based on new data
                 teacherStudentRatio: "1 : 9.0",
                 environmentScore: 99.48,
-                promotionRate: 54
+                promotionRate: 54,
+                bookmarked: false
             },
             {
                 rank: 18,
@@ -574,7 +628,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 19,
@@ -592,7 +647,8 @@
                 tuitionFeeText: "$58,300(10)",
                 teacherStudentRatio: "1 : 7.3",
                 environmentScore: 99.7,
-                promotionRate: 75.1
+                promotionRate: 75.1,
+                bookmarked: false
             },
             {
                 rank: 20,
@@ -610,7 +666,8 @@
                 tuitionFeeText: "$38,930（分10期）",
                 teacherStudentRatio: "1 : 8.8",
                 environmentScore: 94.24,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 21,
@@ -628,7 +685,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 22,
@@ -646,7 +704,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 11.0",
                 environmentScore: 95.34,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 23,
@@ -664,7 +723,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 24,
@@ -682,7 +742,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 25,
@@ -700,7 +761,8 @@
                 tuitionFeeText: "$45,000（分10期）",
                 teacherStudentRatio: "1 : 9.6",
                 environmentScore: 97.98,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 26,
@@ -718,7 +780,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 27,
@@ -736,7 +799,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 28,
@@ -754,7 +818,8 @@
                 tuitionFeeText: "$34,050（分10期）",
                 teacherStudentRatio: "1 : 6.3",
                 environmentScore: 98.97,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 29,
@@ -772,7 +837,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 30,
@@ -790,7 +856,8 @@
                 tuitionFeeText: "$4,160（10）",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 31,
@@ -808,7 +875,8 @@
                 tuitionFeeText: "$46,210（分10期）",
                 teacherStudentRatio: "1 : 10.7",
                 environmentScore: 98.64,
-                promotionRate: 85
+                promotionRate: 85,
+                bookmarked: false
             },
             {
                 rank: 32,
@@ -826,7 +894,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 33,
@@ -844,7 +913,8 @@
                 tuitionFeeText: "全日制 $24,300(12)",
                 teacherStudentRatio: "1 : 7.4",
                 environmentScore: 93.95,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 34,
@@ -862,7 +932,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 35,
@@ -880,7 +951,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 7.7",
                 environmentScore: 95.33,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 36,
@@ -898,7 +970,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 11.0",
                 environmentScore: 98.24,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 37,
@@ -916,7 +989,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 38,
@@ -934,7 +1008,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 39,
@@ -952,7 +1027,8 @@
                 tuitionFeeText: "$19,290（分10期）",
                 teacherStudentRatio: "1 : 8.7",
                 environmentScore: 94.68,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 40,
@@ -970,7 +1046,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 9.0",
                 environmentScore: 95.8,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 41,
@@ -988,7 +1065,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 42,
@@ -1006,7 +1084,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 10.6",
                 environmentScore: 96.11,
-                promotionRate: 100
+                promotionRate: 100,
+                bookmarked: false
             },
             {
                 rank: 43,
@@ -1024,7 +1103,8 @@
                 tuitionFeeText: "幼兒班全年學費：免費 低班班全年學費：免費 高班全年學費：$10,000(10)",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 44,
@@ -1042,7 +1122,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 45,
@@ -1060,7 +1141,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 8.8",
                 environmentScore: 99.2,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 46,
@@ -1078,7 +1160,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 10.7",
                 environmentScore: 95.9,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 47,
@@ -1096,7 +1179,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 48,
@@ -1114,7 +1198,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 49,
@@ -1132,7 +1217,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 6.4",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 50,
@@ -1150,7 +1236,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 51,
@@ -1168,7 +1255,8 @@
                 tuitionFeeText: "$50,400",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 52,
@@ -1186,7 +1274,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 53,
@@ -1204,7 +1293,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 54,
@@ -1222,7 +1312,8 @@
                 tuitionFeeText: "$70,433 (11)",
                 teacherStudentRatio: "1 : 7.3",
                 environmentScore: 99.93,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 55,
@@ -1240,7 +1331,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 56,
@@ -1258,7 +1350,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 9.7",
                 environmentScore: 94.48,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 57,
@@ -1276,7 +1369,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 58,
@@ -1294,7 +1388,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 9.8",
                 environmentScore: 100,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 59,
@@ -1312,7 +1407,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 60,
@@ -1330,7 +1426,8 @@
                 tuitionFeeText: "$3,030",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 61,
@@ -1348,7 +1445,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 62,
@@ -1366,7 +1464,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 63,
@@ -1384,7 +1483,8 @@
                 tuitionFeeText: "$70,433 (11)",
                 teacherStudentRatio: "1 : 7.3",
                 environmentScore: 99.93,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 64,
@@ -1402,7 +1502,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 65,
@@ -1420,7 +1521,8 @@
                 tuitionFeeText: "$40,800（分10期）",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 66,
@@ -1438,7 +1540,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 67,
@@ -1456,7 +1559,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 68,
@@ -1474,7 +1578,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 69,
@@ -1492,7 +1597,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 10.8",
                 environmentScore: 98.04,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 70,
@@ -1510,7 +1616,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 71,
@@ -1528,7 +1635,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 72,
@@ -1546,7 +1654,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 7.6",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 73,
@@ -1564,7 +1673,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 74,
@@ -1582,7 +1692,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 75,
@@ -1600,7 +1711,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 76,
@@ -1618,7 +1730,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 77,
@@ -1636,7 +1749,8 @@
                 tuitionFeeText: "$36,492",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 78,
@@ -1654,7 +1768,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 8.9",
                 environmentScore: 96,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 79,
@@ -1672,7 +1787,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 80,
@@ -1690,7 +1806,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 81,
@@ -1708,7 +1825,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 82,
@@ -1726,7 +1844,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 8.5",
                 environmentScore: 93.72,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 83,
@@ -1744,7 +1863,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 84,
@@ -1762,7 +1882,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 5.6",
                 environmentScore: 94.75,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 85,
@@ -1780,7 +1901,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 86,
@@ -1798,7 +1920,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 87,
@@ -1816,7 +1939,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 88,
@@ -1834,7 +1958,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 89,
@@ -1852,7 +1977,8 @@
                 tuitionFeeText: "免費",
                 teacherStudentRatio: "1 : 10.8",
                 environmentScore: 94.93,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 90,
@@ -1870,7 +1996,8 @@
                 tuitionFeeText: "$69,600",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 91,
@@ -1888,7 +2015,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 92,
@@ -1906,7 +2034,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 93,
@@ -1924,7 +2053,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 94,
@@ -1942,7 +2072,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 95,
@@ -1960,7 +2091,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 96,
@@ -1978,7 +2110,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 97,
@@ -1996,7 +2129,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 98,
@@ -2014,7 +2148,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 99,
@@ -2032,7 +2167,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             },
             {
                 rank: 100,
@@ -2050,7 +2186,8 @@
                 tuitionFeeText: "沒有資料",
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
-                promotionRate: null
+                promotionRate: null,
+                bookmarked: false
             }
         ];
 
@@ -2113,6 +2250,33 @@
             document.getElementById('schoolDetailModal').classList.add('hidden');
         }
 
+        // Function to save bookmarked schools to localStorage
+        function saveBookmarks() {
+            const bookmarkedNames = schoolsData.filter(s => s.bookmarked).map(s => s.name);
+            localStorage.setItem('bookmarkedSchools', JSON.stringify(bookmarkedNames));
+        }
+
+        // Function to load bookmarked schools from localStorage
+        function loadBookmarks() {
+            const bookmarkedNames = JSON.parse(localStorage.getItem('bookmarkedSchools')) || [];
+            schoolsData.forEach(school => {
+                if (bookmarkedNames.includes(school.name)) {
+                    school.bookmarked = true;
+                }
+            });
+        }
+
+        // Function to toggle bookmark status
+        function toggleBookmark(schoolName, event) {
+            event.stopPropagation(); // Prevent card click event from firing
+            const school = schoolsData.find(s => s.name === schoolName);
+            if (school) {
+                school.bookmarked = !school.bookmarked;
+                saveBookmarks();
+                applyFilters(); // Re-render to update bookmark icon and filter
+            }
+        }
+
         // Function to render school cards
         function renderSchoolCards(filteredSchools) {
             const container = document.getElementById('schoolCardsContainer');
@@ -2149,6 +2313,11 @@
                 }
 
                 card.innerHTML = `
+                    <button class="bookmark-button ${school.bookmarked ? 'bookmarked' : ''}" onclick="toggleBookmark('${school.name}', event)">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6">
+                            <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.292-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.006z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
                     <h3 class="text-xl font-bold text-blue-800 mb-2">${school.name}</h3>
                     <p class="text-gray-600 text-sm">${school.englishName}</p>
                     <p><strong>排名：</strong> ${school.rank !== null ? school.rank : '沒有資料'}</p>
@@ -2172,12 +2341,14 @@
             const maxTuition = document.getElementById('maxTuitionFilter').value; // Get as string
             const minPromotionRate = document.getElementById('minPromotionRateFilter').value; // Get as string
             const selectedTeachingLanguage = document.getElementById('teachingLanguageFilter').value; // New filter value
+            const selectedBookmarkFilter = document.getElementById('bookmarkFilter').value; // New bookmark filter
 
             const filteredSchools = schoolsData.filter(school => {
                 const matchesDistrict = (selectedDistrict === '全部' || school.district === selectedDistrict);
                 const matchesSchoolType = (selectedSchoolType === '全部' || school.schoolType === selectedSchoolType);
                 const matchesSchoolGender = (selectedSchoolGender === '全部' || school.schoolGender === selectedSchoolGender);
                 const matchesOneStop = (selectedOneStop === '全部' || school.oneStop === selectedOneStop);
+                const matchesBookmark = (selectedBookmarkFilter === '全部' || (selectedBookmarkFilter === '已加書籤' && school.bookmarked));
                 
                 // For teaching language, split the school's languages and check if any match
                 let matchesTeachingLanguage = true;
@@ -2215,7 +2386,7 @@
                     }
                 }
 
-                return matchesDistrict && matchesSchoolType && matchesSchoolGender && matchesOneStop && matchesTeachingLanguage && matchesTuition && matchesPromotionRate;
+                return matchesDistrict && matchesSchoolType && matchesSchoolGender && matchesOneStop && matchesTeachingLanguage && matchesTuition && matchesPromotionRate && matchesBookmark;
             });
 
             renderSchoolCards(filteredSchools);
@@ -2249,6 +2420,61 @@
             // Map to easily check one-stop status
             const newOneStopMap = new Set(newOneStopList);
 
+            // Reorder schoolsData based on the provided rank list
+            const rankedSchoolNames = [
+                "迦南幼稚園（九龍塘）", "香港創價幼稚園", "根德園幼稚園", "聖母無玷聖心幼稚園", "聖羅撒幼稚園",
+                "合一堂單家傳紀念幼稚園", "學之園幼稚園", "又一村學校", "民生書院幼稚園", "劍鳴幼稚園",
+                "聖馬提亞堂肖珍幼稚園", "激活幼稚園", "約克國際幼稚園", "香港中文大學校友會聯會張煊昌幼稚園", "啟思幼稚園（屯門分校）",
+                "啟思幼稚園", "嘉諾撒聖心幼稚園", "荃灣浸信會幼稚園", "聖公會幼稚園", "宣道幼稚園",
+                "迦南幼稚園﹝荃灣﹞", "明我幼稚園", "比華利中英文幼稚園", "聖公會荊冕堂士德幼稚園", "德望小學暨幼稚園",
+                "救世軍慶恩幼稚園", "雅麗斯英文幼稚園", "聖保祿幼稚園", "珈琳中英文幼稚園", "崇真小學暨幼稚園（本地課程）",
+                "香港培正小學", "迦南幼稚園（麗港城）", "九龍靈糧堂幼兒園", "粉嶺神召會幼稚園", "藍田靈糧幼稚園",
+                "聖保羅堂幼稚園", "香港靈糧堂秀德幼稚園", "天樂幼稚園", "聖三一中心幼稚園", "粉嶺浸信會呂明才幼稚園",
+                "啟思幼稚園（帝堡城）", "香港培道小學", "聖母幼稚園", "真理浸信會榮光幼兒園", "香港靈糧堂幼稚園",
+                "德貞幼稚園", "基督教神召會合一堂幼稚園", "明雅中英文幼稚園", "聖士提反堂小學暨幼稚園", "德寶英文幼稚園（將軍澳）",
+                "綠楊幼稚園", "救世軍田家炳幼稚園", "馬鞍山靈糧幼稚園", "國際英文幼稚園", "佳寶幼稚園（屯門分校）",
+                "鑽石山靈糧幼稚園", "保良局蔡繼有幼稚園", "天主教聖瑪加利大幼稚園", "卓思英文學校暨幼稚園（青怡分校）", "香港靈糧堂荃灣幼稚園",
+                "加州天地幼稚園", "大埔浸信會幼稚園", "國際英文幼稚園", // Duplicate, will map to the first one
+                "香港五常法幼稚園", "高主教書院幼稚園部", "官塘浸信會幼稚園", "東華三院南九龍獅子會幼兒園", "明我幼稚園（奧運校）",
+                "北角衞理堂幼稚園", "德萃幼稚園", "啟思幼稚園（青衣）", "協恩中學附屬幼稚園", "啟思幼稚園（匯景花園）",
+                "救世軍荃灣幼兒學校", "荃灣聖母幼稚園", "元朗三育幼稚園", "新一代英文幼稚園（屯門分校）", "聖公會青山聖彼得堂兆麟苑幼稚園",
+                "元岡幼稚園", "元朗信義會生命幼稚園", "香港宣教會優質幼兒學校", "中華基督教會元朗堂真光幼稚園", "基督教宣道會茵怡幼稚園",
+                "基督教中心幼稚園", "聖保羅堂幼稚園（北角）", "明愛沙田幼兒學校", "保良局易桂芳幼稚園", "博士山（香港）國際幼稚園",
+                "保良局田家炳兆康幼稚園", "萊恩幼稚園（元朗）", "聖公會荊冕堂葵涌幼稚園", "順德聯誼總會屯門梁李秀娛幼稚園", "佛教金麗幼稚園",
+                "基督教粉嶺神召會恩光幼稚園", "保良局金卿幼稚園", "路德會救恩幼稚園", "寶血幼稚園（深水埗）", "迦南幼稚園（窩打老道）",
+                "崇真會美善幼稚園（馬鞍山）", "天主教聖安德肋幼稚園"
+            ];
+
+            const reorderedSchoolsData = [];
+            const processedSchools = new Set(); // To handle duplicates and ensure each school is added once
+
+            rankedSchoolNames.forEach((name, index) => {
+                // Find the school in the original data. Handle potential duplicates by only processing once.
+                const school = schoolsData.find(s => s.name === name && !processedSchools.has(s.name));
+                if (school) {
+                    school.rank = index + 1; // Assign new rank
+                    reorderedSchoolsData.push(school);
+                    processedSchools.add(school.name);
+                } else {
+                    // If a school from the new list isn't in my current data, add a placeholder or log.
+                    // For now, I'll add a basic placeholder if it's truly new and not a duplicate already processed.
+                    if (!processedSchools.has(name)) {
+                        reorderedSchoolsData.push({
+                            rank: index + 1,
+                            name: name,
+                            englishName: "沒有資料", website: "沒有資料", district: "沒有資料", schoolType: "沒有資料",
+                            kgpScheme: "沒有資料", oneStop: "否", teachingLanguage: "沒有資料", primaryInfo: "沒有資料",
+                            schoolGender: "沒有資料", tuitionFee: null, tuitionFeeText: "沒有資料", teacherStudentRatio: "沒有資料",
+                            environmentScore: null, promotionRate: null, bookmarked: false, discrepancy: true // Mark as discrepancy if it's a new placeholder
+                        });
+                    }
+                }
+            });
+
+            // Replace original schoolsData with the reordered and updated data
+            schoolsData.splice(0, schoolsData.length, ...reorderedSchoolsData);
+
+
             schoolsData.forEach(school => {
                 const originalOneStop = school.oneStop; // Store original for discrepancy check
                 const originalSchoolType = school.schoolType;
@@ -2256,6 +2482,7 @@
                 const originalTuitionFeeText = school.tuitionFeeText;
                 const originalPrimaryInfo = school.primaryInfo;
                 const originalSchoolGender = school.schoolGender;
+                const originalWebsite = school.website; // Store original website
 
                 // Update oneStop status based on the new list
                 if (newOneStopMap.has(school.name)) {
@@ -2268,9 +2495,9 @@
                 switch (school.name) {
                     case "嘉諾撒聖心幼稚園":
                         school.schoolType = "非牟利天主教男女校";
-                        school.tuitionFee = 1570; // Updated from 0 to 1570
-                        school.tuitionFeeText = "$1,570.00（10）"; // Updated tuition text
-                        school.primaryInfo = "嘉諾撒聖心學校私立部，41%畢業生升讀嘉諾撒聖心學校，13%升讀嘉諾撒聖心學校（私立部）。"; // Updated primaryInfo
+                        school.tuitionFee = 0; // Updated from 1570 to 0
+                        school.tuitionFeeText = "免費"; // Updated tuition text
+                        school.primaryInfo = "嘉諾撒聖心學校私立部，41%畢業生升讀嘉諾撒聖心學校，13%升讀嘉諾撒聖心學校（私立部）。";
                         school.englishName = "Sacred Heart Canossian Kindergarten";
                         school.website = "http://www.shck.edu.hk";
                         break;
@@ -2352,7 +2579,7 @@
                         school.schoolType = "非牟利基督教男女校";
                         school.tuitionFee = 4160;
                         school.tuitionFeeText = "$4,160（10）";
-                        school.primaryInfo = "崇真小學暨幼稚園(小學部) (7成位置)"; // Added percentage from text
+                        school.primaryInfo = "崇真小學暨幼稚園(小學部) (7成位置)";
                         school.englishName = "Tsung Tsin Primary School and Kindergarten (Local Curriculum)";
                         school.website = "http://www.ttpskg.edu.hk";
                         break;
@@ -2385,19 +2612,19 @@
                         school.schoolType = "基督教私立男女校";
                         school.tuitionFee = 49880;
                         school.tuitionFeeText = "$49,880（分10期）";
-                        school.primaryInfo = "民生書院小學 (不少於85%優先取錄)"; // Added percentage from text
+                        school.primaryInfo = "民生書院小學 (不少於85%優先取錄)";
                         school.englishName = "Munsang College Kindergarten";
                         school.website = "https://kindergarten.munsang.edu.hk";
-                        school.promotionRate = 85; // Extracted from text
+                        school.promotionRate = 85;
                         break;
                     case "香港培道小學幼稚園":
                         school.schoolType = "非牟利私立男女校";
                         school.tuitionFee = 0;
                         school.tuitionFeeText = "免費";
-                        school.primaryInfo = "香港培道小學 (100%升讀)"; // Added percentage from text
+                        school.primaryInfo = "香港培道小學 (100%升讀)";
                         school.englishName = "Pooi To Primary School Kindergarten";
                         school.website = "http://kids.ptps.edu.hk";
-                        school.promotionRate = 100; // Extracted from text
+                        school.promotionRate = 100;
                         break;
                     case "宣道幼稚園":
                         school.schoolType = "非牟利基督教男女校";
@@ -2468,7 +2695,8 @@
                     originalSchoolType !== school.schoolType ||
                     originalTuitionFee !== school.tuitionFee ||
                     originalPrimaryInfo !== school.primaryInfo ||
-                    originalSchoolGender !== school.schoolGender) {
+                    originalSchoolGender !== school.schoolGender ||
+                    originalWebsite !== school.website) { // Also check website for discrepancy
                     school.discrepancy = true;
                 } else {
                     school.discrepancy = false;
@@ -2481,6 +2709,7 @@
             const maxTuitionFilter = document.getElementById('maxTuitionFilter');
             const minPromotionRateFilter = document.getElementById('minPromotionRateFilter');
             const teachingLanguageFilter = document.getElementById('teachingLanguageFilter');
+            const bookmarkFilter = document.getElementById('bookmarkFilter');
 
             // Populate filters
             const uniqueDistricts = new Set(schoolsData.map(s => s.district));
@@ -2567,7 +2796,10 @@
             teachingLanguageFilter.addEventListener('change', applyFilters);
             maxTuitionFilter.addEventListener('change', applyFilters);
             minPromotionRateFilter.addEventListener('change', applyFilters);
+            bookmarkFilter.addEventListener('change', applyFilters); // Add listener for bookmark filter
 
+            // Initial load of bookmarks
+            loadBookmarks();
             // Initial render
             applyFilters();
         });
