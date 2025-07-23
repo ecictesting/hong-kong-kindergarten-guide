@@ -101,23 +101,15 @@
             color: #e53e3e; /* Red text for inconsistency */
             font-weight: bold;
         }
-        .bookmark-button {
-            position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
-            background: none;
-            border: none;
-            cursor: pointer;
-            padding: 0.25rem;
-            color: #cbd5e0; /* Default grey star */
-            transition: color 0.2s ease-in-out;
-            z-index: 10; /* Ensure it's above other card content */
+        .greyed-out {
+            background-color: #f3f4f6; /* Light grey background */
+            color: #9ca3af; /* Grey text */
+            opacity: 0.7;
+            pointer-events: none; /* Disable click events */
         }
-        .bookmark-button.bookmarked {
-            color: #f59e0b; /* Yellow for bookmarked */
-        }
-        .bookmark-button:hover {
-            color: #fcd34d; /* Lighter yellow on hover */
+        .greyed-out .bookmark-button {
+            color: #d1d5db; /* Lighter grey star */
+            pointer-events: auto; /* Re-enable bookmark click */
         }
 
         /* Modal styles */
@@ -173,7 +165,7 @@
     <div class="container bg-white rounded-lg shadow-xl p-6 md:p-10 mt-8">
         <h1 class="text-3xl md:text-4xl font-extrabold text-center text-blue-800 mb-8 section-title">香港幼稚園排名</h1>
 
-        <p class="text-gray-700 mb-6 text-center">以下是香港幼稚園的詳細排名列表，您可以利用下方的篩選器快速查找符合您需求的學校。一條龍學校的卡片會以淺綠色背景和綠色邊框標示。</p>
+        <p class="text-gray-700 mb-6 text-center">以下是香港幼稚園的詳細排名列表，您可以利用下方的篩選器快速查找符合您需求的學校。一條龍學校的卡片會以淺綠色背景和綠色邊框標示。已停辦的學校會以灰色顯示。</p>
 
         <!-- Filter Section -->
         <div class="filter-group">
@@ -272,10 +264,12 @@
             <p><span id="modalEnglishName" class="text-gray-600 text-sm"></span></p>
             <p><strong>排名：</strong> <span id="modalRank"></span></p>
             <p><strong>地區：</strong> <span id="modalDistrict"></span></p>
-            <p><strong>類別：：</strong> <span id="modalSchoolType"></span></p>
+            <p><strong>類別：</strong> <span id="modalSchoolType"></span></p>
             <p><strong>學劵制：：</strong> <span id="modalKgpScheme"></span></p>
             <p><strong>一條龍：：</strong> <span id="modalOneStop"></span></p>
             <p><strong>教學語言：：</strong> <span id="modalTeachingLanguage"></span></p>
+            <p><strong>地址：：</strong> <span id="modalAddress"></span></p> <!-- New address field -->
+            <p><strong>公共交通：：</strong> <span id="modalTransportInfo"></span></p> <!-- New transport info field -->
             <p><strong>聯繫小學及升學率：：</strong> <span id="modalPrimaryInfo"></span></p>
             <p><strong>學校官方網頁：：</strong> <a id="modalWebsite" href="#" target="_blank" class="text-blue-500 hover:underline"></a></p>
             <p><strong>學校性別：：</strong> <span id="modalSchoolGender"></span></p>
@@ -294,6 +288,7 @@
                 name: "迦南幼稚園（九龍塘）",
                 englishName: "Canaan Kindergarten (Kowloon Tong)",
                 website: "http://www.canaan.edu.hk/",
+                address: "九龍九龍塘對衡道2號",
                 district: "九龍城區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -306,13 +301,15 @@
                 teacherStudentRatio: "1 : 8.6",
                 environmentScore: 94.96,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 2,
                 name: "香港創價幼稚園",
                 englishName: "Hong Kong Soka Kindergarten",
-                website: "http://www.hksokakg.edu.hk/",
+                website: "https://soka.edu.hk/zh", // Updated website
+                address: "九龍九龍塘添福道11號",
                 district: "九龍城區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -325,13 +322,15 @@
                 teacherStudentRatio: "1 : 7.7",
                 environmentScore: 97.08,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 3,
                 name: "根德園幼稚園",
                 englishName: "Kentville Kindergarten",
                 website: "http://www.kentville.edu.hk/",
+                address: "九龍九龍塘根德道12號",
                 district: "九龍城區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -344,13 +343,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "已停辦" // Marked as closing
             },
             {
                 rank: 4,
                 name: "聖母無玷聖心幼稚園",
                 englishName: "Immaculate Heart of Mary Kindergarten",
                 website: "http://www.ihmk.edu.hk/",
+                address: "新界沙田馬鞍山恆光街12號",
                 district: "沙田區",
                 schoolType: "非牟利天主教男女校",
                 kgpScheme: "有",
@@ -363,13 +364,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 5,
                 name: "聖羅撒幼稚園",
                 englishName: "St. Rose of Lima Kindergarten",
                 website: "http://www.srlkg.edu.hk/",
+                address: "九龍九龍塘真光里1號",
                 district: "九龍城區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -382,13 +385,15 @@
                 teacherStudentRatio: "1 : 7.5",
                 environmentScore: 94.99,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 6,
                 name: "合一堂單家傳紀念幼稚園",
                 englishName: "Hop Yat Church Shin Ka Chuen Memorial Kindergarten",
                 website: "https://hycskckg.edu.hk/",
+                address: "新界沙田馬鞍山鞍誠街26號",
                 district: "沙田區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -401,13 +406,15 @@
                 teacherStudentRatio: "1 : 6.2",
                 environmentScore: 93.77,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 7,
                 name: "學之園幼稚園", // General entry, assuming it refers to the group
                 englishName: "Learning Habitat Kindergarten",
                 website: "http://www.learninghabitat.org/",
+                address: "沒有資料", // Specific address for general entry not available
                 district: "葵青區", // District from previous data, might be general for the group
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -420,13 +427,15 @@
                 teacherStudentRatio: "1 : 8.1",
                 environmentScore: 97.49,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 8,
                 name: "又一村學校",
                 englishName: "Yau Yat Chuen School",
                 website: "http://www.yycskg.edu.hk",
+                address: "九龍又一村壽菊路2號及新翼",
                 district: "深水埗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -439,13 +448,15 @@
                 teacherStudentRatio: "1 : 9.7",
                 environmentScore: 95.53,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 9,
                 name: "民生書院幼稚園",
                 englishName: "Munsang College Kindergarten",
                 website: "https://kindergarten.munsang.edu.hk",
+                address: "九龍九龍城東寶庭道8號",
                 district: "九龍城區",
                 schoolType: "基督教私立男女校",
                 kgpScheme: "無",
@@ -458,13 +469,15 @@
                 teacherStudentRatio: "1 : 10.1",
                 environmentScore: 98.69,
                 promotionRate: 85,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 10,
                 name: "劍鳴幼稚園",
                 englishName: "Keen Mind Kindergarten",
                 website: "http://www.keenmind.com.hk/",
+                address: "九龍九龍塘金巴倫道20號",
                 district: "九龍城區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -477,13 +490,15 @@
                 teacherStudentRatio: "1 : 6.5",
                 environmentScore: 98.87,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 11,
                 name: "聖馬提亞堂肖珍幼稚園",
                 englishName: "St. Matthias' Church Hsiu Chun Kindergarten",
                 website: "http://www.smckg.edu.hk/",
+                address: "新界元朗青山公路元朗段208號",
                 district: "元朗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -496,13 +511,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 12,
                 name: "激活幼稚園",
                 englishName: "Active Kindergarten",
                 website: "http://www.activekg.edu.hk/",
+                address: "新界元朗鳳攸南街9號好順意大廈地下",
                 district: "元朗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -515,13 +532,15 @@
                 teacherStudentRatio: "1 : 8.0",
                 environmentScore: 95.32,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 13,
                 name: "約克國際幼稚園",
                 englishName: "York International Kindergarten",
                 website: "http://www.york.edu.hk/",
+                address: "九龍九龍塘約克道3號",
                 district: "九龍城區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -534,13 +553,15 @@
                 teacherStudentRatio: "1 : 7.5",
                 environmentScore: 98.59,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 14,
                 name: "香港中文大學校友會聯會張煊昌幼稚園",
                 englishName: "CUHKFAA Chan Chun Ha Kindergarten",
                 website: "http://www.cuhkfaakg.edu.hk/",
+                address: "新界沙田大圍美田路1號",
                 district: "沙田區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -553,13 +574,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 15,
                 name: "啟思幼稚園（屯門分校）",
                 englishName: "Creative Kindergarten (Tuen Mun Branch)",
                 website: "http://www.creativekg.edu.hk/",
+                address: "新界屯門屯順街1號屯門市廣場1期地下",
                 district: "屯門區",
                 schoolType: "私立獨立",
                 kgpScheme: "無",
@@ -572,13 +595,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 16,
                 name: "啟思幼稚園", // General entry, assuming it refers to the group
                 englishName: "Creative Kindergarten",
                 website: "http://www.creativekg.edu.hk/",
+                address: "九龍九龍塘牛津道2A號地下及一樓",
                 district: "九龍城區",
                 schoolType: "私立獨立",
                 kgpScheme: "無",
@@ -591,13 +616,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 17,
                 name: "嘉諾撒聖心幼稚園",
                 englishName: "Sacred Heart Canossian Kindergarten",
                 website: "http://www.shck.edu.hk",
+                address: "香港中環羅便臣道10號2-5樓",
                 district: "中西區",
                 schoolType: "非牟利天主教男女校",
                 kgpScheme: "有",
@@ -610,13 +637,15 @@
                 teacherStudentRatio: "1 : 9.0",
                 environmentScore: 99.48,
                 promotionRate: 54,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 18,
                 name: "荃灣浸信會幼稚園",
                 englishName: "Tsuen Wan Baptist Kindergarten",
                 website: "http://www.twbkg.edu.hk/",
+                address: "新界荃灣大河道99號",
                 district: "荃灣區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -629,13 +658,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 19,
                 name: "聖公會幼稚園",
                 englishName: "Sheng Kung Hui Kindergarten",
                 website: "http://www.skhkg.edu.hk",
+                address: "香港灣仔謝斐道147號",
                 district: "灣仔區",
                 schoolType: "非牟利",
                 kgpScheme: "無",
@@ -648,13 +679,15 @@
                 teacherStudentRatio: "1 : 7.3",
                 environmentScore: 99.7,
                 promotionRate: 75.1,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 20,
                 name: "宣道幼稚園",
                 englishName: "Alliance Kindergarten",
                 website: "http://www.ktak.edu.hk",
+                address: "九龍九龍仔蘭開夏道2號1樓-2樓部份",
                 district: "九龍城區",
                 schoolType: "非牟利基督教男女校",
                 kgpScheme: "無",
@@ -667,13 +700,15 @@
                 teacherStudentRatio: "1 : 8.8",
                 environmentScore: 94.24,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 21,
                 name: "迦南幼稚園﹝荃灣﹞",
                 englishName: "Canaan Kindergarten (Tsuen Wan)",
                 website: "http://www.canaan.edu.hk/",
+                address: "新界荃灣青山公路荃灣段388號",
                 district: "荃灣區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -686,13 +721,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 22,
                 name: "明我幼稚園",
                 englishName: "Ming Nga Kindergarten",
                 website: "http://www.mingngakg.edu.hk/",
+                address: "香港東區筲箕灣道234號",
                 district: "東區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -705,13 +742,15 @@
                 teacherStudentRatio: "1 : 11.0",
                 environmentScore: 95.34,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 23,
                 name: "比華利中英文幼稚園",
                 englishName: "Beverly English & Chinese Kindergarten",
                 website: "http://www.beverlykg.edu.hk/",
+                address: "新界西貢將軍澳寶琳北路18號",
                 district: "西貢區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -724,13 +763,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 24,
                 name: "聖公會荊冕堂士德幼稚園",
                 englishName: "SKH Crown of Thorns Church Shatin Kindergarten",
                 website: "http://www.ctckg.edu.hk/",
+                address: "新界葵涌石蔭邨禮石樓地下",
                 district: "葵青區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -743,13 +784,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 25,
                 name: "德望小學暨幼稚園",
                 englishName: "Good Hope Primary School cum Kindergarten",
                 website: "https://www3.ghs.edu.hk",
+                address: "九龍扎山道383號",
                 district: "黃大仙區",
                 schoolType: "天主教私立女校",
                 kgpScheme: "無",
@@ -762,13 +805,15 @@
                 teacherStudentRatio: "1 : 9.6",
                 environmentScore: 97.98,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 26,
                 name: "救世軍慶恩幼稚園",
                 englishName: "The Salvation Army King Yan Kindergarten",
                 website: "http://www.sakingyan.edu.hk/",
+                address: "新界西貢將軍澳景林邨景榕樓地下",
                 district: "西貢區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -781,13 +826,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 27,
                 name: "雅麗斯英文幼稚園",
                 englishName: "Alice English Kindergarten",
                 website: "http://www.alicekg.edu.hk/",
+                address: "新界屯門屯門鄉事會路136號",
                 district: "屯門區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -800,13 +847,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 28,
                 name: "聖保祿幼稚園",
                 englishName: "St. Paul's Kindergarten",
                 website: "https://www.spk.edu.hk",
+                address: "香港銅鑼灣禮頓道1018地段地下至2樓",
                 district: "灣仔區",
                 schoolType: "非牟利天主教女子學校",
                 kgpScheme: "無",
@@ -819,13 +868,15 @@
                 teacherStudentRatio: "1 : 6.3",
                 environmentScore: 98.97,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 29,
                 name: "珈琳中英文幼稚園",
                 englishName: "Glorious English and Chinese Kindergarten",
                 website: "http://www.glorious.edu.hk/",
+                address: "新界元朗教育路168號",
                 district: "元朗區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -838,13 +889,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 30,
                 name: "崇真小學暨幼稚園（本地課程）",
                 englishName: "Tsung Tsin Primary School and Kindergarten (Local Curriculum)",
                 website: "http://www.ttpskg.edu.hk",
+                address: "九龍深水埗大埔道58號",
                 district: "深水埗區",
                 schoolType: "非牟利基督教男女校",
                 kgpScheme: "有",
@@ -857,13 +910,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 31,
                 name: "香港培正小學", // Refers to the kindergarten section
                 englishName: "Pui Ching Primary School (Kindergarten)",
                 website: "https://www.pcps.edu.hk/kg",
+                address: "九龍九龍城窩打老道80號",
                 district: "九龍城區",
                 schoolType: "非牟利男女校",
                 kgpScheme: "無",
@@ -876,13 +931,15 @@
                 teacherStudentRatio: "1 : 10.7",
                 environmentScore: 98.64,
                 promotionRate: 85,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 32,
                 name: "迦南幼稚園（麗港城）",
                 englishName: "Canaan Kindergarten (Laguna City)",
                 website: "http://www.canaan.edu.hk/",
+                address: "九龍觀塘麗港城商場地下",
                 district: "觀塘區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -895,13 +952,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 33,
                 name: "九龍靈糧堂幼兒園",
                 englishName: "Kowloon Ling Liang Church Day Nursery",
                 website: "http://www.kllck.edu.hk/",
+                address: "九龍九龍城嘉林邊道1號4樓及5樓",
                 district: "九龍城區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -914,13 +973,15 @@
                 teacherStudentRatio: "1 : 7.4",
                 environmentScore: 93.95,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 34,
                 name: "粉嶺神召會幼稚園",
                 englishName: "Fanling Assembly of God Kindergarten",
                 website: "http://www.fagkg.edu.hk/",
+                address: "新界粉嶺璧峰路12號",
                 district: "北區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -933,13 +994,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 35,
                 name: "藍田靈糧幼稚園",
                 englishName: "Lam Tin Ling Liang Kindergarten",
                 website: "http://www.ltllkg.edu.hk/",
+                address: "九龍觀塘藍田碧雲道170號",
                 district: "觀塘區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -952,13 +1015,15 @@
                 teacherStudentRatio: "1 : 7.7",
                 environmentScore: 95.33,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 36,
                 name: "聖保羅堂幼稚園",
                 englishName: "St. Paul's Church Kindergarten",
                 website: "http://spckg.edu.hk/",
+                address: "香港中環己連拿利1號",
                 district: "中西區",
                 schoolType: "非牟利",
                 kgpScheme: "無",
@@ -971,13 +1036,15 @@
                 teacherStudentRatio: "1 : 11.0",
                 environmentScore: 98.24,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 37,
                 name: "香港靈糧堂秀德幼稚園",
                 englishName: "Hong Kong Ling Liang Church Sau Tak Kindergarten",
                 website: "http://www.llckg.edu.hk/",
+                address: "九龍深水埗南昌街200號",
                 district: "深水埗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -990,13 +1057,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 38,
                 name: "天樂幼稚園",
                 englishName: "Tin Lok Kindergarten",
                 website: "http://www.tinlok.edu.hk/",
+                address: "新界元朗天水圍天耀邨耀華樓地下",
                 district: "元朗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1009,13 +1078,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 39,
                 name: "聖三一中心幼稚園",
                 englishName: "Holy Trinity Centre Kindergarten",
                 website: "http://www.htckg.edu.hk",
+                address: "九龍馬頭圍馬頭涌道139號",
                 district: "九龍城區",
                 schoolType: "非牟利基督教男女校",
                 kgpScheme: "有",
@@ -1028,13 +1099,15 @@
                 teacherStudentRatio: "1 : 8.7",
                 environmentScore: 94.68,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 40,
                 name: "粉嶺浸信會呂明才幼稚園",
                 englishName: "Fanling Baptist Lui Ming Choi Kindergarten",
                 website: "http://www.fblmckg.edu.hk/",
+                address: "新界粉嶺華明邨信明樓地下",
                 district: "北區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1047,13 +1120,15 @@
                 teacherStudentRatio: "1 : 9.0",
                 environmentScore: 95.8,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 41,
                 name: "啟思幼稚園（帝堡城）",
                 englishName: "Creative Kindergarten (Castello)",
                 website: "http://www.creativekg.edu.hk/",
+                address: "新界沙田小瀝源路69號帝堡城商場地下",
                 district: "沙田區",
                 schoolType: "私立獨立",
                 kgpScheme: "無",
@@ -1066,13 +1141,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 42,
                 name: "香港培道小學", // Refers to the kindergarten section
                 englishName: "Pooi To Primary School (Kindergarten)",
                 website: "http://kids.ptps.edu.hk",
+                address: "九龍馬頭涌福祥街3號",
                 district: "九龍城區",
                 schoolType: "非牟利私立男女校",
                 kgpScheme: "有",
@@ -1085,13 +1162,15 @@
                 teacherStudentRatio: "1 : 10.6",
                 environmentScore: 96.11,
                 promotionRate: 100,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 43,
                 name: "聖母幼稚園",
                 englishName: "Our Lady's Kindergarten",
                 website: "http://www.olk.edu.hk",
+                address: "九龍黃大仙沙田坳道113號",
                 district: "黃大仙區",
                 schoolType: "非牟利天主教男女校",
                 kgpScheme: "有",
@@ -1104,13 +1183,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 44,
                 name: "真理浸信會榮光幼兒園",
                 englishName: "Truth Baptist Church Wing Kwong Nursery",
                 website: "http://www.tbcwkn.edu.hk/",
+                address: "新界沙田馬鞍山頌安邨頌智樓地下",
                 district: "沙田區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1123,13 +1204,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 45,
                 name: "香港靈糧堂幼稚園",
                 englishName: "Hong Kong Ling Liang Church Kindergarten",
                 website: "http://www.kllck.edu.hk/",
+                address: "香港灣仔靈糧街1號",
                 district: "灣仔區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1142,13 +1225,15 @@
                 teacherStudentRatio: "1 : 8.8",
                 environmentScore: 99.2,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 46,
                 name: "德貞幼稚園",
                 englishName: "Tak Ching Kindergarten",
                 website: "http://www.tckg.edu.hk/",
+                address: "九龍深水埗醫局街170號",
                 district: "深水埗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1161,13 +1246,15 @@
                 teacherStudentRatio: "1 : 10.7",
                 environmentScore: 95.9,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 47,
                 name: "基督教神召會合一堂幼稚園",
                 englishName: "Christian Assembly of God Hop Yat Church Kindergarten",
                 website: "http://www.aghyckg.edu.hk/",
+                address: "新界沙田馬鞍山恆安邨恆峰樓地下",
                 district: "沙田區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1180,13 +1267,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 48,
                 name: "明雅中英文幼稚園",
                 englishName: "Ming Nga English & Chinese Kindergarten",
                 website: "http://www.mingngakg.edu.hk/",
+                address: "新界大埔大元邨泰榮樓地下",
                 district: "大埔區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1199,13 +1288,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 49,
                 name: "聖士提反堂小學暨幼稚園",
                 englishName: "St. Stephen's Church Primary School and Kindergarten",
                 website: "http://www.ststephenskg.edu.hk/",
+                address: "香港中環堅道71號",
                 district: "中西區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1218,13 +1309,15 @@
                 teacherStudentRatio: "1 : 6.4",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 50,
                 name: "德寶英文幼稚園（將軍澳）",
                 englishName: "Debo English Kindergarten (Tseung Kwan O)",
                 website: "http://www.debokg.edu.hk/",
+                address: "新界將軍澳唐德街9號",
                 district: "西貢區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1237,13 +1330,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 51,
                 name: "綠楊幼稚園",
                 englishName: "Greenwood Kindergarten",
                 website: "http://www.greenwood.edu.hk/",
+                address: "新界荃灣蕙荃路22-66號綠楊新邨商場平台",
                 district: "荃灣區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1256,13 +1351,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 52,
                 name: "救世軍田家炳幼稚園",
                 englishName: "The Salvation Army Tin Ka Ping Kindergarten",
                 website: "http://www.satkp.edu.hk/",
+                address: "新界沙田瀝源邨榮瑞樓地下",
                 district: "沙田區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1275,13 +1372,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 53,
                 name: "馬鞍山靈糧幼稚園",
                 englishName: "Ma On Shan Ling Liang Kindergarten",
                 website: "http://www.mosllkg.edu.hk/",
+                address: "新界沙田馬鞍山恆安邨恆峰樓地下",
                 district: "沙田區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1294,13 +1393,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 54,
                 name: "國際英文幼稚園", // General entry, mapping to Norfolk Road branch
                 englishName: "St. Catherine's International Kindergarten (Norfolk Road)",
                 website: "http://www.stcatherines.edu.hk",
+                address: "九龍九龍塘羅福道4及6號",
                 district: "九龍城區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1313,13 +1414,15 @@
                 teacherStudentRatio: "1 : 7.3",
                 environmentScore: 99.93,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 55,
                 name: "佳寶幼稚園（屯門分校）",
                 englishName: "Kai Po Kindergarten (Tuen Mun Branch)",
                 website: "http://www.kaipokg.edu.hk/",
+                address: "新界屯門湖景邨湖暉樓地下",
                 district: "屯門區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1332,13 +1435,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 56,
                 name: "鑽石山靈糧幼稚園",
                 englishName: "Diamond Hill Ling Liang Kindergarten",
                 website: "http://www.dhllkg.edu.hk/",
+                address: "九龍鑽石山鳳德邨黛鳳樓地下",
                 district: "黃大仙區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1351,13 +1456,15 @@
                 teacherStudentRatio: "1 : 9.7",
                 environmentScore: 94.48,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 57,
                 name: "保良局蔡繼有幼稚園",
                 englishName: "Po Leung Kuk Choi Kai Yau Kindergarten",
                 website: "http://www.plkcky.edu.hk/",
+                address: "新界西貢將軍澳唐俊街1號",
                 district: "西貢區",
                 schoolType: "非牟利",
                 kgpScheme: "無",
@@ -1370,13 +1477,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 58,
                 name: "天主教聖瑪加利大幼稚園",
                 englishName: "St. Margaret Mary's Catholic Kindergarten",
                 website: "https://www.stmkg.edu.hk/",
+                address: "香港跑馬地樂活道2號A聖瑪加利大堂區中心3樓及4樓",
                 district: "灣仔區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1389,13 +1498,15 @@
                 teacherStudentRatio: "1 : 9.8",
                 environmentScore: 100,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 59,
                 name: "卓思英文學校暨幼稚園（青怡分校）",
                 englishName: "Choice English School & Kindergarten (Ching Yi Branch)",
                 website: "http://www.choicekg.edu.hk/",
+                address: "新界葵涌青衣青怡花園商場地下",
                 district: "葵青區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1408,13 +1519,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 60,
                 name: "香港靈糧堂荃灣幼稚園",
                 englishName: "Hong Kong Ling Liang Church Tsuen Wan Kindergarten",
                 website: "http://www.llctwkg.edu.hk/",
+                address: "新界荃灣青山公路荃灣段388號",
                 district: "荃灣區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1427,13 +1540,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 61,
                 name: "加州天地幼稚園",
                 englishName: "California Wonderland Kindergarten",
                 website: "http://www.calwonderland.edu.hk/",
+                address: "新界屯門屯門鄉事會路136號",
                 district: "屯門區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1446,13 +1561,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 62,
                 name: "大埔浸信會幼稚園",
                 englishName: "Tai Po Baptist Kindergarten",
                 website: "http://www.tpbc.edu.hk/",
+                address: "新界大埔廣福邨廣仁樓地下",
                 district: "大埔區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1465,13 +1582,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 63,
                 name: "國際英文幼稚園", // General entry, mapping to Norfolk Road branch
                 englishName: "St. Catherine's International Kindergarten (Norfolk Road)",
                 website: "http://www.stcatherines.edu.hk",
+                address: "九龍九龍塘羅福道4及6號",
                 district: "九龍城區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1484,13 +1603,15 @@
                 teacherStudentRatio: "1 : 7.3",
                 environmentScore: 99.93,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 64,
                 name: "香港五常法幼稚園",
                 englishName: "Hong Kong 5S Kindergarten",
                 website: "http://www.hk5skg.edu.hk/",
+                address: "新界北區華明邨信明樓地下",
                 district: "北區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1503,13 +1624,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 65,
                 name: "高主教書院幼稚園部",
                 englishName: "Raimondi College Kindergarten Section",
                 website: "http://www.rckg.edu.hk",
+                address: "香港北角建華街30號地下3室",
                 district: "東區",
                 schoolType: "非牟利天主教男女校",
                 kgpScheme: "無",
@@ -1522,13 +1645,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 66,
                 name: "官塘浸信會幼稚園",
                 englishName: "Kwun Tong Baptist Kindergarten",
                 website: "http://www.ktbckg.edu.hk/",
+                address: "九龍觀塘翠屏北邨翠柏樓地下",
                 district: "觀塘區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1541,13 +1666,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 67,
                 name: "東華三院南九龍獅子會幼兒園",
                 englishName: "TWGHs South Kowloon Lions Club Nursery",
                 website: "http://www.twghs.org.hk/nursery/sklc/",
+                address: "新界沙田禾輋邨德和樓地下",
                 district: "沙田區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1560,13 +1687,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 68,
                 name: "明我幼稚園（奧運校）",
                 englishName: "Ming Nga Kindergarten (Olympic Branch)",
                 website: "http://www.mingngakg.edu.hk/",
+                address: "九龍大角咀海帆道11號奧海城1期地下",
                 district: "油尖旺區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1579,13 +1708,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 69,
                 name: "北角衞理堂幼稚園",
                 englishName: "North Point Methodist Church Kindergarten",
                 website: "http://www.npmc.edu.hk",
+                address: "香港北角英皇道125-133號月明樓1樓及2樓全層",
                 district: "東區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1598,13 +1729,15 @@
                 teacherStudentRatio: "1 : 10.8",
                 environmentScore: 98.04,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 70,
                 name: "德萃幼稚園",
                 englishName: "St. Hilary's Kindergarten",
                 website: "http://www.sthilarys.edu.hk/",
+                address: "九龍深水埗荔枝角道1號",
                 district: "深水埗區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1617,13 +1750,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 71,
                 name: "啟思幼稚園（青衣）",
                 englishName: "Creative Kindergarten (Tsing Yi)",
                 website: "http://www.creativekg.edu.hk/",
+                address: "新界青衣青敬路33號青衣城地下",
                 district: "葵青區",
                 schoolType: "私立獨立",
                 kgpScheme: "無",
@@ -1636,13 +1771,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 72,
                 name: "協恩中學附屬幼稚園",
                 englishName: "Heep Yunn School Private Kindergarten",
                 website: "http://www.hykg.edu.hk",
+                address: "九龍九龍城農圃道1號",
                 district: "九龍城區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1655,13 +1792,15 @@
                 teacherStudentRatio: "1 : 7.6",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 73,
                 name: "啟思幼稚園（匯景花園）",
                 englishName: "Creative Kindergarten (Laguna City)",
                 website: "http://www.creativekg.edu.hk/",
+                address: "九龍觀塘匯景花園商場地下",
                 district: "觀塘區",
                 schoolType: "私立獨立",
                 kgpScheme: "無",
@@ -1674,13 +1813,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 74,
                 name: "救世軍荃灣幼兒學校",
                 englishName: "The Salvation Army Tsuen Wan Nursery School",
                 website: "http://www.salvationarmy.org.hk/nursery/tw/",
+                address: "新界荃灣大河道99號",
                 district: "荃灣區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1693,13 +1834,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 75,
                 name: "荃灣聖母幼稚園",
                 englishName: "Our Lady of Lourdes Kindergarten (Tsuen Wan)",
                 website: "http://www.ollkg.edu.hk/",
+                address: "新界荃灣沙咀道328號",
                 district: "荃灣區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1712,13 +1855,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 76,
                 name: "元朗三育幼稚園",
                 englishName: "Yuen Long Sam Yuk Kindergarten",
                 website: "http://www.ylsykg.edu.hk/",
+                address: "新界元朗教育路168號",
                 district: "元朗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1731,13 +1876,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 77,
                 name: "新一代英文幼稚園（屯門分校）",
                 englishName: "New Generation English Kindergarten (Tuen Mun Branch)",
                 website: "http://www.newgeneration.edu.hk/",
+                address: "新界屯門屯順街1號屯門市廣場1期地下",
                 district: "屯門區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1750,13 +1897,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 78,
                 name: "聖公會青山聖彼得堂兆麟苑幼稚園",
                 englishName: "SKH St. Peter's Church Siu Lun Court Kindergarten",
                 website: "https://www.plkkgs.edu.hk/plktkpshkg/",
+                address: "新界屯門兆麟苑商場3樓",
                 district: "屯門區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1769,13 +1918,15 @@
                 teacherStudentRatio: "1 : 8.9",
                 environmentScore: 96,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 79,
                 name: "元岡幼稚園",
                 englishName: "Yuen Kong Kindergarten",
                 website: "http://www.yuenkong.edu.hk/",
+                address: "新界元朗流浮山元岡村",
                 district: "元朗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1788,13 +1939,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 80,
                 name: "元朗信義會生命幼稚園",
                 englishName: "Yuen Long Lutheran Church Life Kindergarten",
                 website: "http://www.yllclife.edu.hk/",
+                address: "新界元朗鳳攸南街3號好順利大廈地下",
                 district: "元朗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1807,13 +1960,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 81,
                 name: "香港宣教會優質幼兒學校",
                 englishName: "Hong Kong Alliance Church Quality Nursery School",
                 website: "http://www.hkacqns.edu.hk/",
+                address: "新界北區華明邨華明商場地下",
                 district: "北區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1826,13 +1981,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 82,
                 name: "中華基督教會元朗堂真光幼稚園",
                 englishName: "CCC Yuen Long Church Chan Kwong Kindergarten",
                 website: "https://chankwong.edu.hk/",
+                address: "新界元朗青山公路元朗段208號",
                 district: "元朗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1845,13 +2002,15 @@
                 teacherStudentRatio: "1 : 8.5",
                 environmentScore: 93.72,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 83,
                 name: "基督教宣道會茵怡幼稚園",
                 englishName: "Christian Alliance Yan Oi Kindergarten",
                 website: "http://www.cayokg.edu.hk/",
+                address: "新界西貢將軍澳茵怡花園商場地下",
                 district: "西貢區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1864,13 +2023,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 84,
                 name: "基督教中心幼稚園",
                 englishName: "Christian Youth Centre Kindergarten",
                 website: "http://www.cyckg.edu.hk",
+                address: "九龍九龍塘窩打老道103號地下",
                 district: "九龍城區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1883,13 +2044,15 @@
                 teacherStudentRatio: "1 : 5.6",
                 environmentScore: 94.75,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 85,
                 name: "聖保羅堂幼稚園（北角）",
                 englishName: "St. Paul's Church Kindergarten (North Point)",
                 website: "http://spckg.edu.hk/",
+                address: "香港北角英皇道321號",
                 district: "東區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1902,13 +2065,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 86,
                 name: "明愛沙田幼兒學校",
                 englishName: "Caritas Shatin Day Nursery",
                 website: "https://csdn.caritas.org.hk/",
+                address: "新界沙田圓洲角路1號",
                 district: "沙田區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1921,13 +2086,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 87,
                 name: "保良局易桂芳幼稚園",
                 englishName: "Po Leung Kuk Yick Kwai Fong Kindergarten",
                 website: "http://www.plkykfkg.edu.hk/",
+                address: "新界屯門湖景邨湖畔樓地下",
                 district: "屯門區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1940,13 +2107,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 88,
                 name: "博士山（香港）國際幼稚園",
                 englishName: "Box Hill (HK) International Kindergarten",
                 website: "http://www.boxhill.edu.hk/",
+                address: "新界沙田小瀝源路69號帝堡城商場地下",
                 district: "沙田區",
                 schoolType: "國際學校",
                 kgpScheme: "無",
@@ -1959,13 +2128,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 89,
                 name: "保良局田家炳兆康幼稚園",
                 englishName: "Po Leung Kuk Tin Ka Ping Siu Hong Kindergarten",
                 website: "https://www.plkkgs.edu.hk/plktkpshkg/",
+                address: "新界屯門兆康苑商場3樓",
                 district: "屯門區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -1978,13 +2149,15 @@
                 teacherStudentRatio: "1 : 10.8",
                 environmentScore: 94.93,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 90,
                 name: "萊恩幼稚園（元朗）",
                 englishName: "Rhine Garden Kindergarten (Yuen Long)",
                 website: "http://www.rhine.edu.hk/",
+                address: "新界元朗鳳攸南街9號好順意大廈地下",
                 district: "元朗區",
                 schoolType: "私立",
                 kgpScheme: "無",
@@ -1997,13 +2170,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 91,
                 name: "聖公會荊冕堂葵涌幼稚園",
                 englishName: "SKH Crown of Thorns Church Kwai Chung Kindergarten",
                 website: "http://www.ctckc.edu.hk/",
+                address: "新界葵涌石蔭邨禮石樓地下",
                 district: "葵青區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2016,13 +2191,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 92,
                 name: "順德聯誼總會屯門梁李秀娛幼稚園",
                 englishName: "Shun Tak Fraternal Association Leung Lee Sau Yu Kindergarten",
                 website: "http://www.stfalsykg.edu.hk/",
+                address: "新界屯門兆麟苑商場3樓",
                 district: "屯門區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2035,13 +2212,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 93,
                 name: "佛教金麗幼稚園",
                 englishName: "Buddhist Kam Lai Kindergarten",
                 website: "http://www.buddhistkamlaikg.edu.hk/",
+                address: "九龍觀塘翠屏北邨翠柏樓地下",
                 district: "觀塘區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2054,13 +2233,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 94,
                 name: "基督教粉嶺神召會恩光幼稚園",
                 englishName: "Christian Fanling Assembly of God Yan Kwong Kindergarten",
                 website: "http://www.fagyk.edu.hk/",
+                address: "新界粉嶺華明邨信明樓地下",
                 district: "北區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2073,13 +2254,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 95,
                 name: "保良局金卿幼稚園",
                 englishName: "Po Leung Kuk Kam Hing Kindergarten",
                 website: "http://www.plkkhkg.edu.hk/",
+                address: "九龍黃大仙竹園南邨華園樓地下",
                 district: "黃大仙區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2092,13 +2275,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 96,
                 name: "路德會救恩幼稚園",
                 englishName: "Lutheran Church Kau Yan Kindergarten",
                 website: "http://www.lckyk.edu.hk/",
+                address: "九龍黃大仙竹園南邨華園樓地下",
                 district: "黃大仙區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2111,13 +2296,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 97,
                 name: "寶血幼稚園（深水埗）",
                 englishName: "Precious Blood Kindergarten (Sham Shui Po)",
                 website: "http://www.pbkg.edu.hk/",
+                address: "九龍深水埗醫局街170號",
                 district: "深水埗區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2130,13 +2317,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 98,
                 name: "迦南幼稚園（窩打老道）",
                 englishName: "Canaan Kindergarten (Waterloo Road)",
                 website: "http://www.canaan.edu.hk/",
+                address: "九龍九龍塘窩打老道103號地下",
                 district: "九龍城區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2149,13 +2338,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 99,
                 name: "崇真會美善幼稚園（馬鞍山）",
                 englishName: "Tsung Tsin Mission of Hong Kong Graceful Kindergarten (Ma On Shan)",
                 website: "http://www.ttmkg.edu.hk/",
+                address: "新界沙田馬鞍山恆安邨恆峰樓地下",
                 district: "沙田區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2168,13 +2359,15 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
             },
             {
                 rank: 100,
                 name: "天主教聖安德肋幼稚園",
                 englishName: "St. Andrew's Catholic Kindergarten",
                 website: "http://www.st-andrew.edu.hk/",
+                address: "新界西貢將軍澳寶琳北路18號",
                 district: "西貢區",
                 schoolType: "非牟利",
                 kgpScheme: "有",
@@ -2187,7 +2380,913 @@
                 teacherStudentRatio: "沒有資料",
                 environmentScore: null,
                 promotionRate: null,
-                bookmarked: false
+                bookmarked: false,
+                status: "operating"
+            },
+            // Schools from previous data that were not in the new 100 list but might still exist.
+            // Keeping them in data for completeness, but their ranks will be null.
+            {
+                rank: null,
+                name: "德瑞國際學校",
+                englishName: "German Swiss International School",
+                website: "http://www.gsis.edu.hk",
+                address: "香港山頂僑福道11及22號",
+                district: "南區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 德文, 普通話",
+                primaryInfo: "本身為一條龍學校 (小學部男女校)，畢業生升讀海外頂尖大學 (約24%)",
+                schoolGender: "男女校",
+                tuitionFee: 135000,
+                tuitionFeeText: "$135,000(12)",
+                teacherStudentRatio: "1 : 8.4",
+                environmentScore: 99.52,
+                promotionRate: 24,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "哈囉香港國際學校",
+                englishName: "Harrow International School Hong Kong",
+                website: "http://www.harrowschool.hk",
+                address: "新界屯門區掃管笏青盈路38號",
+                district: "屯門區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 普通話",
+                primaryInfo: "本身為一條龍學校 (小學部男女校)，畢業生升讀頂尖大學 (約5%牛劍)",
+                schoolGender: "男女校",
+                tuitionFee: 169050,
+                tuitionFeeText: "$169,050(12)",
+                teacherStudentRatio: "1 : 9.9",
+                environmentScore: 99.47,
+                promotionRate: 5,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "漢基國際學校",
+                englishName: "Chinese International School",
+                website: "https://www.cis.edu.hk/",
+                address: "香港北角寶馬山校園",
+                district: "東區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 普通話",
+                primaryInfo: "本身為一條龍學校 (小學部男女校)，畢業生升讀頂尖大學 (約13%牛劍及藤校)",
+                schoolGender: "男女校",
+                tuitionFee: 206200,
+                tuitionFeeText: "$206,200(10)",
+                teacherStudentRatio: "1 : 9.0",
+                environmentScore: 98.8,
+                promotionRate: 13,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "維多利亞（寶翠園）幼稚園",
+                englishName: "Victoria (Belcher Garden) Kindergarten",
+                website: "https://www.victoria.edu.hk/en/kindergarten/belcher-garden.php",
+                address: "香港薄扶林寶翠園",
+                district: "中西區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 123068,
+                tuitionFeeText: "$123,068(11)",
+                teacherStudentRatio: "1 : 5.2",
+                environmentScore: 98.86,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "維多利亞（何文田）國際幼兒園",
+                englishName: "Victoria (Homantin) International Nursery",
+                website: "https://www.victoria.edu.hk/en/nursery/homantin.php",
+                address: "九龍何文田何文田山道22號",
+                district: "九龍城區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 104995,
+                tuitionFeeText: "$104,995(11)",
+                teacherStudentRatio: "1 : 2.0",
+                environmentScore: 98.83,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "銅鑼灣維多利亞國際幼稚園",
+                englishName: "Victoria (Causeway Bay) International Kindergarten",
+                website: "https://www.victoria.edu.hk/en/kindergarten/causeway-bay-international.php",
+                address: "香港銅鑼灣興發街32號",
+                district: "灣仔區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 110759,
+                tuitionFeeText: "$110,759(11)",
+                teacherStudentRatio: "1 : 6.6",
+                environmentScore: 98.8,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "學之園幼稚園(凱帆薈)",
+                englishName: "Learning Habitat Kindergarten (Central Park)",
+                website: "http://www.learninghabitat.org/school/central-park/",
+                address: "九龍大角咀海帆道11號奧海城1期地下",
+                district: "油尖旺區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 86400,
+                tuitionFeeText: "$86,400(12)",
+                teacherStudentRatio: "1 : 5.0",
+                environmentScore: 96.85,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "明慧國際幼稚園",
+                englishName: "Mighty Oaks International Nursery & Kindergarten",
+                website: "http://www.mightyoaks.edu.hk/",
+                address: "香港東區筲箕灣道234號",
+                district: "東區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 57090,
+                tuitionFeeText: "$57,090(11)",
+                teacherStudentRatio: "1 : 6.1",
+                environmentScore: 96.31,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "愛群道浸信會呂郭碧鳳幼稚園",
+                englishName: "Oi Kwan Road Baptist Lui Kwok Pui Fong Kindergarten",
+                website: "http://www.okrb.edu.hk/kindergarten/",
+                address: "香港灣仔愛群道23號",
+                district: "灣仔區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 6.4",
+                environmentScore: 96.24,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "明慧幼稚園",
+                englishName: "Mighty Oaks Kindergarten",
+                website: "http://www.mightyoaks.edu.hk/",
+                address: "香港東區筲箕灣道234號",
+                district: "東區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 71720,
+                tuitionFeeText: "$71,720(11)",
+                teacherStudentRatio: "1 : 4.8",
+                environmentScore: 96.05,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "維多利亞(康怡)幼兒園",
+                englishName: "Victoria (Kornhill) Nursery",
+                website: "https://www.victoria.edu.hk/en/nursery/kornhill.php",
+                address: "香港鰂魚涌康山道2號康怡廣場南座地下",
+                district: "東區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 46644,
+                tuitionFeeText: "$46,644(12)",
+                teacherStudentRatio: "1 : 2.0",
+                environmentScore: 95.97,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "道爾頓幼稚園",
+                englishName: "Dalton School Hong Kong (Kindergarten)",
+                website: "https://www.dshk.edu.hk/",
+                address: "香港灣仔皇后大道東200號",
+                district: "灣仔區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 79200,
+                tuitionFeeText: "$79,200(11)",
+                teacherStudentRatio: "1 : 5.1",
+                environmentScore: 95.96,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "耀中國際幼稚園(根德道)",
+                englishName: "Yew Chung International Kindergarten (Kent Road)",
+                website: "https://www.ycis-hk.com/en/early-childhood-education/kindergarten-kent-road/",
+                address: "九龍九龍塘根德道20號",
+                district: "九龍城區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 普通話",
+                primaryInfo: "耀中國際學校 (小學部男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 231154,
+                tuitionFeeText: "$231,154(2)",
+                teacherStudentRatio: "1 : 3.0",
+                environmentScore: 95.9,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "加拿大國際學校",
+                englishName: "Canadian International School of Hong Kong",
+                website: "https://www.cdnis.edu.hk/",
+                address: "香港南區黃竹坑南朗山道36號",
+                district: "南區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文",
+                primaryInfo: "加拿大國際學校 (小學部男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 148900,
+                tuitionFeeText: "$148,900(2)",
+                teacherStudentRatio: "1 : 5.8",
+                environmentScore: 95.86,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "聖公會青山聖彼得堂幼稚園",
+                englishName: "SKH St. Peter's Church Kindergarten",
+                website: "http://www.skhspckg.edu.hk/",
+                address: "新界屯門青山公路新墟段201號",
+                district: "屯門區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 8.8",
+                environmentScore: 95.85,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "浸信會培理學校",
+                englishName: "Baptist Oi Kwan Road Primary School (Kindergarten)",
+                website: "http://www.okrb.edu.hk/kindergarten/",
+                address: "香港灣仔愛群道23號",
+                district: "東區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 10.8",
+                environmentScore: 95.83,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "聖保祿幼兒園",
+                englishName: "St. Paul's Nursery",
+                website: "http://www.spn.edu.hk/",
+                address: "香港銅鑼灣禮頓道140A號地下部份3字樓4字樓及6字樓",
+                district: "灣仔區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 97350,
+                tuitionFeeText: "$97,350(11)",
+                teacherStudentRatio: "1 : 5.6",
+                environmentScore: 95.72,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "明慧國際幼稚園(太子分校)",
+                englishName: "Mighty Oaks International Nursery & Kindergarten (Prince Edward Branch)",
+                website: "http://www.mightyoaks.edu.hk/",
+                address: "九龍油尖旺區太子道西193號",
+                district: "油尖旺區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 71720,
+                tuitionFeeText: "$71,720(11)",
+                teacherStudentRatio: "1 : 3.2",
+                environmentScore: 95.4,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "新加坡國際學校",
+                englishName: "Singapore International School (Hong Kong)",
+                website: "https://www.singapore.edu.hk/",
+                address: "香港南區黃竹坑南朗山道23號",
+                district: "南區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 普通話",
+                primaryInfo: "新加坡國際學校 (小學部男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 99000,
+                tuitionFeeText: "$99,000(4)",
+                teacherStudentRatio: "1 : 8.3",
+                environmentScore: 95.26,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "安基司國際幼兒園(富萊花園正校)",
+                englishName: "Anchors International Nursery (Fullwell Garden Main Campus)",
+                website: "http://www.anchors.edu.hk/",
+                address: "新界大埔富萊花園地下",
+                district: "大埔區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 68200,
+                tuitionFeeText: "$68,200(12)",
+                teacherStudentRatio: "1 : 3.6",
+                environmentScore: null,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "耀中國際幼稚園(窩打老道)",
+                englishName: "Yew Chung International Kindergarten (Waterloo Road)",
+                website: "https://www.ycis-hk.com/en/early-childhood-education/kindergarten-waterloo-road/",
+                address: "九龍九龍塘窩打老道103號",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 普通話",
+                primaryInfo: "耀中國際學校 (小學部男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 231154,
+                tuitionFeeText: "$231,154(11)",
+                teacherStudentRatio: "1 : 2.7",
+                environmentScore: 94.79,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "香港學堂國際學校",
+                englishName: "Hong Kong Academy",
+                website: "https://www.hkacademy.edu.hk/",
+                address: "新界西貢惠民路33號",
+                district: "西貢區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文",
+                primaryInfo: "香港學堂國際學校 (小學部男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 112200,
+                tuitionFeeText: "$112,200(10)",
+                teacherStudentRatio: "1 : 5.6",
+                environmentScore: 94.72,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "耀中國際學校",
+                englishName: "Yew Chung International School",
+                website: "https://www.ycis-hk.com/",
+                address: "九龍九龍塘多實街3號",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 普通話",
+                primaryInfo: "耀中國際學校 (小學部男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 133397,
+                tuitionFeeText: "$133,397(11)",
+                teacherStudentRatio: "1 : 7.1",
+                environmentScore: 94.7,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "安基司幼稚園",
+                englishName: "Anchors Kindergarten",
+                website: "http://www.anchors.edu.hk/",
+                address: "新界大埔富萊花園地下",
+                district: "大埔區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 64900,
+                tuitionFeeText: "$64,900(11)",
+                teacherStudentRatio: "1 : 8.9",
+                environmentScore: null,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "英基雅柏國際幼稚園",
+                englishName: "ESF Abacus International Kindergarten",
+                website: "https://www.esf.edu.hk/kindergartens/abacus/",
+                address: "新界西貢清水灣道1000號",
+                district: "西貢區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 中文 (雙語班)",
+                primaryInfo: "英基學校協會屬下小學 (男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 93700,
+                tuitionFeeText: "$93,700(10)",
+                teacherStudentRatio: "1 : 11.1",
+                environmentScore: 94.57,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "美國國際學校",
+                englishName: "American International School",
+                website: "https://www.ais.edu.hk/",
+                address: "九龍九龍塘羅福道12號",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 普通話",
+                primaryInfo: "美國國際學校 (小學部男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 95120,
+                tuitionFeeText: "$95,120(4)",
+                teacherStudentRatio: "1 : 9.0",
+                environmentScore: 94.55,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "保良局李徐松聲紀念幼稚園",
+                englishName: "Po Leung Kuk Li Tsui Chung Sing Memorial Kindergarten",
+                website: "https://www.plkkgs.edu.hk/plkltcsmkg/",
+                address: "九龍紅磡佛光街5號家盛樓地下",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 6.9",
+                environmentScore: 94.52,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "基督教國際學校 - 幼稚園",
+                englishName: "Christian Alliance International School - Kindergarten",
+                website: "https://www.cais.edu.hk/kindergarten/",
+                address: "九龍沙田馬鞍山恆明街1號",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "英文, 普通話, 西班牙文",
+                primaryInfo: "基督教國際學校 (小學部男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 85900,
+                tuitionFeeText: "$85,900(10)",
+                teacherStudentRatio: "1 : 12.2",
+                environmentScore: 94.48,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "香港真光幼稚園(堅道)",
+                englishName: "True Light Kindergarten (Caine Road)",
+                website: "http://www.tlk.edu.hk/",
+                address: "香港中環堅道50號",
+                district: "中西區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "女校",
+                tuitionFee: 3000,
+                tuitionFeeText: "$3,000(10)",
+                teacherStudentRatio: "1 : 5.0",
+                environmentScore: 94.47,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "明愛凌月仙幼稚園",
+                englishName: "Caritas Ling Yuet Sin Kindergarten",
+                website: "https://lyskg.caritas.org.hk/",
+                address: "香港中環堅道50號",
+                district: "中西區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 5.3",
+                environmentScore: 94.35,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "宣道幼稚園",
+                englishName: "Alliance Kindergarten",
+                website: "http://www.ktak.edu.hk",
+                address: "九龍九龍仔蘭開夏道2號1樓-2樓部份",
+                district: "九龍城區",
+                schoolType: "非牟利基督教男女校",
+                kgpScheme: "無",
+                oneStop: "是",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "九龍塘宣道小學",
+                schoolGender: "男女校",
+                tuitionFee: 38930,
+                tuitionFeeText: "$38,930（分10期）",
+                teacherStudentRatio: "1 : 8.8",
+                environmentScore: 94.24,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "保良局譚歐陽少芳紀念幼稚園",
+                englishName: "Po Leung Kuk Tam Au-Yeung Siu Fong Memorial Kindergarten",
+                website: "https://www.plkkgs.edu.hk/plktaysfmkg/",
+                address: "九龍紅磡黃埔花園第七期地下3B舖",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 6220,
+                tuitionFeeText: "$6,220(10)",
+                teacherStudentRatio: "1 : 8.6",
+                environmentScore: 94.21,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "安基司國際幼兒園(滌濤山分校)",
+                englishName: "Anchors International Nursery (The Paragon Branch)",
+                website: "http://www.anchors.edu.hk/",
+                address: "新界大埔滌濤山",
+                district: "大埔區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 68200,
+                tuitionFeeText: "$68,200(11)",
+                teacherStudentRatio: "1 : 5.4",
+                environmentScore: null,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "銅鑼灣維多利亞洲(海峰園)幼兒園",
+                englishName: "Victoria (Island Resort) Nursery",
+                website: "https://www.victoria.edu.hk/en/nursery/island-resort.php",
+                address: "香港柴灣小西灣道10號",
+                district: "東區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否", // User specified not one-stop
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 132671,
+                tuitionFeeText: "$132,671(11)",
+                teacherStudentRatio: "1 : 5.2",
+                environmentScore: 94.08,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "九龍靈糧堂幼兒園",
+                englishName: "Kowloon Ling Liang Church Day Nursery",
+                website: "http://www.kllck.edu.hk/",
+                address: "九龍九龍城嘉林邊道1號4樓及5樓",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 24300,
+                tuitionFeeText: "全日制 $24,300(12)",
+                teacherStudentRatio: "1 : 7.4",
+                environmentScore: 93.95,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "禮賢會學校",
+                englishName: "Rhenish Church School",
+                website: "http://www.rckg.edu.hk/",
+                address: "香港中環般咸道70號",
+                district: "中西區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 10.4",
+                environmentScore: 93.85,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "合一堂單家傳紀念幼稚園",
+                englishName: "Hop Yat Church Shin Ka Chuen Memorial Kindergarten",
+                website: "https://hycskckg.edu.hk/",
+                address: "新界沙田馬鞍山鞍誠街26號",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 6.2",
+                environmentScore: 93.77,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "柏基國際幼稚園",
+                englishName: "Parkview International Kindergarten",
+                website: "http://www.pikg.edu.hk/",
+                address: "香港大潭水塘道88號",
+                district: "南區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 112200,
+                tuitionFeeText: "$112,200(11)",
+                teacherStudentRatio: "1 : 3.8",
+                environmentScore: 93.76,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "天主教聖多默幼稚園",
+                englishName: "St. Thomas Catholic Kindergarten",
+                website: "http://www.stthomas.edu.hk/",
+                address: "新界葵涌葵盛圍300號",
+                district: "葵青區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 13.3",
+                environmentScore: 93.74,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "中華基督教會元朗堂真光幼稚園",
+                englishName: "CCC Yuen Long Church Chan Kwong Kindergarten",
+                website: "https://chankwong.edu.hk/",
+                address: "新界元朗青山公路元朗段208號",
+                district: "元朗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 8.5",
+                environmentScore: 93.72,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "聖雅各福群會寶翠園幼稚園",
+                englishName: "St. James' Settlement Belcher Garden Kindergarten",
+                website: "https://bgkg.sjs.org.hk/",
+                address: "香港薄扶林寶翠園",
+                district: "中西區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 30340,
+                tuitionFeeText: "全日制 $30,340(12)",
+                teacherStudentRatio: "1 : 6.8",
+                environmentScore: 93.71,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "中華基督教會灣仔堂幼稚園",
+                englishName: "CCC Wanchai Church Kindergarten",
+                website: "http://wck.ccc.edu.hk",
+                address: "香港春園街竹居台",
+                district: "灣仔區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 2.7",
+                environmentScore: 93.71,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
+            },
+            {
+                rank: null,
+                name: "香港教育大學幼兒發展中心(幼稚園部)",
+                englishName: "The Education University of Hong Kong Early Childhood Development Centre (Kindergarten Section)",
+                website: "https://www.eduhk.hk/ece/tc/about-us/eduhk-ece-kindergarten.html",
+                address: "新界大埔露屏路10號",
+                district: "大埔區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 54285,
+                tuitionFeeText: "$54,285(11)",
+                teacherStudentRatio: "1 : 2.3",
+                environmentScore: null,
+                promotionRate: null,
+                bookmarked: false,
+                status: "operating"
             }
         ];
 
@@ -2225,6 +3324,8 @@
             document.getElementById('modalKgpScheme').textContent = school.kgpScheme;
             document.getElementById('modalOneStop').textContent = school.oneStop;
             document.getElementById('modalTeachingLanguage').textContent = school.teachingLanguage;
+            document.getElementById('modalAddress').textContent = school.address !== null ? school.address : '沒有資料'; // Display address
+            document.getElementById('modalTransportInfo').textContent = "請使用地圖應用程式查詢公共交通路線及時間，起點：利安道32號順利紀律部隊宿舍 (巴士、小巴、港鐵)"; // Display transport info
             document.getElementById('modalPrimaryInfo').textContent = school.primaryInfo;
             document.getElementById('modalSchoolGender').textContent = school.schoolGender;
             document.getElementById('modalTuitionFee').textContent = school.tuitionFeeText;
@@ -2293,8 +3394,8 @@
                 if (school.oneStop === '是') {
                     card.classList.add('one-stop-school-card');
                 }
-                if (school.discrepancy) { // Add discrepancy highlight
-                    card.classList.add('discrepancy-highlight');
+                if (school.status === '已停辦') { // Apply greyed-out style for closing schools
+                    card.classList.add('greyed-out');
                 }
                 card.onclick = () => showModal(school); // Attach click event for modal
 
@@ -2318,11 +3419,11 @@
                             <path fill-rule="evenodd" d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.006 5.404.434c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.292-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.434 2.082-5.006z" clip-rule="evenodd" />
                         </svg>
                     </button>
-                    <h3 class="text-xl font-bold text-blue-800 mb-2">${school.name}</h3>
+                    <h3 class="text-xl font-bold text-blue-800 mb-2">${school.name} ${school.status === '已停辦' ? '<span class="text-gray-500 text-sm">(已停辦)</span>' : ''}</h3>
                     <p class="text-gray-600 text-sm">${school.englishName}</p>
                     <p><strong>排名：</strong> ${school.rank !== null ? school.rank : '沒有資料'}</p>
-                    <p><strong>地區：</strong> ${school.district}</p>
-                    <p><strong>類別：</strong> ${school.schoolType}</p>
+                    <p><strong>地區：：</strong> ${school.district}</p>
+                    <p><strong>類別：：</strong> ${school.schoolType}</p>
                     <p><strong>教學語言：：</strong> ${school.teachingLanguage}</p>
                     <p><strong>學校性別：：</strong> ${school.schoolGender} ${isGenderInconsistent ? '<span class="gender-inconsistency">(與聯繫小學性別不一致)</span>' : ''}</p>
                     <p><strong>全年學費：：</strong> ${school.tuitionFeeText}</p>
@@ -2462,10 +3563,10 @@
                         reorderedSchoolsData.push({
                             rank: index + 1,
                             name: name,
-                            englishName: "沒有資料", website: "沒有資料", district: "沒有資料", schoolType: "沒有資料",
+                            englishName: "沒有資料", website: "沒有資料", address: "沒有資料", district: "沒有資料", schoolType: "沒有資料",
                             kgpScheme: "沒有資料", oneStop: "否", teachingLanguage: "沒有資料", primaryInfo: "沒有資料",
                             schoolGender: "沒有資料", tuitionFee: null, tuitionFeeText: "沒有資料", teacherStudentRatio: "沒有資料",
-                            environmentScore: null, promotionRate: null, bookmarked: false, discrepancy: true // Mark as discrepancy if it's a new placeholder
+                            environmentScore: null, promotionRate: null, bookmarked: false, status: "operating" // Default status
                         });
                     }
                 }
@@ -2483,6 +3584,7 @@
                 const originalPrimaryInfo = school.primaryInfo;
                 const originalSchoolGender = school.schoolGender;
                 const originalWebsite = school.website; // Store original website
+                const originalAddress = school.address; // Store original address
 
                 // Update oneStop status based on the new list
                 if (newOneStopMap.has(school.name)) {
@@ -2493,13 +3595,14 @@
 
                 // Update specific school details from the new provided text
                 switch (school.name) {
-                    case "嘉諾撒聖心幼稚園":
+                    case "天主教聖瑪加利大幼稚園":
                         school.schoolType = "非牟利天主教男女校";
                         school.tuitionFee = 0; // Updated from 1570 to 0
                         school.tuitionFeeText = "免費"; // Updated tuition text
-                        school.primaryInfo = "嘉諾撒聖心學校私立部，41%畢業生升讀嘉諾撒聖心學校，13%升讀嘉諾撒聖心學校（私立部）。";
-                        school.englishName = "Sacred Heart Canossian Kindergarten";
-                        school.website = "http://www.shck.edu.hk";
+                        school.primaryInfo = "官立／資助小學：141 人 (包括聖保祿天主教小學 29, 聖若瑟小學 17, 瑪利曼小學 15, 番禺會所華仁小學 10, 聖公會聖雅各小學 10, 軒尼詩道官立小學(銅鑼灣) 9, 寶血小學 6, 香港嘉諾撒學校 6, 滬江小學 4, 太古小學 4, 丹拿山循道學校 4, 嘉諾撒聖心學校 3, 北角官立小學（英皇道） 3, 嘉諾撒聖方濟各學校 3, 寶覺小學 2, 聖公會聖彼得小學 2, 北角衛理小學 1, 培僑小學 1, 東華三院李賜豪小學 1, 油麻地天主教小學 1, 聖公會田灣始南小學 1, 屯門何日東小學 1, 英皇書院同學會小學 1, 瑪利諾修院（小學部） 1, 海怡寶血小學 1, 德信小學 1, 聖公會阮鄭夢芹小學 1, 九龍聖若瑟小學 1, 聖公會聖米迦勒小學 1, 聖安多尼小學 1)；直資／私立小學：23 人 (包括高主教書院小學部 9, 香港真光書院(小學部) 2, 聖嘉勒小學 2, 蘇浙小學 2, 聖保羅書院小學 1, 聖保祿學校(小學部) 1, 漢華中學（小學部） 1, 保良局蔡繼有學校 1, 救恩學校（小學部） 1, 聖士提反書院附屬小學 1, 英基小學 1, 香港華人基督教聯會真道書院 1)"; // Updated primaryInfo with detailed breakdown
+                        school.englishName = "St. Margaret Mary's Catholic Kindergarten";
+                        school.website = "https://www.stmkg.edu.hk/";
+                        school.address = "香港跑馬地樂活道2號A聖瑪加利大堂區中心3樓及4樓";
                         break;
                     case "高主教書院幼稚園部":
                         school.schoolType = "非牟利天主教男女校";
@@ -2508,6 +3611,7 @@
                         school.primaryInfo = "高主教書院小學部";
                         school.englishName = "Raimondi College Kindergarten Section";
                         school.website = "http://www.rckg.edu.hk";
+                        school.address = "香港北角建華街30號地下3室";
                         break;
                     case "銅鑼灣維多利亞幼稚園":
                         school.schoolType = "私立男女校";
@@ -2517,6 +3621,7 @@
                         school.englishName = "Victoria (Causeway Bay) Kindergarten";
                         school.website = "https://www.victoria.edu.hk/en/kindergarten/causeway-bay.php";
                         school.promotionRate = 58;
+                        school.address = "香港銅鑼灣興發街32號";
                         break;
                     case "聖保祿幼稚園": // This is the one in Wanchai, original rank 9
                         school.schoolType = "非牟利天主教女子學校";
@@ -2526,6 +3631,7 @@
                         school.schoolGender = "女校";
                         school.englishName = "St. Paul's Kindergarten";
                         school.website = "https://www.spk.edu.hk";
+                        school.address = "香港銅鑼灣禮頓道1018地段地下至2樓";
                         break;
                     case "救恩學校(幼稚園)": // Original name was 救恩學校(幼稚園)
                         school.schoolType = "非牟利私立基督教男女校";
@@ -2534,6 +3640,7 @@
                         school.primaryInfo = "救恩學校（小學部）";
                         school.englishName = "Kau Yan School (Kindergarten)";
                         school.website = "https://www.kauyan.edu.hk/kindergarten";
+                        school.address = "香港香港島中西區西營盤高街97B號";
                         break;
                     case "香港真光中學（幼稚園部）":
                         school.schoolType = "私立男女校";
@@ -2542,6 +3649,7 @@
                         school.primaryInfo = "香港真光中學（小學部）";
                         school.englishName = "True Light Middle School of Hong Kong (Kindergarten)";
                         school.website = "http://www.tlmshkps.edu.hk/kindergarten";
+                        school.address = "香港大坑大坑道50號";
                         break;
                     case "蘇浙小學校":
                         school.schoolType = "非牟利私立男女校";
@@ -2550,6 +3658,7 @@
                         school.primaryInfo = "蘇浙小學";
                         school.englishName = "Kiangsu & Chekiang Primary School (Kindergarten)";
                         school.website = "http://www.kcs.edu.hk";
+                        school.address = "香港北角清華街30號";
                         break;
                     case "聖嘉勒小學暨幼稚園":
                         school.schoolType = "非牟利天主教女校";
@@ -2558,6 +3667,7 @@
                         school.primaryInfo = "聖嘉勒小學";
                         school.englishName = "St. Clare's Primary School cum Kindergarten";
                         school.website = "http://kg.scps.edu.hk";
+                        school.address = "香港般咸道光景台3-6號";
                         break;
                     case "聖士提反女子中學附屬幼稚園":
                         school.schoolType = "非牟利基督教女校";
@@ -2566,6 +3676,7 @@
                         school.primaryInfo = "聖士提反女子中學附屬小學";
                         school.englishName = "St. Stephen's Girls' College Primary School & Kindergarten";
                         school.website = "https://www.ssgc.edu.hk";
+                        school.address = "香港中環柏道33號地下部份車庫及1樓全層";
                         break;
                     case "九龍禮賢學校暨幼稚園":
                         school.schoolType = "非牟利基督教男女校";
@@ -2574,6 +3685,7 @@
                         school.primaryInfo = "九龍禮賢學校";
                         school.englishName = "Kowloon Rhenish School and Kindergarten";
                         school.website = "http://krs.school.hk/~kindergarten";
+                        school.address = "九龍又一村石竹路2A號";
                         break;
                     case "崇真小學暨幼稚園（本地課程）":
                         school.schoolType = "非牟利基督教男女校";
@@ -2582,6 +3694,7 @@
                         school.primaryInfo = "崇真小學暨幼稚園(小學部) (7成位置)";
                         school.englishName = "Tsung Tsin Primary School and Kindergarten (Local Curriculum)";
                         school.website = "http://www.ttpskg.edu.hk";
+                        school.address = "九龍深水埗大埔道58號";
                         break;
                     case "聖母幼稚園":
                         school.schoolType = "非牟利天主教男女校";
@@ -2590,6 +3703,7 @@
                         school.primaryInfo = "聖母小學";
                         school.englishName = "Our Lady's Kindergarten";
                         school.website = "http://www.olk.edu.hk";
+                        school.address = "九龍黃大仙沙田坳道113號";
                         break;
                     case "德望小學暨幼稚園": // Note: User provided "德望小學暨幼稚園(幼稚園部)" but the name in data is "德望小學暨幼稚園"
                         school.schoolType = "天主教私立女校";
@@ -2598,6 +3712,7 @@
                         school.primaryInfo = "德望小學暨幼稚園";
                         school.englishName = "Good Hope Primary School cum Kindergarten";
                         school.website = "https://www3.ghs.edu.hk";
+                        school.address = "九龍扎山道383號";
                         break;
                     case "香港培正小學（幼稚園）":
                         school.schoolType = "非牟利男女校";
@@ -2607,6 +3722,7 @@
                         school.englishName = "Pui Ching Primary School (Kindergarten)";
                         school.website = "https://www.pcps.edu.hk/kg";
                         school.promotionRate = 85;
+                        school.address = "九龍九龍城窩打老道80號";
                         break;
                     case "民生書院幼稚園":
                         school.schoolType = "基督教私立男女校";
@@ -2616,6 +3732,7 @@
                         school.englishName = "Munsang College Kindergarten";
                         school.website = "https://kindergarten.munsang.edu.hk";
                         school.promotionRate = 85;
+                        school.address = "九龍九龍城東寶庭道8號";
                         break;
                     case "香港培道小學幼稚園":
                         school.schoolType = "非牟利私立男女校";
@@ -2625,6 +3742,7 @@
                         school.englishName = "Pooi To Primary School Kindergarten";
                         school.website = "http://kids.ptps.edu.hk";
                         school.promotionRate = 100;
+                        school.address = "香港馬頭圍福祥街3號香港培道小學";
                         break;
                     case "宣道幼稚園":
                         school.schoolType = "非牟利基督教男女校";
@@ -2633,6 +3751,7 @@
                         school.primaryInfo = "九龍塘宣道小學";
                         school.englishName = "Kowloon Tong Alliance Kindergarten";
                         school.website = "http://www.ktak.edu.hk";
+                        school.address = "香港九龍仔蘭開夏道2號1樓-2樓部份";
                         break;
                     case "啓思小學附屬幼稚園":
                         school.schoolType = "私立獨立男女校";
@@ -2641,6 +3760,7 @@
                         school.primaryInfo = "啓思小學";
                         school.englishName = "Creative Primary School's Kindergarten";
                         school.website = "http://www.cpskg.edu.hk";
+                        school.address = "九龍九龍塘牛津道2A號地下及一樓";
                         break;
                     case "聖三一中心幼稚園":
                         school.schoolType = "非牟利基督教男女校";
@@ -2649,6 +3769,7 @@
                         school.primaryInfo = "聖三一堂小學";
                         school.englishName = "Holy Trinity Centre Kindergarten";
                         school.website = "http://www.htckg.edu.hk";
+                        school.address = "香港馬頭圍馬頭涌道139號";
                         break;
                     case "聖若望英文書院（幼稚園部）":
                         school.schoolType = "私立獨立男女校";
@@ -2657,6 +3778,7 @@
                         school.primaryInfo = "聖若望英文書院（小學部）";
                         school.englishName = "St. Johannes College (Kindergarten Section)";
                         school.website = "http://www.st-johannes.edu.hk";
+                        school.address = "九龍窩打老道109號";
                         break;
                     case "玫瑰崗幼稚園": // Added new school
                         school.rank = null; // No rank in the provided list
@@ -2674,6 +3796,7 @@
                         school.promotionRate = null; // Not specified in text
                         school.englishName = "Rosaryhill Kindergarten";
                         school.website = "http://www.rhs.edu.hk";
+                        school.address = "香港灣仔司徒拔道41B號";
                         break;
                     // Handle Victoria Education Organisation schools based on their original names
                     case "維多利亞（寶翠園）幼稚園":
@@ -2696,7 +3819,8 @@
                     originalTuitionFee !== school.tuitionFee ||
                     originalPrimaryInfo !== school.primaryInfo ||
                     originalSchoolGender !== school.schoolGender ||
-                    originalWebsite !== school.website) { // Also check website for discrepancy
+                    originalWebsite !== school.website ||
+                    originalAddress !== school.address) { // Also check address for discrepancy
                     school.discrepancy = true;
                 } else {
                     school.discrepancy = false;
