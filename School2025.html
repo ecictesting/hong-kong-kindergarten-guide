@@ -1,794 +1,2576 @@
-<!DOCTYPE html>
-<html lang="zh-HK">
+
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香港「一條龍」幼稚園互動指南 / Hong Kong "Through-Train" Kindergarten Interactive Guide</title>
+    <title>香港幼稚園排名</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+HK:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Chosen Palette: Calm Harmony -->
-    <!-- Application Structure Plan: The application is designed as an interactive dashboard. It starts with a clear definition of 'through-train' kindergartens to manage user expectations. The core is an interactive filtering system (by district, gender, fee, progression rate) that allows parents to instantly find schools matching their criteria. Results are shown in a card-based layout for easy scanning. Clicking a card opens a detailed modal view. This task-oriented design is more user-friendly than a linear report. Key data points like fees and progression rates are visualized in dynamic bar charts that update with filters, providing quick comparative insights. Finally, the report's qualitative advice is broken down into digestible, visually distinct sections. This structure empowers users to actively explore and compare, rather than passively read. -->
-    <!-- Visualization & Content Choices: 
-        - Report Info: Comprehensive school data table -> Goal: Organize & Compare -> Viz/Method: Interactive card grid with filters -> Interaction: Users select filters (district, gender, etc.) to dynamically update the grid of school cards. Clicking a card opens a modal with detailed text. -> Justification: Allows users to quickly narrow down options based on their specific needs, a more efficient process than manually scanning a large table.
-        - Report Info: School fees & progression percentages -> Goal: Compare -> Viz/Method: Two horizontal bar charts (Chart.js/Canvas) -> Interaction: Charts are dynamically updated based on the active filters. Tooltips on hover show precise data. -> Justification: Visualizes numerical data for instant comparison, making it easier to spot outliers and trends than reading numbers in a table.
-        - Report Info: Key considerations and advice for parents -> Goal: Inform & Guide -> Viz/Method: Structured HTML/CSS sections with icons and distinct styling (Tailwind CSS) -> Interaction: Static but visually engaging content blocks. -> Justification: Breaks down dense text into scannable, memorable points, improving readability and retention of important advice.
-        - CONFIRMATION: NO SVG graphics used. NO Mermaid JS used.
-    -->
     <style>
+        /* Custom styles for better readability and highlighting */
         body {
-            font-family: 'Noto Sans HK', sans-serif;
-            background-color: #F8F7F4;
-            color: #333333;
+            font-family: "Inter", sans-serif;
+            background-color: #f0f2f5;
+            color: #333;
         }
-        .chart-container {
-            position: relative;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .section-title {
+            border-bottom: 2px solid #a7d9f7; /* Underline for section titles */
+            padding-bottom: 8px;
+            margin-bottom: 20px;
+        }
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            align-items: flex-end; /* Align items to the bottom */
+        }
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        .filter-item label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 0.875rem; /* text-sm */
+        }
+        .filter-item select, .filter-item input[type="number"] {
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #cbd5e0;
+            border-radius: 0.375rem; /* rounded-md */
+            background-color: #fff;
+            font-size: 0.875rem; /* text-sm */
+            color: #4a5568;
+            appearance: none; /* Remove default arrow for select */
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='currentColor'%3e%3cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0.5rem center;
+            background-size: 1.5em 1.5em;
+        }
+
+        /* Card specific styles */
+        .school-card {
+            background-color: #fff;
+            border-radius: 0.5rem; /* rounded-lg */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-md */
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .school-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.15);
+        }
+        .school-card h3 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: bold;
+            color: #2c5282;
+            margin-bottom: 0.5rem;
+        }
+        .school-card p {
+            font-size: 0.9rem; /* text-sm */
+            color: #4a5568;
+            margin-bottom: 0.25rem;
+        }
+        .one-stop-school-card {
+            border: 2px solid #48bb78; /* Green border for one-stop schools */
+            background-color: #e6fffa; /* Light green background */
+        }
+        .gender-inconsistency {
+            color: #e53e3e; /* Red text for inconsistency */
+            font-weight: bold;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            height: 400px;
-            max-height: 50vh;
-            margin-left: auto;
-            margin-right: auto;
-        }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 500px;
-            }
-        }
-        .custom-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            background: #4A90E2;
-            cursor: pointer;
-            border-radius: 50%;
-        }
-        .custom-slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
-            background: #4A90E2;
-            cursor: pointer;
-            border-radius: 50%;
-        }
-        .modal-bg {
-            background-color: rgba(0,0,0,0.5);
-            transition: opacity 0.3s ease;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
         }
         .modal-content {
-            transition: transform 0.3s ease;
+            background-color: #fff;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            max-width: 90%;
+            max-height: 90%;
+            overflow-y: auto;
+            position: relative;
+        }
+        .modal-close-button {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #4a5568;
+        }
+        .modal-content h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c5282;
+            margin-bottom: 1rem;
+        }
+        .modal-content p {
+            margin-bottom: 0.75rem;
+            color: #4a5568;
+            line-height: 1.6;
+        }
+        .modal-content strong {
+            color: #2c5282;
         }
     </style>
 </head>
-<body class="antialiased">
+<body class="p-4">
+    <div class="container bg-white rounded-lg shadow-xl p-6 md:p-10 mt-8">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-center text-blue-800 mb-8 section-title">香港幼稚園排名</h1>
 
-    <header class="bg-white shadow-md py-6">
-        <div class="container mx-auto px-6 text-center">
-            <h1 class="text-4xl font-bold text-gray-800">香港「一條龍」幼稚園互動指南 / Hong Kong "Through-Train" Kindergarten Interactive Guide</h1>
-            <p class="mt-4 text-lg text-gray-600 max-w-3xl mx-auto">本指南旨在將繁複的報告數據轉化為易於使用的互動工具，助您輕鬆尋找最適合子女的幼稚園。請注意，香港教育局並無官方的「幼小一條龍」制度，本指南中的學校是指與其聯繫小學有較高升學率的幼稚園。</p>
-            <p class="mt-2 text-md text-gray-500 max-w-3xl mx-auto">This guide aims to transform complex report data into an easy-to-use interactive tool, helping you effortlessly find the most suitable kindergarten for your child. Please note that the Hong Kong Education Bureau does not officially recognize a "through-train" system for kindergartens and primary schools. Schools listed here refer to kindergartens with a high progression rate to their associated primary schools.</p>
+        <p class="text-gray-700 mb-6 text-center">以下是香港幼稚園的詳細排名列表，您可以利用下方的篩選器快速查找符合您需求的學校。一條龍學校的卡片會以淺綠色背景和綠色邊框標示。</p>
+
+        <!-- Filter Section -->
+        <div class="filter-group">
+            <div class="filter-item">
+                <label for="districtFilter">地區</label>
+                <select id="districtFilter" class="rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="全部">全部</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="schoolTypeFilter">學校類別</label>
+                <select id="schoolTypeFilter" class="rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="全部">全部</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="schoolGenderFilter">學校性別</label>
+                <select id="schoolGenderFilter" class="rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="全部">全部</option>
+                    <option value="男女校">男女校</option>
+                    <option value="女校">女校</option>
+                    <option value="男校">男校</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="oneStopFilter">一條龍</label>
+                <select id="oneStopFilter" class="rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="全部">全部</option>
+                    <option value="是">是</option>
+                    <option value="否">否</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="teachingLanguageFilter">教學語言</label>
+                <select id="teachingLanguageFilter" class="rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="全部">全部</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="maxTuitionFilter">學費上限 ($)</label>
+                <select id="maxTuitionFilter" class="rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">不限</option>
+                </select>
+            </div>
+            <div class="filter-item">
+                <label for="minPromotionRateFilter">升學率下限 (%)</label>
+                <select id="minPromotionRateFilter" class="rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+                    <option value="">不限</option>
+                </select>
+            </div>
         </div>
-    </header>
+        <!-- End Filter Section -->
 
-    <main class="container mx-auto p-4 md:p-8">
-        
-        <section id="filters" class="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-center">快速篩選學校 / Quick School Filters</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div>
-                    <label for="district-filter" class="block text-sm font-medium text-gray-700 mb-2">地區 / District</label>
-                    <select id="district-filter" class="w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
-                        <option value="all">所有地區 / All Districts</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">學校性別 / School Gender</label>
-                    <div class="flex space-x-2" id="gender-filter">
-                        <button data-value="all" class="flex-1 p-2 bg-blue-500 text-white rounded-md">全部 / All</button>
-                        <button data-value="男女校" class="flex-1 p-2 bg-gray-200 text-gray-700 rounded-md">男女校 / Co-ed</button>
-                        <button data-value="女校" class="flex-1 p-2 bg-gray-200 text-gray-700 rounded-md">女校 / Girls'</button>
-                    </div>
-                </div>
-                <div>
-                    <label for="fee-filter" class="block text-sm font-medium text-gray-700 mb-2">全年學費 (HKD) / Annual Fee (HKD)</label>
-                    <input type="range" id="fee-filter" min="0" max="100000" step="1000" value="100000" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer custom-slider">
-                    <div class="text-center mt-1 text-gray-600">低於 / Below $<span id="fee-value">100,000</span></div>
-                </div>
-                <div>
-                    <label for="progression-filter" class="block text-sm font-medium text-gray-700 mb-2">聯繫小學升學率 / Primary Progression Rate</label>
-                    <input type="range" id="progression-filter" min="0" max="100" step="5" value="0" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer custom-slider">
-                    <div class="text-center mt-1 text-gray-600">高於 / Above <span id="progression-value">0</span>%</div>
-                </div>
-            </div>
-        </section>
-
-        <section id="school-list" class="mb-8">
-            <div id="results-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            </div>
-        </section>
-
-        <section id="charts" class="bg-white p-6 rounded-lg shadow-lg mb-8">
-            <h2 class="text-2xl font-bold mb-6 text-center">數據洞察：學費與升學率比較 / Data Insights: Fee & Progression Rate Comparison</h2>
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div>
-                    <h3 class="text-xl font-semibold mb-4 text-center">全年學費比較圖 / Annual Fee Comparison Chart</h3>
-                    <p class="text-sm text-gray-500 text-center mb-4">此圖表顯示篩選後學校的大約全年學費，助您快速比較各校的費用水平。「免費」或極低費用通常表示學校參與了政府的幼稚園教育計劃。 / This chart displays the approximate annual fees of filtered schools, helping you quickly compare fee levels. "Free" or very low fees usually indicate participation in the government's Kindergarten Education Scheme.</p>
-                    <div class="chart-container">
-                        <canvas id="feeChart"></canvas>
-                    </div>
-                </div>
-                <div>
-                    <h3 class="text-xl font-semibold mb-4 text-center">聯繫小學升學率比較圖 / Primary Progression Rate Comparison Chart</h3>
-                    <p class="text-sm text-gray-500 text-center mb-4">此圖表展示幼稚園畢業生升讀其聯繫小學的比例。較高的百分比意味著更大的升學保障。部分學校未提供確實數據。 / This chart shows the percentage of kindergarten graduates progressing to their associated primary schools. A higher percentage implies greater assurance of progression. Some schools do not provide exact data.</p>
-                    <div class="chart-container">
-                        <canvas id="progressionChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
-        <section id="considerations" class="mb-8">
-            <h2 class="text-3xl font-bold text-center mb-8">選擇幼稚園的四大關鍵考量 / Four Key Considerations for Choosing a Kindergarten</h2>
-             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-blue-400">
-                    <h3 class="text-xl font-bold mb-3 flex items-center"><span class="text-2xl mr-3">🗣️</span>教學語言 / Teaching Language</h3>
-                    <p class="text-gray-600">深入了解學校的語言環境，是「兩文三語」並重，還是側重某種語言？這直接關係到孩子能否順利銜接小學課程。家長應考慮學校的語言政策是否配合家庭的語言環境和期望。 / Deeply understand the school's language environment: does it emphasize "biliteracy and trilingualism" or focus on a specific language? This directly impacts whether your child can smoothly transition to primary school. Parents should consider if the school's language policy aligns with their family's language environment and expectations.</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-green-400">
-                    <h3 class="text-xl font-bold mb-3 flex items-center"><span class="text-2xl mr-3">👫</span>學校性別 / School Gender</h3>
-                    <p class="text-gray-600">幼稚園是男女校，但聯繫小學是否只收單一性別？這個細節至關重要，直接影響「一條龍」優勢是否適用於您的子女。務必核對清楚，避免期望落差。 / Is the kindergarten co-educational, but the associated primary school single-sex? This detail is crucial, directly affecting whether the "through-train" advantage applies to your child. Be sure to verify clearly to avoid unmet expectations.</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-yellow-400">
-                    <h3 class="text-xl font-bold mb-3 flex items-center"><span class="text-2xl mr-3">💰</span>學費與資助 / Fees and Subsidies</h3>
-                    <p class="text-gray-600">學費差異巨大，從免費到十多萬不等。高昂學費可能代表更豐富的資源，但也需考慮家庭負擔能力。部分學校參與政府資助計劃，學費會大幅降低。 / Fees vary significantly, from free to over a hundred thousand. High fees might indicate richer resources, but family affordability must also be considered. Some schools participate in government subsidy schemes, which can significantly reduce fees.</p>
-                </div>
-                <div class="bg-white p-6 rounded-lg shadow-lg border-t-4 border-red-400">
-                    <h3 class="text-xl font-bold mb-3 flex items-center"><span class="text-2xl mr-3">📊</span>解讀「排名」 / Interpreting "Rankings"</h3>
-                    <p class="text-gray-600">坊間排名並無官方標準，多為主觀評選。與其過分依賴排名，不如關注學校的辦學理念、課程特色、師資及與聯繫小學的實際銜接情況，這些才是更重要的「隱性指標」。 / Market rankings have no official standards and are often subjective. Instead of overly relying on rankings, focus on the school's educational philosophy, curriculum features, teaching staff, and the actual transition arrangements with the associated primary school. These are more important "hidden indicators."</p>
-                </div>
-            </div>
-        </section>
-        
-        <section id="advice" class="bg-blue-50 p-8 rounded-lg">
-            <h2 class="text-3xl font-bold text-center mb-8">給家長的實用建議 / Practical Advice for Parents</h2>
-            <div class="space-y-6 max-w-4xl mx-auto">
-                <div class="flex items-start">
-                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xl">1</div>
-                    <div class="ml-4">
-                        <h4 class="text-lg font-semibold">超越「一條龍」標籤 / Beyond the "Through-Train" Label</h4>
-                        <p class="text-gray-700">升學率固然吸引，但學校的教育理念、課程與環境是否適合您的孩子更為重要。一個快樂、受啟發的童年，遠比「直升」保證更有價值。 / While progression rates are appealing, the school's educational philosophy, curriculum, and environment's suitability for your child are more crucial. A happy, inspired childhood is far more valuable than a "direct admission" guarantee.</p>
-                    </div>
-                </div>
-                <div class="flex items-start">
-                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xl">2</div>
-                    <div class="ml-4">
-                        <h4 class="text-lg font-semibold">親身考察，感受氛圍 / Visit in Person, Feel the Atmosphere</h4>
-                        <p class="text-gray-700">積極參與學校的資訊日和開放日。親身感受校園氛圍、觀察師生互動，是書面資料無法取代的。直接與校方交流，獲取第一手資訊。 / Actively participate in school information days and open days. Experiencing the campus atmosphere and observing teacher-student interactions firsthand is irreplaceable by written materials. Communicate directly with the school to get first-hand information.</p>
-                    </div>
-                </div>
-                <div class="flex items-start">
-                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xl">3</div>
-                    <div class="ml-4">
-                        <h4 class="text-lg font-semibold">深入了解升學數據 / Understand Progression Data in Depth</h4>
-                        <p class="text-gray-700">仔細查閱學校官方網站或教育局資料，了解最新的升學政策和實際比例。清楚的數據能助您評估「一條龍」的真正價值。 / Carefully review the school's official website or Education Bureau data to understand the latest progression policies and actual ratios. Clear data helps you evaluate the true value of the "through-train" system.</p>
-                    </div>
-                </div>
-                 <div class="flex items-start">
-                    <div class="flex-shrink-0 h-10 w-10 rounded-full bg-blue-500 text-white flex items-center justify-center font-bold text-xl">4</div>
-                    <div class="ml-4">
-                        <h4 class="text-lg font-semibold">面試是雙向了解 / Interviews are a Two-Way Understanding</h4>
-                        <p class="text-gray-700">面試不僅評估孩子，也是學校了解家庭教育觀的機會。在日常生活中培養孩子的溝通能力和自信心，並在面試中展現您對教育的投入和對學校的認同。 / Interviews not only assess the child but also provide an opportunity for the school to understand the family's educational philosophy. Cultivate your child's communication skills and self-confidence in daily life, and demonstrate your commitment to education and appreciation for the school during the interview.</p>
-                </div>
-            </div>
-        </section>
-
-    </main>
-
-    <footer class="bg-gray-800 text-white mt-12 py-6">
-        <div class="container mx-auto px-6 text-center">
-            <p>&copy; 2024 香港「一條龍」幼稚園互動指南 / Hong Kong "Through-Train" Kindergarten Interactive Guide</p>
-            <p class="text-sm text-gray-400 mt-2">資訊來源於公開報告，僅供參考。請以學校官方公佈為準。 / Information is sourced from public reports and is for reference only. Please refer to official school announcements for accuracy.</p>
+        <!-- School Cards Container -->
+        <div id="schoolCardsContainer" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- School cards will be dynamically inserted here by JavaScript -->
         </div>
-    </footer>
-    
-    <div id="modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-bg opacity-0 pointer-events-none">
-        <div id="modal-content" class="bg-white rounded-lg shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-y-auto modal-content transform scale-95">
-            <div class="sticky top-0 bg-white p-4 sm:p-6 border-b border-gray-200 flex justify-between items-center">
-                <h2 id="modal-title" class="text-2xl font-bold text-gray-800"></h2>
-                <button id="modal-close" class="text-gray-500 hover:text-gray-800 text-3xl">&times;</button>
-            </div>
-            <div id="modal-body" class="p-4 sm:p-6">
-            </div>
+        <!-- End School Cards Container -->
+
+        <h2 class="text-2xl md:text-3xl font-bold text-blue-700 mb-6 mt-10 section-title">香港幼稚園類型簡介</h2>
+        <div class="text-gray-800 leading-relaxed text-base md:text-lg">
+            <p class="mb-4">香港的幼稚園主要分為三大類型：<strong class="text-blue-600">非牟利學校</strong>、<strong class="text-blue-600">私立學校</strong>和<strong class="text-blue-600">國際學校</strong>。</p>
+
+            <h3 class="text-xl md:text-2xl font-semibold text-blue-600 mb-3">非牟利幼稚園：</h3>
+            <p class="mb-4">這類學校通常由辦學團體營運，並接受政府資助。它們的學費相對較低，旨在提供普及而優質的學前教育。非牟利幼稚園可再細分為「學券」與「非學券」制。</p>
+
+            <ul class="list-disc list-inside ml-4 mb-4">
+                <li class="mb-2">
+                    <strong class="text-blue-500">學券幼稚園：</strong> 指的是有參與政府的「幼稚園教育計劃」（前稱「學前教育學券計劃」）的學校。這項計劃旨在為合資格的學童提供學費資助。入讀學券幼稚園的學童，在政府資助下可獲學費減免甚至全免，家長只需繳付其他雜費，如茶點費、書簿費等。這對於家長來說，可以大大減輕教育開支，因此學券幼稚園在全港幼稚園中佔有超過7成的比例。
+                </li>
+                <li>
+                    <strong class="text-blue-500">非學券幼稚園：</strong> 雖然同屬非牟利性質，但這些學校沒有參與政府的學券計劃，因此學費不會獲得政府資助。
+                </li>
+            </ul>
+
+            <h3 class="text-xl md:text-2xl font-semibold text-blue-600 mb-3">私立學校：</h3>
+            <p class="mb-4">這類幼稚園由私人機構營辦，學費通常較高，課程設計和教學方式也相對多元化，以滿足不同家長的需求。它們不接受政府的學券資助。</p>
+
+            <h3 class="text-xl md:text-2xl font-semibold text-blue-600 mb-3">國際學校：</h3>
+            <p class="mb-4">國際學校主要為在港居住的非本地學生或希望子女接受國際化教育的家庭提供服務。它們通常採用國際課程（如IB、英制、美制等），學費是三種類型中最高的，也不參與學券計劃。</p>
         </div>
     </div>
 
+    <!-- Modal for detailed school info -->
+    <div id="schoolDetailModal" class="modal-overlay hidden">
+        <div class="modal-content">
+            <button class="modal-close-button" onclick="closeModal()">×</button>
+            <h3 id="modalSchoolName"></h3>
+            <p><span id="modalEnglishName" class="text-gray-600 text-sm"></span></p>
+            <p><strong>排名：：</strong> <span id="modalRank"></span></p>
+            <p><strong>地區：：</strong> <span id="modalDistrict"></span></p>
+            <p><strong>類別：：</strong> <span id="modalSchoolType"></span></p>
+            <p><strong>學劵制：：</strong> <span id="modalKgpScheme"></span></p>
+            <p><strong>一條龍：：</strong> <span id="modalOneStop"></span></p>
+            <p><strong>教學語言：：</strong> <span id="modalTeachingLanguage"></span></p>
+            <p><strong>聯繫小學及升學率：：</strong> <span id="modalPrimaryInfo"></span></p>
+            <p><strong>學校官方網頁：：</strong> <a id="modalWebsite" href="#" target="_blank" class="text-blue-500 hover:underline"></a></p>
+            <p><strong>學校性別：：</strong> <span id="modalSchoolGender"></span></p>
+            <p><strong>全年學費 (期數)：：</strong> <span id="modalTuitionFee"></span></p>
+            <p><strong>師生比例(上午)：：</strong> <span id="modalTeacherStudentRatio"></span></p>
+            <p><strong>環境設施資源(100滿分)：：</strong> <span id="modalEnvironmentScore"></span></p>
+            <p class="mt-4 text-gray-600"><em>* 詳細剖析內容目前為通用資訊，如需特定學校的詳細介紹，請參考官方資料。</em></p>
+        </div>
+    </div>
 
     <script>
-        const schoolData = [
+        // Data extracted from the HTML table for easier manipulation
+        const schoolsData = [
             {
-                id: 1,
-                name: "德望小學暨幼稚園",
-                englishName: "Good Hope Primary School cum Kindergarten",
-                district: "黃大仙區",
-                primary: "德望小學",
-                progressionRate: 80,
-                progressionText: "約80%幼稚園生能直升小學",
-                language: "中英並重，雙語教學",
-                genderK: "女校",
-                genderP: "女校",
-                fee: 47500,
-                feeText: "約 $47,500",
                 rank: 1,
-                details: `
-                    <p class="mb-4">德望小學暨幼稚園位於黃大仙區，與德望小學及德望學校（中學部）有緊密聯繫，形成了幼小中一條龍的教育體系。這所學校是一所傳統的天主教女校，從幼稚園到中學部均只招收女生。對於希望女兒在單一性別環境中成長的家庭而言，德望提供了一條清晰且連貫的升學路徑。</p>
-                    <p class="text-gray-600 mb-4">Good Hope Primary School cum Kindergarten is located in Wong Tai Sin District, closely linked with Good Hope Primary School and Good Hope School (Secondary Section), forming a through-train education system from kindergarten to secondary. This traditional Catholic girls' school admits only female students from kindergarten to secondary. For families wishing their daughters to grow up in a single-sex environment, Good Hope offers a clear and coherent path for advancement.</p>
-                    <p class="mb-4">在升學方面，德望小學暨幼稚園的學生約有80%的機會直升德望小學。然而，需要注意的是，幼稚園部畢業生並非保證直升小學部。儘管如此，這種高比例的內部升學機會，為家長提供了相當大的確定性。學校的課程設計注重全人發展，除了學術，也強調品德教育和藝術培養，提供多元化的課外活動，如音樂、舞蹈、戲劇等，旨在培養學生的綜合素質。</p>
-                    <p class="text-gray-600 mb-4">Regarding progression, approximately 80% of kindergarten students at Good Hope Primary School cum Kindergarten have the opportunity to advance directly to Good Hope Primary School. However, it's important to note that kindergarten graduates are not guaranteed direct admission to the primary section. Nevertheless, this high internal progression rate offers parents considerable certainty. The school's curriculum focuses on holistic development, emphasizing moral education and artistic cultivation alongside academics, offering diverse extracurricular activities such as music, dance, and drama, aiming to foster students' comprehensive qualities.</p>
-                    <p class="mb-4">學校在教學語言上中英並重，實行雙語教學。小學部入學面試會以英文及普通話進行，重點評估學生的溝通技巧、解難及協作能力。校園設施完善，包括圖書館、多媒體學習室、戶外遊戲區等，為學生提供優良的學習環境。在2021年全港Top 100幼稚園排名中，德望小學暨幼稚園位列第一。</p>
-                    <p class="text-gray-600 mb-4">The school places equal emphasis on Chinese and English as teaching languages, implementing bilingual instruction. Primary section admission interviews are conducted in English and Putonghua, focusing on assessing students' communication skills, problem-solving, and collaboration abilities. The campus facilities are well-equipped, including a library, multimedia learning rooms, and outdoor play areas, providing an excellent learning environment for students. Good Hope Primary School cum Kindergarten was ranked first among the Top 100 kindergartens in Hong Kong in 2021.</p>
-                `
+                name: "迦南幼稚園（九龍塘）",
+                englishName: "Canaan Kindergarten (Kowloon Tong)",
+                website: "http://www.canaan.edu.hk/",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 5440,
+                tuitionFeeText: "$5,440(10)",
+                teacherStudentRatio: "1 : 8.6",
+                environmentScore: 94.96,
+                promotionRate: null
             },
             {
-                id: 2,
+                rank: 2,
+                name: "香港創價幼稚園",
+                englishName: "Hong Kong Soka Kindergarten",
+                website: "http://www.hksokakg.edu.hk/",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 2112,
+                tuitionFeeText: "2,112(11)",
+                teacherStudentRatio: "1 : 7.7",
+                environmentScore: 97.08,
+                promotionRate: null
+            },
+            {
+                rank: 3,
+                name: "根德園幼稚園",
+                englishName: "Kentville Kindergarten",
+                website: "http://www.kentville.edu.hk/",
+                district: "九龍城區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 4,
+                name: "聖母無玷聖心幼稚園",
+                englishName: "Immaculate Heart of Mary Kindergarten",
+                website: "http://www.ihmk.edu.hk/",
+                district: "沙田區",
+                schoolType: "非牟利天主教男女校",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 5,
+                name: "聖羅撒幼稚園",
+                englishName: "St. Rose of Lima Kindergarten",
+                website: "http://www.srlkg.edu.hk/",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 7.5",
+                environmentScore: 94.99,
+                promotionRate: null
+            },
+            {
+                rank: 6,
+                name: "合一堂單家傳紀念幼稚園",
+                englishName: "Hop Yat Church Shin Ka Chuen Memorial Kindergarten",
+                website: "https://hycskckg.edu.hk/",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 6.2",
+                environmentScore: 93.77,
+                promotionRate: null
+            },
+            {
+                rank: 7,
+                name: "學之園幼稚園", // General entry, assuming it refers to the group
+                englishName: "Learning Habitat Kindergarten",
+                website: "http://www.learninghabitat.org/",
+                district: "葵青區", // District from previous data, might be general for the group
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 72000,
+                tuitionFeeText: "$72,000",
+                teacherStudentRatio: "1 : 8.1",
+                environmentScore: 97.49,
+                promotionRate: null
+            },
+            {
+                rank: 8,
+                name: "又一村學校",
+                englishName: "Yau Yat Chuen School",
+                website: "http://www.yycskg.edu.hk",
+                district: "深水埗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 9.7",
+                environmentScore: 95.53,
+                promotionRate: null
+            },
+            {
+                rank: 9,
                 name: "民生書院幼稚園",
                 englishName: "Munsang College Kindergarten",
+                website: "https://kindergarten.munsang.edu.hk",
                 district: "九龍城區",
-                primary: "民生書院小學",
-                progressionRate: 85,
-                progressionText: "小學預留不少於85%學額",
-                language: "英文為主要教學語言 (小學部)",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 51400,
-                feeText: "約 $51,400",
+                schoolType: "基督教私立男女校",
+                kgpScheme: "無",
+                oneStop: "是",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "民生書院小學 (不少於85%優先取錄)",
+                schoolGender: "男女校",
+                tuitionFee: 49880,
+                tuitionFeeText: "$49,880（分10期）",
+                teacherStudentRatio: "1 : 10.1",
+                environmentScore: 98.69,
+                promotionRate: 85
+            },
+            {
+                rank: 10,
+                name: "劍鳴幼稚園",
+                englishName: "Keen Mind Kindergarten",
+                website: "http://www.keenmind.com.hk/",
+                district: "九龍城區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 70268,
+                tuitionFeeText: "$70,268(11)",
+                teacherStudentRatio: "1 : 6.5",
+                environmentScore: 98.87,
+                promotionRate: null
+            },
+            {
                 rank: 11,
-                details: `
-                    <p class="mb-4">民生書院幼稚園坐落於九龍城區，與民生書院小學及民生書院有緊密聯繫，構成一個幼小中一條龍的教育體系。這是一所男女校。</p>
-                    <p class="text-gray-600 mb-4">Munsang College Kindergarten is located in Kowloon City District, closely linked with Munsang College Primary School and Munsang College, forming a through-train education system from kindergarten to secondary. This is a co-educational school.</p>
-                    <p class="mb-4">在升學銜接上，民生書院小學為民生書院幼稚園的學生預留了不少於85%的小一學額，優先取錄這些學生。這種高比例的優先取錄政策，為家長提供了極大的升學保障。學校課程注重學術與品格並重，推行多元智能教育，鼓勵學生在學術、藝術、體育等多方面發展。</p>
-                    <p class="text-gray-600 mb-4">Regarding progression, Munsang College Primary School reserves no less than 85% of its Primary One places for Munsang College Kindergarten students, giving them priority admission. This high-priority admission policy provides parents with significant assurance of progression. The school's curriculum emphasizes both academics and character development, promoting multiple intelligences education, and encouraging students' development in various areas such as academics, arts, and sports.</p>
-                    <p class="mb-4">小學部在教學上高度重視英語培訓，除了中文、中國歷史、普通話及宗教科目外，所有科目均以英語為主要教學語言。學校以「光與生命」及「人人為我，我為人人」為校訓，致力提供以基督教信仰為基礎的全人教育。在2021年全港Top 100幼稚園中，民生書院幼稚園排名第11位。</p>
-                    <p class="text-gray-600 mb-4">The primary section places high importance on English language training, with all subjects taught primarily in English, except for Chinese, Chinese History, Putonghua, and Religious Studies. The school's motto is "Light and Life" and "All for One, One for All," committed to providing holistic education based on Christian faith. Munsang College Kindergarten was ranked 11th among the Top 100 kindergartens in Hong Kong in 2021.</p>
-                `
+                name: "聖馬提亞堂肖珍幼稚園",
+                englishName: "St. Matthias' Church Hsiu Chun Kindergarten",
+                website: "http://www.smckg.edu.hk/",
+                district: "元朗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
             },
             {
-                id: 3,
-                name: "救恩學校幼稚園部",
-                englishName: "Kau Yan School Kindergarten",
+                rank: 12,
+                name: "激活幼稚園",
+                englishName: "Active Kindergarten",
+                website: "http://www.activekg.edu.hk/",
+                district: "元朗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 8.0",
+                environmentScore: 95.32,
+                promotionRate: null
+            },
+            {
+                rank: 13,
+                name: "約克國際幼稚園",
+                englishName: "York International Kindergarten",
+                website: "http://www.york.edu.hk/",
+                district: "九龍城區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 87996,
+                tuitionFeeText: "$87,996(12)",
+                teacherStudentRatio: "1 : 7.5",
+                environmentScore: 98.59,
+                promotionRate: null
+            },
+            {
+                rank: 14,
+                name: "香港中文大學校友會聯會張煊昌幼稚園",
+                englishName: "CUHKFAA Chan Chun Ha Kindergarten",
+                website: "http://www.cuhkfaakg.edu.hk/",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 15,
+                name: "啟思幼稚園（屯門分校）",
+                englishName: "Creative Kindergarten (Tuen Mun Branch)",
+                website: "http://www.creativekg.edu.hk/",
+                district: "屯門區",
+                schoolType: "私立獨立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 16,
+                name: "啟思幼稚園", // General entry, assuming it refers to the group
+                englishName: "Creative Kindergarten",
+                website: "http://www.creativekg.edu.hk/",
+                district: "九龍城區",
+                schoolType: "私立獨立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 17,
+                name: "嘉諾撒聖心幼稚園",
+                englishName: "Sacred Heart Canossian Kindergarten",
+                website: "http://www.shck.edu.hk",
                 district: "中西區",
-                primary: "救恩學校",
-                progressionRate: 40,
-                progressionText: "保留50學額給幼稚園生 (約3班)",
-                language: "中文為主，設英語及普通話組",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 9550,
-                feeText: "約 $9,550 (參與計劃)",
-                rank: null,
-                details: `
-                    <p class="mb-4">救恩學校幼稚園部位於中西區的西營盤，其聯繫小學救恩學校也位於西營盤。這是一所男女校。</p>
-                    <p class="text-gray-600 mb-4">Kau Yan School Kindergarten is located in Sai Ying Pun, Central and Western District, with its associated primary school, Kau Yan School, also in Sai Ying Pun. It is a co-educational school.</p>
-                    <p class="mb-4">在升學方面，救恩學校小一收生約3班，其中保留了50個學額給幼稚園學生。學校的日常教學以中文為主要語言，但每週會安排多次英語會話和英文活動時間，並有專任老師教授普通話。學校注重學生的全面發展，提供豐富的學習體驗，例如戶外探索活動和創意藝術課程。</p>
-                    <p class="text-gray-600 mb-4">Regarding progression, Kau Yan School admits approximately 3 classes for Primary One, reserving 50 places for kindergarten students. The school's daily instruction is primarily in Chinese, but it also arranges multiple English conversation and activity sessions weekly, with dedicated teachers for Putonghua. The school focuses on students' holistic development, offering rich learning experiences such as outdoor exploration activities and creative arts programs.</p>
-                    <p class="mb-4">救恩學校幼稚園部參與了幼稚園教育計劃，這使得其學費相對較低。2024/25學年，全年學費為HKD$9,550。學校的校園環境優美，設施齊全，為學生提供了良好的學習和成長空間。</p>
-                    <p class="text-gray-600 mb-4">Kau Yan School Kindergarten participates in the Kindergarten Education Scheme, which makes its fees relatively low. For the 2024/25 academic year, the annual fee is HKD$9,550. The school boasts a beautiful campus and comprehensive facilities, providing an excellent environment for students' learning and growth.</p>
-                `
+                schoolType: "非牟利天主教男女校",
+                kgpScheme: "有",
+                oneStop: "是",
+                teachingLanguage: "中文",
+                primaryInfo: "嘉諾撒聖心學校私立部，41%畢業生升讀嘉諾撒聖心學校，13%升讀嘉諾撒聖心學校（私立部）。",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 9.0",
+                environmentScore: 99.48,
+                promotionRate: 54
             },
             {
-                id: 4,
-                name: "聖嘉勒小學（幼稚園部）",
-                englishName: "St. Clare's Primary School (Kindergarten Section)",
-                district: "中西區",
-                primary: "聖嘉勒小學",
-                progressionRate: 75,
-                progressionText: "大部分幼稚園學生獲錄取",
-                language: "中英並重，雙語教學",
-                genderK: "女校",
-                genderP: "女校",
-                fee: 51000,
-                feeText: "約 $51,000",
-                rank: null,
-                details: `
-                    <p class="mb-4">聖嘉勒小學（幼稚園部）位於中西區，與聖嘉勒小學及聖嘉勒女書院有緊密聯繫。這是一所女校，從幼稚園到中學部均只招收女生。</p>
-                    <p class="text-gray-600 mb-4">St. Clare's Primary School (Kindergarten Section) is located in the Central and Western District, closely linked with St. Clare's Primary School and St. Clare's Girls' School. It is an all-girls school, admitting only female students from kindergarten to secondary levels.</p>
-                    <p class="mb-4">在升學銜接上，聖嘉勒小學部會錄取大部分幼稚園學生，為女生提供了一條穩定且連貫的升學路徑。學校課程強調學術基礎，同時注重培養學生的藝術修養和體育技能，鼓勵學生參與各類校內外活動。</p>
-                    <p class="text-gray-600 mb-4">Regarding progression, St. Clare's Primary School admits most of its kindergarten students, providing a stable and coherent progression path for girls. The school's curriculum emphasizes academic foundations while also focusing on fostering students' artistic appreciation and athletic skills, encouraging participation in various school and external activities.</p>
-                    <p class="mb-4">學校在教學語言上中英並重，實行雙語教學。小學部除了中文、視藝、體育及法語外，其他科目均以英語為授課語言。學校亦參與了免費幼稚園計劃，提供優質且負擔得起的教育。</p>
-                    <p class="text-gray-600 mb-4">The school places equal emphasis on Chinese and English as teaching languages, implementing bilingual instruction. In the primary section, all subjects except Chinese, Visual Arts, Physical Education, and French are taught in English. The school also participates in the Free Quality Kindergarten Education Scheme, providing high-quality and affordable education.</p>
-                `
+                rank: 18,
+                name: "荃灣浸信會幼稚園",
+                englishName: "Tsuen Wan Baptist Kindergarten",
+                website: "http://www.twbkg.edu.hk/",
+                district: "荃灣區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
             },
             {
-                id: 5,
-                name: "高主教書院幼稚園部",
-                englishName: "Raimondi College Kindergarten",
-                district: "中西區",
-                primary: "高主教書院小學部",
-                progressionRate: 0,
-                progressionText: "未提供數據",
-                language: "中文(普通話)及英文",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 40800,
-                feeText: "約 $40,800",
-                rank: null,
-                details: `
-                    <p class="mb-4">高主教書院幼稚園部與高主教書院小學部和高主教書院有直屬關係。這是一所男女校。</p>
-                    <p class="text-gray-600 mb-4">Raimondi College Kindergarten has a direct affiliation with Raimondi College Primary Section and Raimondi College. It is a co-educational school.</p>
-                    <p class="mb-4">學校的辦學表現良好，為學生提供了從幼稚園到中學的連貫教育途徑。學校注重培養學生的批判性思維和解難能力，並提供豐富的課外活動，以促進學生的全面發展。</p>
-                    <p class="text-gray-600 mb-4">The school demonstrates excellent educational performance, providing students with a continuous educational pathway from kindergarten to secondary school. The school focuses on fostering students' critical thinking and problem-solving skills, and offers a rich variety of extracurricular activities to promote their holistic development.</p>
-                    <p class="mb-4">小學部在教學語言上中文（包括普通話）及英文並重，並實施普通話教中文的政策。學校的設施現代化，包括多功能活動室、電腦室和圖書館，為學生創造了優質的學習環境。</p>
-                    <p class="text-gray-600 mb-4">In terms of teaching languages, the primary section emphasizes both Chinese (including Putonghua) and English, implementing a policy of teaching Chinese in Putonghua. The school's facilities are modern, including multi-purpose activity rooms, computer labs, and a library, creating a high-quality learning environment for students.</p>
-                `
-            },
-            {
-                id: 6,
-                name: "玫瑰崗幼稚園",
-                englishName: "Rosaryhill Kindergarten",
+                rank: 19,
+                name: "聖公會幼稚園",
+                englishName: "Sheng Kung Hui Kindergarten",
+                website: "http://www.skhkg.edu.hk",
                 district: "灣仔區",
-                primary: "玫瑰崗學校（小學部）",
-                progressionRate: 0,
-                progressionText: "未提供數據",
-                language: "中文為主，訓練三文四語",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 35800,
-                feeText: "約 $35,800 (半日)",
-                rank: null,
-                details: `
-                    <p class="mb-4">玫瑰崗幼稚園位於灣仔區，與玫瑰崗學校（小學部）有聯繫。這是一所男女校。</p>
-                    <p class="text-gray-600 mb-4">Rosaryhill Kindergarten is located in Wan Chai District and is affiliated with Rosaryhill School (Primary Section). It is a co-educational school.</p>
-                    <p class="mb-4">在教學語言方面，玫瑰崗學校（小學部）以中文為主要教學語言。然而，學校在中、小、幼階段均致力於訓練學生掌握「三文四語」，即中文、英文、西班牙文，以及廣東話、普通話、英語和西班牙語。學校的課程設計注重培養學生的多元智能，鼓勵他們在學術、藝術和體育方面均衡發展。</p>
-                    <p class="text-gray-600 mb-4">In terms of teaching languages, Rosaryhill School (Primary Section) primarily uses Chinese as the medium of instruction. However, the school is committed to training students in "trilingualism and quadrilingualism" across kindergarten, primary, and secondary levels, encompassing Chinese, English, Spanish, as well as Cantonese, Putonghua, English, and Spanish. The school's curriculum design focuses on cultivating students' multiple intelligences, encouraging balanced development in academics, arts, and sports.</p>
-                    <p class="mb-4">學校提供半日制課程，學費約為 $35,800。校園環境優雅，設有各種專用教室和戶外活動空間，為學生提供舒適和啟發性的學習環境。</p>
-                    <p class="text-gray-600 mb-4">The school offers a half-day program with an annual fee of approximately HKD$35,800. The campus environment is elegant, featuring various specialized classrooms and outdoor activity spaces, providing a comfortable and inspiring learning environment for students.</p>
-                `
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "兩文三語 (中文, 英文, 普通話)",
+                primaryInfo: "畢業生升讀私立及直資小學 (75.1%)，包括聖士提反書院小學；資助及官立小學 (23.1%)，包括聖保羅書院小學、聖若瑟小學。",
+                schoolGender: "男女校",
+                tuitionFee: 58300,
+                tuitionFeeText: "$58,300(10)",
+                teacherStudentRatio: "1 : 7.3",
+                environmentScore: 99.7,
+                promotionRate: 75.1
             },
             {
-                id: 7,
+                rank: 20,
+                name: "宣道幼稚園",
+                englishName: "Alliance Kindergarten",
+                website: "http://www.ktak.edu.hk",
+                district: "九龍城區",
+                schoolType: "非牟利基督教男女校",
+                kgpScheme: "無",
+                oneStop: "是",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "九龍塘宣道小學",
+                schoolGender: "男女校",
+                tuitionFee: 38930,
+                tuitionFeeText: "$38,930（分10期）",
+                teacherStudentRatio: "1 : 8.8",
+                environmentScore: 94.24,
+                promotionRate: null
+            },
+            {
+                rank: 21,
+                name: "迦南幼稚園﹝荃灣﹞",
+                englishName: "Canaan Kindergarten (Tsuen Wan)",
+                website: "http://www.canaan.edu.hk/",
+                district: "荃灣區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 22,
+                name: "明我幼稚園",
+                englishName: "Ming Nga Kindergarten",
+                website: "http://www.mingngakg.edu.hk/",
+                district: "東區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 11.0",
+                environmentScore: 95.34,
+                promotionRate: null
+            },
+            {
+                rank: 23,
+                name: "比華利中英文幼稚園",
+                englishName: "Beverly English & Chinese Kindergarten",
+                website: "http://www.beverlykg.edu.hk/",
+                district: "西貢區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 24,
+                name: "聖公會荊冕堂士德幼稚園",
+                englishName: "SKH Crown of Thorns Church Shatin Kindergarten",
+                website: "http://www.ctckg.edu.hk/",
+                district: "葵青區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 25,
+                name: "德望小學暨幼稚園",
+                englishName: "Good Hope Primary School cum Kindergarten",
+                website: "https://www3.ghs.edu.hk",
+                district: "黃大仙區",
+                schoolType: "天主教私立女校",
+                kgpScheme: "無",
+                oneStop: "是",
+                teachingLanguage: "中文, 英文",
+                primaryInfo: "德望小學暨幼稚園",
+                schoolGender: "女校",
+                tuitionFee: 45000,
+                tuitionFeeText: "$45,000（分10期）",
+                teacherStudentRatio: "1 : 9.6",
+                environmentScore: 97.98,
+                promotionRate: null
+            },
+            {
+                rank: 26,
+                name: "救世軍慶恩幼稚園",
+                englishName: "The Salvation Army King Yan Kindergarten",
+                website: "http://www.sakingyan.edu.hk/",
+                district: "西貢區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 27,
+                name: "雅麗斯英文幼稚園",
+                englishName: "Alice English Kindergarten",
+                website: "http://www.alicekg.edu.hk/",
+                district: "屯門區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 28,
                 name: "聖保祿幼稚園",
                 englishName: "St. Paul's Kindergarten",
+                website: "https://www.spk.edu.hk",
                 district: "灣仔區",
-                primary: "聖保祿學校（小學部）",
-                progressionRate: 50,
-                progressionText: "約50%",
-                language: "中文及英文",
-                genderK: "男女校",
-                genderP: "女校",
-                fee: 34050,
-                feeText: "約 $34,050",
-                rank: null,
-                details: `
-                    <p class="mb-4">聖保祿幼稚園位於灣仔區，是一所男女校，但其聯繫小學聖保祿學校（小學部）是女校。這意味著只有女生才能享有「一條龍」的升學優勢。</p>
-                    <p class="text-gray-600 mb-4">St. Paul's Kindergarten is located in Wan Chai District and is a co-educational school, but its associated primary school, St. Paul's School (Primary Section), is an all-girls school. This means only female students can benefit from the "through-train" progression advantage.</p>
-                    <p class="mb-4">聖保祿學校（小學部）不公開招生，因此，入讀其附屬幼稚園被視為升讀該小學的最佳途徑，約有50%的機會。幼稚園的課程規劃按照兒童身心發展編定，注重培養學生的自主學習能力和社交技能。</p>
-                    <p class="text-gray-600 mb-4">St. Paul's School (Primary Section) does not conduct public admissions; therefore, enrolling in its affiliated kindergarten is considered the best pathway to enter the primary school, with approximately a 50% chance. The kindergarten's curriculum is designed according to children's physical and mental development, focusing on fostering students' independent learning abilities and social skills.</p>
-                    <p class="mb-4">小學部的校園語言環境主要為英文和粵語。學校提供豐富的課外活動，如音樂、體育和藝術課程，旨在促進學生的全面發展。</p>
-                    <p class="text-gray-600 mb-4">The primary section's campus language environment is primarily English and Cantonese. The school offers a wide range of extracurricular activities, such as music, sports, and art programs, aimed at promoting students' holistic development.</p>
-                `
+                schoolType: "非牟利天主教女子學校",
+                kgpScheme: "無",
+                oneStop: "是",
+                teachingLanguage: "兩文三語 (中文, 英文, 普通話)",
+                primaryInfo: "聖保祿學校（小學部）",
+                schoolGender: "女校",
+                tuitionFee: 34050,
+                tuitionFeeText: "$34,050（分10期）",
+                teacherStudentRatio: "1 : 6.3",
+                environmentScore: 98.97,
+                promotionRate: null
             },
             {
-                id: 8,
-                name: "香港真光中學（幼稚園部）",
-                englishName: "True Light Middle School of Hong Kong (Kindergarten Section)",
-                district: "灣仔區",
-                primary: "香港真光中學（小學部）",
-                progressionRate: 50,
-                progressionText: "約50%",
-                language: "中、英兼擅",
-                genderK: "男女校",
-                genderP: "女校",
-                fee: 47000,
-                feeText: "約 $47,000",
-                rank: null,
-                details: `
-                    <p class="mb-4">香港真光中學（幼稚園部）位於灣仔區，是一所男女校。然而，其聯繫小學只招收女生，這意味著只有女生才能享有「一條龍」的升學優勢。</p>
-                    <p class="text-gray-600 mb-4">True Light Middle School of Hong Kong (Kindergarten Section) is located in Wan Chai District and is a co-educational school. However, its associated primary school only admits female students, meaning only girls can benefit from the "through-train" progression advantage.</p>
-                    <p class="mb-4">高班學生需通過校本評核及小學面試，方能升讀真光小學一年級，升學比例約為50%。學校致力於培育中、英兼擅的學生，重視語文學習，並聘請外籍英語老師營造豐富的英語語境。課程設計注重學生的全面發展，包括學術、藝術和體育。</p>
-                    <p class="text-gray-600 mb-4">Kindergarten K3 students must pass school-based assessments and primary school interviews to be admitted to Primary One at True Light Primary School, with a progression rate of approximately 50%. The school is committed to nurturing students proficient in both Chinese and English, emphasizing language learning, and employing native English-speaking teachers to create a rich English environment. The curriculum is designed to promote students' holistic development, including academics, arts, and sports.</p>
-                    <p class="mb-4">學校提供多元化的學習活動，例如科學探索、戶外學習和文化體驗，旨在激發學生的學習興趣和潛能。</p>
-                    <p class="text-gray-600 mb-4">The school offers diverse learning activities, such as scientific exploration, outdoor learning, and cultural experiences, aiming to stimulate students' interest in learning and unleash their potential.</p>
-                `
+                rank: 29,
+                name: "珈琳中英文幼稚園",
+                englishName: "Glorious English and Chinese Kindergarten",
+                website: "http://www.glorious.edu.hk/",
+                district: "元朗區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
             },
             {
-                id: 9,
-                name: "九龍禮賢學校暨幼稚園",
-                englishName: "Kowloon Rhenish School and Kindergarten",
+                rank: 30,
+                name: "崇真小學暨幼稚園（本地課程）",
+                englishName: "Tsung Tsin Primary School and Kindergarten (Local Curriculum)",
+                website: "http://www.ttpskg.edu.hk",
+                district: "深水埗區",
+                schoolType: "非牟利基督教男女校",
+                kgpScheme: "有",
+                oneStop: "是",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "崇真小學暨幼稚園(小學部) (7成位置)",
+                schoolGender: "男女校",
+                tuitionFee: 4160,
+                tuitionFeeText: "$4,160（10）",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 31,
+                name: "香港培正小學", // Refers to the kindergarten section
+                englishName: "Pui Ching Primary School (Kindergarten)",
+                website: "https://www.pcps.edu.hk/kg",
                 district: "九龍城區",
-                primary: "九龍禮賢學校",
-                progressionRate: 0,
-                progressionText: "未提供數據",
-                language: "中文為主，設英語及普通話組",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 39900,
-                feeText: "約 $39,900",
-                rank: null,
-                details: `
-                    <p class="mb-4">九龍禮賢學校暨幼稚園位於九龍城區，是一所男女校。本園沒有參加教育局的「免費幼稚園教育計劃」。</p>
-                    <p class="text-gray-600 mb-4">Kowloon Rhenish School and Kindergarten is located in Kowloon City District and is a co-educational school. This kindergarten does not participate in the Education Bureau's "Free Quality Kindergarten Education Scheme."</p>
-                    <p class="mb-4">在教學語言方面，日常課堂以中文為主要教學語言。此外，學校每週會安排多次英語會話和英文活動時間，旨在提升學生對學習兩文三語的興趣。學校的課程設計注重學生的品德培養和全人發展，提供豐富的課外活動，如音樂、藝術和體育。</p>
-                    <p class="text-gray-600 mb-4">In terms of teaching languages, daily lessons are primarily conducted in Chinese. Additionally, the school arranges multiple English conversation and activity sessions weekly, aiming to enhance students' interest in learning biliteracy and trilingualism. The school's curriculum design focuses on cultivating students' moral character and holistic development, offering a rich variety of extracurricular activities such as music, art, and sports.</p>
-                    <p class="mb-4">學校的校園環境寬敞，設施齊全，包括圖書館、多功能活動室和戶外遊戲區，為學生提供了良好的學習和成長空間。</p>
-                    <p class="text-gray-600 mb-4">The school campus is spacious and well-equipped, including a library, multi-purpose activity rooms, and outdoor play areas, providing an excellent environment for students' learning and growth.</p>
-                `
+                schoolType: "非牟利男女校",
+                kgpScheme: "無",
+                oneStop: "是",
+                teachingLanguage: "中文",
+                primaryInfo: "香港培正小學 (男女校)，約85%升學率",
+                schoolGender: "男女校",
+                tuitionFee: 46210,
+                tuitionFeeText: "$46,210（分10期）",
+                teacherStudentRatio: "1 : 10.7",
+                environmentScore: 98.64,
+                promotionRate: 85
             },
             {
-                id: 10,
+                rank: 32,
+                name: "迦南幼稚園（麗港城）",
+                englishName: "Canaan Kindergarten (Laguna City)",
+                website: "http://www.canaan.edu.hk/",
+                district: "觀塘區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 33,
+                name: "九龍靈糧堂幼兒園",
+                englishName: "Kowloon Ling Liang Church Day Nursery",
+                website: "http://www.kllck.edu.hk/",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 24300,
+                tuitionFeeText: "全日制 $24,300(12)",
+                teacherStudentRatio: "1 : 7.4",
+                environmentScore: 93.95,
+                promotionRate: null
+            },
+            {
+                rank: 34,
+                name: "粉嶺神召會幼稚園",
+                englishName: "Fanling Assembly of God Kindergarten",
+                website: "http://www.fagkg.edu.hk/",
+                district: "北區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 35,
+                name: "藍田靈糧幼稚園",
+                englishName: "Lam Tin Ling Liang Kindergarten",
+                website: "http://www.ltllkg.edu.hk/",
+                district: "觀塘區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 7.7",
+                environmentScore: 95.33,
+                promotionRate: null
+            },
+            {
+                rank: 36,
+                name: "聖保羅堂幼稚園",
+                englishName: "St. Paul's Church Kindergarten",
+                website: "http://spckg.edu.hk/",
+                district: "中西區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "聖保羅書院小學 (男校) (升學優勢不明確)",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 11.0",
+                environmentScore: 98.24,
+                promotionRate: null
+            },
+            {
+                rank: 37,
+                name: "香港靈糧堂秀德幼稚園",
+                englishName: "Hong Kong Ling Liang Church Sau Tak Kindergarten",
+                website: "http://www.llckg.edu.hk/",
+                district: "深水埗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 38,
+                name: "天樂幼稚園",
+                englishName: "Tin Lok Kindergarten",
+                website: "http://www.tinlok.edu.hk/",
+                district: "元朗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 39,
+                name: "聖三一中心幼稚園",
+                englishName: "Holy Trinity Centre Kindergarten",
+                website: "http://www.htckg.edu.hk",
+                district: "九龍城區",
+                schoolType: "非牟利基督教男女校",
+                kgpScheme: "有",
+                oneStop: "是",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "聖三一堂小學",
+                schoolGender: "男女校",
+                tuitionFee: 19290,
+                tuitionFeeText: "$19,290（分10期）",
+                teacherStudentRatio: "1 : 8.7",
+                environmentScore: 94.68,
+                promotionRate: null
+            },
+            {
+                rank: 40,
+                name: "粉嶺浸信會呂明才幼稚園",
+                englishName: "Fanling Baptist Lui Ming Choi Kindergarten",
+                website: "http://www.fblmckg.edu.hk/",
+                district: "北區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 9.0",
+                environmentScore: 95.8,
+                promotionRate: null
+            },
+            {
+                rank: 41,
+                name: "啟思幼稚園（帝堡城）",
+                englishName: "Creative Kindergarten (Castello)",
+                website: "http://www.creativekg.edu.hk/",
+                district: "沙田區",
+                schoolType: "私立獨立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 42,
+                name: "香港培道小學", // Refers to the kindergarten section
+                englishName: "Pooi To Primary School (Kindergarten)",
+                website: "http://kids.ptps.edu.hk",
+                district: "九龍城區",
+                schoolType: "非牟利私立男女校",
+                kgpScheme: "有",
+                oneStop: "是",
+                teachingLanguage: "中文",
+                primaryInfo: "香港培道小學 (100%升讀)",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 10.6",
+                environmentScore: 96.11,
+                promotionRate: 100
+            },
+            {
+                rank: 43,
                 name: "聖母幼稚園",
                 englishName: "Our Lady's Kindergarten",
+                website: "http://www.olk.edu.hk",
                 district: "黃大仙區",
-                primary: "聖母小學",
-                progressionRate: 0,
-                progressionText: "未提供數據",
-                language: "設外籍/母語老師教英語及普通話",
-                genderK: "男女校",
-                genderP: "女校",
-                fee: 0,
-                feeText: "免費 (參與計劃)",
-                rank: null,
-                details: `
-                    <p class="mb-4">聖母幼稚園位於黃大仙區，是一所男女校，但其聯繫小學是女校。學校的辦學表現良好。</p>
-                    <p class="text-gray-600 mb-4">Our Lady's Kindergarten is located in Wong Tai Sin District and is a co-educational school, but its associated primary school is an all-girls school. The school demonstrates good educational performance.</p>
-                    <p class="mb-4">在教學語言方面，聖母幼稚園的英語及普通話課程分別由外籍英語老師和普通話為母語的老師任教，讓幼兒在輕鬆、自然的語境下學習。學校注重培養學生的自信心和創造力，提供多元化的學習活動，如故事時間、角色扮演和藝術創作。</p>
-                    <p class="text-gray-600 mb-4">In terms of teaching languages, Our Lady's Kindergarten's English and Putonghua courses are taught by native English-speaking teachers and native Putonghua teachers respectively, allowing young children to learn in a relaxed and natural language environment. The school focuses on fostering students' self-confidence and creativity, offering diverse learning activities such as story time, role-playing, and art creation.</p>
-                    <p class="mb-4">聖母幼稚園參與了幼稚園教育計劃，學費非常低廉，半日班近乎免費。學校的校園環境溫馨，設施齊全，為學生提供了良好的學習和成長空間。</p>
-                    <p class="text-gray-600 mb-4">Our Lady's Kindergarten participates in the Kindergarten Education Scheme, making its fees very low, with half-day classes being almost free. The school campus environment is warm and well-equipped, providing an excellent learning and growth space for students.</p>
-                `
+                schoolType: "非牟利天主教男女校",
+                kgpScheme: "有",
+                oneStop: "是",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "聖母小學",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "幼兒班全年學費：免費 低班班全年學費：免費 高班全年學費：$10,000(10)",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
             },
             {
-                id: 11,
-                name: "香港培正小學（幼稚園）",
-                englishName: "Pui Ching Primary School (Kindergarten)",
-                district: "九龍城區",
-                primary: "香港培正小學",
-                progressionRate: 85,
-                progressionText: "約85% (有指100%)",
-                language: "中文為主，培育兩文三語",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 48530,
-                feeText: "約 $48,530",
-                rank: null,
-                details: `
-                    <p class="mb-4">香港培正小學（幼稚園）位於九龍城區，直屬香港培正小學，是一所男女校。</p>
-                    <p class="text-gray-600 mb-4">Pui Ching Primary School (Kindergarten) is located in Kowloon City District and is directly affiliated with Pui Ching Primary School. It is a co-educational school.</p>
-                    <p class="mb-4">在升學方面，約有85%的幼稚園學生能升上香港培正小學，有資料甚至顯示可100%直升。小學部以中文為教學語言。幼稚園則以兒童為中心，培育多元智能的發展，並設有幼小銜接活動，確保學生能順利過渡。</p>
-                    <p class="text-gray-600 mb-4">Regarding progression, approximately 85% of kindergarten students can advance to Pui Ching Primary School, with some sources even indicating 100% direct progression. The primary section uses Chinese as the medium of instruction. The kindergarten adopts a child-centered approach, fostering the development of multiple intelligences, and includes kindergarten-to-primary transition activities to ensure a smooth transition for students.</p>
-                    <p class="mb-4">學校注重培養學生的語文能力，除了中文，也重視英文和普通話的學習。校園設施完善，包括體育館、圖書館和多媒體教室，為學生提供豐富的學習資源。</p>
-                    <p class="text-gray-600 mb-4">The school emphasizes cultivating students' language abilities, focusing on English and Putonghua in addition to Chinese. The campus facilities are comprehensive, including a gymnasium, library, and multimedia classrooms, providing rich learning resources for students.</p>
-                `
+                rank: 44,
+                name: "真理浸信會榮光幼兒園",
+                englishName: "Truth Baptist Church Wing Kwong Nursery",
+                website: "http://www.tbcwkn.edu.hk/",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
             },
             {
-                id: 12,
-                name: "香港培道小學幼稚園",
-                englishName: "Hong Kong Pui To Primary School Kindergarten",
-                district: "九龍城區",
-                primary: "香港培道小學",
-                progressionRate: 100,
-                progressionText: "100%",
-                language: "中文為主，重視語文學習",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 0,
-                feeText: "免費",
-                rank: null,
-                details: `
-                    <p class="mb-4">香港培道小學幼稚園位於九龍城區，是一所男女校。它是香港少數的幼小「一條龍」學校。</p>
-                    <p class="text-gray-600 mb-4">Hong Kong Pui To Primary School Kindergarten is located in Kowloon City District and is a co-educational school. It is one of the few "through-train" kindergarten-to-primary schools in Hong Kong.</p>
-                    <p class="mb-4">其學生可以100%升讀香港培道小學，為家長提供了極大的升學確定性。小學部以中文為教學語言，普通話由專業普通話教師任教。學校的課程設計注重學生的全面發展，包括學術、藝術和體育。</p>
-                    <p class="text-gray-600 mb-4">Its students can achieve 100% progression to Hong Kong Pui To Primary School, providing parents with great certainty regarding their child's future education. The primary section uses Chinese as the medium of instruction, with Putonghua taught by professional Putonghua teachers. The school's curriculum design focuses on students' holistic development, including academics, arts, and sports.</p>
-                    <p class="mb-4">香港培道小學幼稚園的學費為免費。學校提供豐富的課外活動，如音樂、舞蹈和科學探索，旨在激發學生的學習興趣和潛能。</p>
-                    <p class="text-gray-600 mb-4">Hong Kong Pui To Primary School Kindergarten is free of charge. The school offers a wide range of extracurricular activities, such as music, dance, and scientific exploration, aiming to stimulate students' interest in learning and unleash their potential.</p>
-                `
+                rank: 45,
+                name: "香港靈糧堂幼稚園",
+                englishName: "Hong Kong Ling Liang Church Kindergarten",
+                website: "http://www.kllck.edu.hk/",
+                district: "灣仔區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "兩文三語 (中文, 英文, 普通話)",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 8.8",
+                environmentScore: 99.2,
+                promotionRate: null
             },
             {
-                id: 13,
-                name: "啓思小學附屬幼稚園",
-                englishName: "Creative Primary School Kindergarten",
-                district: "九龍城區",
-                primary: "啓思小學",
-                progressionRate: 0,
-                progressionText: "有優先入讀機會",
-                language: "廣東話，英文，普通話",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 72930,
-                feeText: "約 $72,930",
-                rank: null,
-                details: `
-                    <p class="mb-4">啓思小學附屬幼稚園位於九龍城區，是一所男女校。幼稚園的學生有優先入讀啓思小學的機會。</p>
-                    <p class="text-gray-600 mb-4">Creative Primary School Kindergarten is located in Kowloon City District and is a co-educational school. Kindergarten students have priority admission opportunities to Creative Primary School.</p>
-                    <p class="mb-4">學校積極在課程中實踐和深化「探索式的學習」，鼓勵學生通過親身實踐和探索來建構知識。在教學語言方面，學校提供廣東話、英文和普通話教學，強調兩文三語，並配備專門的語言教師。</p>
-                    <p class="text-gray-600 mb-4">The school actively implements and deepens "inquiry-based learning" in its curriculum, encouraging students to construct knowledge through hands-on practice and exploration. In terms of teaching languages, the school provides instruction in Cantonese, English, and Putonghua, emphasizing biliteracy and trilingualism, and is equipped with specialized language teachers.</p>
-                    <p class="mb-4">學校的校園環境充滿創意，設施包括藝術工作室、科學實驗室和戶外遊樂場，為學生提供了豐富的學習和發展空間。</p>
-                    <p class="text-gray-600 mb-4">The school campus is full of creativity, with facilities including art studios, science labs, and outdoor playgrounds, providing a rich learning and development space for students.</p>
-                `
-            },
-            {
-                id: 14,
-                name: "聖若望英文書院（幼稚園部）",
-                englishName: "St. Johannes College (Kindergarten Section)",
-                district: "九龍城區",
-                primary: "聖若望英文書院（小學部）",
-                progressionRate: 0,
-                progressionText: "未提供數據",
-                language: "英語為主要教學語言",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 80400,
-                feeText: "約 $80,400 (幼兒班)",
-                rank: null,
-                details: `
-                    <p class="mb-4">聖若望英文書院（幼稚園部）位於九龍城區，是聖若望英文書院（小學部）的直屬幼稚園，為男女校。</p>
-                    <p class="text-gray-600 mb-4">St. Johannes College (Kindergarten Section) is located in Kowloon City District and is the directly affiliated kindergarten of St. Johannes College (Primary Section), serving as a co-educational school.</p>
-                    <p class="mb-4">學校以英語為主要教學語言，並設有中文、普通話、Phonics等課程。學校致力於透過綜合課程培養學生積極的態度和價值觀。學費相對較高，但提供了優質的英語學習環境和全面的教育。</p>
-                    <p class="text-gray-600 mb-4">The school primarily uses English as the medium of instruction and offers courses in Chinese, Putonghua, and Phonics. The school is committed to fostering students' positive attitudes and values through an integrated curriculum. While the fees are relatively high, it provides a high-quality English learning environment and comprehensive education.</p>
-                    <p class="mb-4">學校的設施現代化，包括多媒體學習中心、圖書館和戶外運動場，為學生提供了豐富的學習和活動空間。</p>
-                    <p class="text-gray-600 mb-4">The school's facilities are modern, including a multimedia learning center, library, and outdoor sports grounds, providing ample learning and activity space for students.</p>
-                `
-            },
-            {
-                id: 15,
-                name: "崇真小學暨幼稚園",
-                englishName: "Tsung Tsin Primary School and Kindergarten",
+                rank: 46,
+                name: "德貞幼稚園",
+                englishName: "Tak Ching Kindergarten",
+                website: "http://www.tckg.edu.hk/",
                 district: "深水埗區",
-                primary: "崇真小學暨幼稚園（小學部）",
-                progressionRate: 70,
-                progressionText: "預留7成位置給幼稚園學生",
-                language: "兩文三語，普教中",
-                genderK: "男女校",
-                genderP: "男女校",
-                fee: 41600,
-                feeText: "約 $41,600",
-                rank: null,
-                details: `
-                    <p class="mb-4">崇真小學暨幼稚園位於深水埗區，是一所男女校。</p>
-                    <p class="text-gray-600 mb-4">Tsung Tsin Primary School and Kindergarten is located in Sham Shui Po District and is a co-educational school.</p>
-                    <p class="mb-4">在升學方面，小學部預留了7成位置給崇真小學暨幼稚園的學生升學。學校積極營造兩文三語的環境，中文課程的授課語言為普通話，各班班主任是由英文和普通話為母語的專業教師擔任。課程設計注重學生的全面發展，包括學術、藝術和體育。</p>
-                    <p class="text-gray-600 mb-4">Regarding progression, the primary section reserves 70% of its places for students from Tsung Tsin Primary School and Kindergarten. The school actively fosters a biliterate and trilingual environment, with Chinese lessons taught in Putonghua, and class teachers who are native English and Putonghua speakers. The curriculum is designed for students' holistic development, including academics, arts, and sports.</p>
-                    <p class="mb-4">學校的校園環境優美，設施齊全，包括圖書館、多功能活動室和戶外遊戲區，為學生提供了良好的學習和成長空間。</p>
-                    <p class="text-gray-600 mb-4">The school campus is beautiful and well-equipped, including a library, multi-purpose activity rooms, and outdoor play areas, providing an excellent environment for students' learning and growth.</p>
-                `
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 10.7",
+                environmentScore: 95.9,
+                promotionRate: null
+            },
+            {
+                rank: 47,
+                name: "基督教神召會合一堂幼稚園",
+                englishName: "Christian Assembly of God Hop Yat Church Kindergarten",
+                website: "http://www.aghyckg.edu.hk/",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 48,
+                name: "明雅中英文幼稚園",
+                englishName: "Ming Nga English & Chinese Kindergarten",
+                website: "http://www.mingngakg.edu.hk/",
+                district: "大埔區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 49,
+                name: "聖士提反堂小學暨幼稚園",
+                englishName: "St. Stephen's Church Primary School and Kindergarten",
+                website: "http://www.ststephenskg.edu.hk/",
+                district: "中西區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "英文, 普通話",
+                primaryInfo: "聖士提反堂小學 (男女校)",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 6.4",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 50,
+                name: "德寶英文幼稚園（將軍澳）",
+                englishName: "Debo English Kindergarten (Tseung Kwan O)",
+                website: "http://www.debokg.edu.hk/",
+                district: "西貢區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 51,
+                name: "綠楊幼稚園",
+                englishName: "Greenwood Kindergarten",
+                website: "http://www.greenwood.edu.hk/",
+                district: "荃灣區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 50400,
+                tuitionFeeText: "$50,400",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 52,
+                name: "救世軍田家炳幼稚園",
+                englishName: "The Salvation Army Tin Ka Ping Kindergarten",
+                website: "http://www.satkp.edu.hk/",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 53,
+                name: "馬鞍山靈糧幼稚園",
+                englishName: "Ma On Shan Ling Liang Kindergarten",
+                website: "http://www.mosllkg.edu.hk/",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 54,
+                name: "國際英文幼稚園", // General entry, mapping to Norfolk Road branch
+                englishName: "St. Catherine's International Kindergarten (Norfolk Road)",
+                website: "http://www.stcatherines.edu.hk",
+                district: "九龍城區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "中文 (粵語/普通話), 英文",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 70433,
+                tuitionFeeText: "$70,433 (11)",
+                teacherStudentRatio: "1 : 7.3",
+                environmentScore: 99.93,
+                promotionRate: null
+            },
+            {
+                rank: 55,
+                name: "佳寶幼稚園（屯門分校）",
+                englishName: "Kai Po Kindergarten (Tuen Mun Branch)",
+                website: "http://www.kaipokg.edu.hk/",
+                district: "屯門區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 56,
+                name: "鑽石山靈糧幼稚園",
+                englishName: "Diamond Hill Ling Liang Kindergarten",
+                website: "http://www.dhllkg.edu.hk/",
+                district: "黃大仙區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 9.7",
+                environmentScore: 94.48,
+                promotionRate: null
+            },
+            {
+                rank: 57,
+                name: "保良局蔡繼有幼稚園",
+                englishName: "Po Leung Kuk Choi Kai Yau Kindergarten",
+                website: "http://www.plkcky.edu.hk/",
+                district: "西貢區",
+                schoolType: "非牟利",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 58,
+                name: "天主教聖瑪加利大幼稚園",
+                englishName: "St. Margaret Mary's Catholic Kindergarten",
+                website: "https://www.stmkg.edu.hk/",
+                district: "灣仔區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "中文 (粵語), 英文, 普通話",
+                primaryInfo: "官立／資助小學：141 人 (包括聖保祿天主教小學 29, 聖若瑟小學 17, 瑪利曼小學 15, 番禺會所華仁小學 10, 聖公會聖雅各小學 10, 軒尼詩道官立小學(銅鑼灣) 9, 寶血小學 6, 香港嘉諾撒學校 6, 滬江小學 4, 太古小學 4, 丹拿山循道學校 4, 嘉諾撒聖心學校 3, 北角官立小學（英皇道） 3, 嘉諾撒聖方濟各學校 3, 寶覺小學 2, 聖公會聖彼得小學 2, 北角衛理小學 1, 培僑小學 1, 東華三院李賜豪小學 1, 油麻地天主教小學 1, 聖公會田灣始南小學 1, 屯門何日東小學 1, 英皇書院同學會小學 1, 瑪利諾修院（小學部） 1, 海怡寶血小學 1, 德信小學 1, 聖公會阮鄭夢芹小學 1, 九龍聖若瑟小學 1, 聖公會聖米迦勒小學 1, 聖安多尼小學 1)；直資／私立小學：23 人 (包括高主教書院小學部 9, 香港真光書院(小學部) 2, 聖嘉勒小學 2, 蘇浙小學 2, 聖保羅書院小學 1, 聖保祿學校(小學部) 1, 漢華中學（小學部） 1, 保良局蔡繼有學校 1, 救恩學校（小學部） 1, 聖士提反書院附屬小學 1, 英基小學 1, 香港華人基督教聯會真道書院 1)",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 9.8",
+                environmentScore: 100,
+                promotionRate: null
+            },
+            {
+                rank: 59,
+                name: "卓思英文學校暨幼稚園（青怡分校）",
+                englishName: "Choice English School & Kindergarten (Ching Yi Branch)",
+                website: "http://www.choicekg.edu.hk/",
+                district: "葵青區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 60,
+                name: "香港靈糧堂荃灣幼稚園",
+                englishName: "Hong Kong Ling Liang Church Tsuen Wan Kindergarten",
+                website: "http://www.llctwkg.edu.hk/",
+                district: "荃灣區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 3030,
+                tuitionFeeText: "$3,030",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 61,
+                name: "加州天地幼稚園",
+                englishName: "California Wonderland Kindergarten",
+                website: "http://www.calwonderland.edu.hk/",
+                district: "屯門區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 62,
+                name: "大埔浸信會幼稚園",
+                englishName: "Tai Po Baptist Kindergarten",
+                website: "http://www.tpbc.edu.hk/",
+                district: "大埔區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 63,
+                name: "國際英文幼稚園", // General entry, mapping to Norfolk Road branch
+                englishName: "St. Catherine's International Kindergarten (Norfolk Road)",
+                website: "http://www.stcatherines.edu.hk",
+                district: "九龍城區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "中文 (粵語/普通話), 英文",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 70433,
+                tuitionFeeText: "$70,433 (11)",
+                teacherStudentRatio: "1 : 7.3",
+                environmentScore: 99.93,
+                promotionRate: null
+            },
+            {
+                rank: 64,
+                name: "香港五常法幼稚園",
+                englishName: "Hong Kong 5S Kindergarten",
+                website: "http://www.hk5skg.edu.hk/",
+                district: "北區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 65,
+                name: "高主教書院幼稚園部",
+                englishName: "Raimondi College Kindergarten Section",
+                website: "http://www.rckg.edu.hk",
+                district: "東區",
+                schoolType: "非牟利天主教男女校",
+                kgpScheme: "無",
+                oneStop: "是",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "高主教書院小學部",
+                schoolGender: "男女校",
+                tuitionFee: 40800,
+                tuitionFeeText: "$40,800（分10期）",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 66,
+                name: "官塘浸信會幼稚園",
+                englishName: "Kwun Tong Baptist Kindergarten",
+                website: "http://www.ktbckg.edu.hk/",
+                district: "觀塘區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 67,
+                name: "東華三院南九龍獅子會幼兒園",
+                englishName: "TWGHs South Kowloon Lions Club Nursery",
+                website: "http://www.twghs.org.hk/nursery/sklc/",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 68,
+                name: "明我幼稚園（奧運校）",
+                englishName: "Ming Nga Kindergarten (Olympic Branch)",
+                website: "http://www.mingngakg.edu.hk/",
+                district: "油尖旺區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 69,
+                name: "北角衞理堂幼稚園",
+                englishName: "North Point Methodist Church Kindergarten",
+                website: "http://www.npmc.edu.hk",
+                district: "東區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 10.8",
+                environmentScore: 98.04,
+                promotionRate: null
+            },
+            {
+                rank: 70,
+                name: "德萃幼稚園",
+                englishName: "St. Hilary's Kindergarten",
+                website: "http://www.sthilarys.edu.hk/",
+                district: "深水埗區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 71,
+                name: "啟思幼稚園（青衣）",
+                englishName: "Creative Kindergarten (Tsing Yi)",
+                website: "http://www.creativekg.edu.hk/",
+                district: "葵青區",
+                schoolType: "私立獨立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 72,
+                name: "協恩中學附屬幼稚園",
+                englishName: "Heep Yunn School Private Kindergarten",
+                website: "http://www.hykg.edu.hk",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "是",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "協恩中學附屬小學 (女校)",
+                schoolGender: "女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 7.6",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 73,
+                name: "啟思幼稚園（匯景花園）",
+                englishName: "Creative Kindergarten (Laguna City)",
+                website: "http://www.creativekg.edu.hk/",
+                district: "觀塘區",
+                schoolType: "私立獨立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 74,
+                name: "救世軍荃灣幼兒學校",
+                englishName: "The Salvation Army Tsuen Wan Nursery School",
+                website: "http://www.salvationarmy.org.hk/nursery/tw/",
+                district: "荃灣區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 75,
+                name: "荃灣聖母幼稚園",
+                englishName: "Our Lady of Lourdes Kindergarten (Tsuen Wan)",
+                website: "http://www.ollkg.edu.hk/",
+                district: "荃灣區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 76,
+                name: "元朗三育幼稚園",
+                englishName: "Yuen Long Sam Yuk Kindergarten",
+                website: "http://www.ylsykg.edu.hk/",
+                district: "元朗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 77,
+                name: "新一代英文幼稚園（屯門分校）",
+                englishName: "New Generation English Kindergarten (Tuen Mun Branch)",
+                website: "http://www.newgeneration.edu.hk/",
+                district: "屯門區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 36492,
+                tuitionFeeText: "$36,492",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 78,
+                name: "聖公會青山聖彼得堂兆麟苑幼稚園",
+                englishName: "SKH St. Peter's Church Siu Lun Court Kindergarten",
+                website: "https://www.plkkgs.edu.hk/plktkpshkg/",
+                district: "屯門區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 8.9",
+                environmentScore: 96,
+                promotionRate: null
+            },
+            {
+                rank: 79,
+                name: "元岡幼稚園",
+                englishName: "Yuen Kong Kindergarten",
+                website: "http://www.yuenkong.edu.hk/",
+                district: "元朗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 80,
+                name: "元朗信義會生命幼稚園",
+                englishName: "Yuen Long Lutheran Church Life Kindergarten",
+                website: "http://www.yllclife.edu.hk/",
+                district: "元朗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 81,
+                name: "香港宣教會優質幼兒學校",
+                englishName: "Hong Kong Alliance Church Quality Nursery School",
+                website: "http://www.hkacqns.edu.hk/",
+                district: "北區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 82,
+                name: "中華基督教會元朗堂真光幼稚園",
+                englishName: "CCC Yuen Long Church Chan Kwong Kindergarten",
+                website: "https://chankwong.edu.hk/",
+                district: "元朗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 8.5",
+                environmentScore: 93.72,
+                promotionRate: null
+            },
+            {
+                rank: 83,
+                name: "基督教宣道會茵怡幼稚園",
+                englishName: "Christian Alliance Yan Oi Kindergarten",
+                website: "http://www.cayokg.edu.hk/",
+                district: "西貢區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 84,
+                name: "基督教中心幼稚園",
+                englishName: "Christian Youth Centre Kindergarten",
+                website: "http://www.cyckg.edu.hk",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 5.6",
+                environmentScore: 94.75,
+                promotionRate: null
+            },
+            {
+                rank: 85,
+                name: "聖保羅堂幼稚園（北角）",
+                englishName: "St. Paul's Church Kindergarten (North Point)",
+                website: "http://spckg.edu.hk/",
+                district: "東區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 86,
+                name: "明愛沙田幼兒學校",
+                englishName: "Caritas Shatin Day Nursery",
+                website: "https://csdn.caritas.org.hk/",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 87,
+                name: "保良局易桂芳幼稚園",
+                englishName: "Po Leung Kuk Yick Kwai Fong Kindergarten",
+                website: "http://www.plkykfkg.edu.hk/",
+                district: "屯門區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 88,
+                name: "博士山（香港）國際幼稚園",
+                englishName: "Box Hill (HK) International Kindergarten",
+                website: "http://www.boxhill.edu.hk/",
+                district: "沙田區",
+                schoolType: "國際學校",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 89,
+                name: "保良局田家炳兆康幼稚園",
+                englishName: "Po Leung Kuk Tin Ka Ping Siu Hong Kindergarten",
+                website: "https://www.plkkgs.edu.hk/plktkpshkg/",
+                district: "屯門區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 0,
+                tuitionFeeText: "免費",
+                teacherStudentRatio: "1 : 10.8",
+                environmentScore: 94.93,
+                promotionRate: null
+            },
+            {
+                rank: 90,
+                name: "萊恩幼稚園（元朗）",
+                englishName: "Rhine Garden Kindergarten (Yuen Long)",
+                website: "http://www.rhine.edu.hk/",
+                district: "元朗區",
+                schoolType: "私立",
+                kgpScheme: "無",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: 69600,
+                tuitionFeeText: "$69,600",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 91,
+                name: "聖公會荊冕堂葵涌幼稚園",
+                englishName: "SKH Crown of Thorns Church Kwai Chung Kindergarten",
+                website: "http://www.ctckc.edu.hk/",
+                district: "葵青區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 92,
+                name: "順德聯誼總會屯門梁李秀娛幼稚園",
+                englishName: "Shun Tak Fraternal Association Leung Lee Sau Yu Kindergarten",
+                website: "http://www.stfalsykg.edu.hk/",
+                district: "屯門區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 93,
+                name: "佛教金麗幼稚園",
+                englishName: "Buddhist Kam Lai Kindergarten",
+                website: "http://www.buddhistkamlaikg.edu.hk/",
+                district: "觀塘區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 94,
+                name: "基督教粉嶺神召會恩光幼稚園",
+                englishName: "Christian Fanling Assembly of God Yan Kwong Kindergarten",
+                website: "http://www.fagyk.edu.hk/",
+                district: "北區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 95,
+                name: "保良局金卿幼稚園",
+                englishName: "Po Leung Kuk Kam Hing Kindergarten",
+                website: "http://www.plkkhkg.edu.hk/",
+                district: "黃大仙區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 96,
+                name: "路德會救恩幼稚園",
+                englishName: "Lutheran Church Kau Yan Kindergarten",
+                website: "http://www.lckyk.edu.hk/",
+                district: "黃大仙區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 97,
+                name: "寶血幼稚園（深水埗）",
+                englishName: "Precious Blood Kindergarten (Sham Shui Po)",
+                website: "http://www.pbkg.edu.hk/",
+                district: "深水埗區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 98,
+                name: "迦南幼稚園（窩打老道）",
+                englishName: "Canaan Kindergarten (Waterloo Road)",
+                website: "http://www.canaan.edu.hk/",
+                district: "九龍城區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 99,
+                name: "崇真會美善幼稚園（馬鞍山）",
+                englishName: "Tsung Tsin Mission of Hong Kong Graceful Kindergarten (Ma On Shan)",
+                website: "http://www.ttmkg.edu.hk/",
+                district: "沙田區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
+            },
+            {
+                rank: 100,
+                name: "天主教聖安德肋幼稚園",
+                englishName: "St. Andrew's Catholic Kindergarten",
+                website: "http://www.st-andrew.edu.hk/",
+                district: "西貢區",
+                schoolType: "非牟利",
+                kgpScheme: "有",
+                oneStop: "否",
+                teachingLanguage: "沒有資料",
+                primaryInfo: "沒有資料",
+                schoolGender: "男女校",
+                tuitionFee: null,
+                tuitionFeeText: "沒有資料",
+                teacherStudentRatio: "沒有資料",
+                environmentScore: null,
+                promotionRate: null
             }
         ];
 
-        document.addEventListener('DOMContentLoaded', () => {
-            const resultsContainer = document.getElementById('results-container');
-            const districtFilter = document.getElementById('district-filter');
-            const genderFilter = document.getElementById('gender-filter');
-            const feeFilter = document.getElementById('fee-filter');
-            const feeValue = document.getElementById('fee-value');
-            const progressionFilter = document.getElementById('progression-filter');
-            const progressionValue = document.getElementById('progression-value');
+        // List of schools confirmed as "一條龍" from the user's latest input
+        const confirmedOneStopSchools = [
+            "嘉諾撒聖心幼稚園",
+            "高主教書院幼稚園部",
+            "銅鑼灣維多利亞幼稚園",
+            "聖保祿幼稚園",
+            "救恩學校(幼稚園)",
+            "香港真光中學（幼稚園部）",
+            "蘇浙小學（幼稚園）",
+            "聖嘉勒小學暨幼稚園",
+            "聖士提反女子中學附屬幼稚園",
+            "崇真小學暨幼稚園（本地課程）",
+            "聖若望英文書院（幼稚園部）",
+            "香港培道小學幼稚園",
+            "啓思小學附屬幼稚園",
+            "德望小學暨幼稚園",
+            "民生書院幼稚園",
+            "香港培正小學（幼稚園）",
+            "宣道幼稚園",
+            "聖三一中心幼稚園",
+            "聖母幼稚園",
+            "玫瑰崗幼稚園"
+        ];
 
-            let feeChart, progressionChart;
+        // Function to open the modal with school details
+        function showModal(school) {
+            document.getElementById('modalSchoolName').textContent = school.name;
+            document.getElementById('modalEnglishName').textContent = school.englishName;
+            document.getElementById('modalRank').textContent = school.rank !== null ? school.rank : '沒有資料';
+            document.getElementById('modalDistrict').textContent = school.district;
+            document.getElementById('modalSchoolType').textContent = school.schoolType;
+            document.getElementById('modalKgpScheme').textContent = school.kgpScheme;
+            document.getElementById('modalOneStop').textContent = school.oneStop;
+            document.getElementById('modalTeachingLanguage').textContent = school.teachingLanguage;
+            document.getElementById('modalPrimaryInfo').textContent = school.primaryInfo;
+            document.getElementById('modalSchoolGender').textContent = school.schoolGender;
+            document.getElementById('modalTuitionFee').textContent = school.tuitionFeeText;
+            document.getElementById('modalTeacherStudentRatio').textContent = school.teacherStudentRatio !== null ? school.teacherStudentRatio : '沒有資料';
+            document.getElementById('modalEnvironmentScore').textContent = school.environmentScore !== null ? school.environmentScore : '沒有資料';
 
-            const districts = [...new Set(schoolData.map(s => s.district))];
-            districts.forEach(d => {
+            const websiteLink = document.getElementById('modalWebsite');
+            if (school.website && school.website !== "沒有資料") {
+                websiteLink.href = school.website;
+                websiteLink.textContent = school.website;
+                websiteLink.classList.remove('hidden');
+            } else {
+                websiteLink.textContent = '沒有資料';
+                websiteLink.removeAttribute('href');
+                websiteLink.classList.add('hidden'); // Hide the link if no website
+            }
+
+            document.getElementById('schoolDetailModal').classList.remove('hidden');
+        }
+
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('schoolDetailModal').classList.add('hidden');
+        }
+
+        // Function to render school cards
+        function renderSchoolCards(filteredSchools) {
+            const container = document.getElementById('schoolCardsContainer');
+            container.innerHTML = ''; // Clear previous cards
+
+            if (filteredSchools.length === 0) {
+                container.innerHTML = '<p class="text-center text-gray-600 col-span-full">沒有找到符合篩選條件的學校。</p>';
+                return;
+            }
+
+            filteredSchools.forEach(school => {
+                const card = document.createElement('div');
+                card.classList.add('school-card');
+                if (school.oneStop === '是') {
+                    card.classList.add('one-stop-school-card');
+                }
+                if (school.discrepancy) { // Add discrepancy highlight
+                    card.classList.add('discrepancy-highlight');
+                }
+                card.onclick = () => showModal(school); // Attach click event for modal
+
+                // Determine primary school gender for highlighting inconsistency
+                let primarySchoolGenderText = '';
+                let isGenderInconsistent = false;
+                if (school.primaryInfo && school.primaryInfo !== "沒有資料") {
+                    const match = school.primaryInfo.match(/\((男校|女校|男女校)\)/);
+                    if (match) {
+                        primarySchoolGenderText = match[1];
+                        // Check for inconsistency only if both kindergarten and primary school genders are known
+                        if (school.schoolGender && primarySchoolGenderText && school.schoolGender !== primarySchoolGenderText) {
+                            isGenderInconsistent = true;
+                        }
+                    }
+                }
+
+                card.innerHTML = `
+                    <h3 class="text-xl font-bold text-blue-800 mb-2">${school.name}</h3>
+                    <p class="text-gray-600 text-sm">${school.englishName}</p>
+                    <p><strong>排名：</strong> ${school.rank !== null ? school.rank : '沒有資料'}</p>
+                    <p><strong>地區：</strong> ${school.district}</p>
+                    <p><strong>類別：</strong> ${school.schoolType}</p>
+                    <p><strong>教學語言：：</strong> ${school.teachingLanguage}</p>
+                    <p><strong>學校性別：：</strong> ${school.schoolGender} ${isGenderInconsistent ? '<span class="gender-inconsistency">(與聯繫小學性別不一致)</span>' : ''}</p>
+                    <p><strong>全年學費：：</strong> ${school.tuitionFeeText}</p>
+                    <p class="text-xs text-gray-500 mt-2">點擊查看更多詳情</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Main filtering and rendering function
+        function applyFilters() {
+            const selectedDistrict = document.getElementById('districtFilter').value;
+            const selectedSchoolType = document.getElementById('schoolTypeFilter').value;
+            const selectedSchoolGender = document.getElementById('schoolGenderFilter').value;
+            const selectedOneStop = document.getElementById('oneStopFilter').value;
+            const maxTuition = document.getElementById('maxTuitionFilter').value; // Get as string
+            const minPromotionRate = document.getElementById('minPromotionRateFilter').value; // Get as string
+            const selectedTeachingLanguage = document.getElementById('teachingLanguageFilter').value; // New filter value
+
+            const filteredSchools = schoolsData.filter(school => {
+                const matchesDistrict = (selectedDistrict === '全部' || school.district === selectedDistrict);
+                const matchesSchoolType = (selectedSchoolType === '全部' || school.schoolType === selectedSchoolType);
+                const matchesSchoolGender = (selectedSchoolGender === '全部' || school.schoolGender === selectedSchoolGender);
+                const matchesOneStop = (selectedOneStop === '全部' || school.oneStop === selectedOneStop);
+                
+                // For teaching language, split the school's languages and check if any match
+                let matchesTeachingLanguage = true;
+                if (selectedTeachingLanguage !== '全部' && school.teachingLanguage !== "沒有資料") {
+                    const schoolLanguages = school.teachingLanguage.split(',').map(lang => lang.trim());
+                    // Check for partial match for simplified languages
+                    if (selectedTeachingLanguage === '中文') {
+                        matchesTeachingLanguage = schoolLanguages.some(lang => lang.includes('中文') || lang.includes('粵語') || lang.includes('普通話'));
+                    } else {
+                        matchesTeachingLanguage = schoolLanguages.includes(selectedTeachingLanguage);
+                    }
+                } else if (selectedTeachingLanguage !== '全部' && school.teachingLanguage === "沒有資料") {
+                    matchesTeachingLanguage = false; // If filter is set but school has no data, don't match
+                }
+
+
+                // Tuition filter
+                let matchesTuition = true;
+                if (maxTuition !== "") {
+                    const maxT = parseFloat(maxTuition);
+                    if (!isNaN(maxT)) {
+                        matchesTuition = school.tuitionFee <= maxT;
+                    }
+                }
+
+                // Promotion rate filter
+                let matchesPromotionRate = true;
+                if (minPromotionRate !== "") {
+                    const minPR = parseFloat(minPromotionRate);
+                    if (!isNaN(minPR) && school.promotionRate !== null && !isNaN(school.promotionRate)) {
+                        matchesPromotionRate = school.promotionRate >= minPR;
+                    } else if (!isNaN(minPR) && (school.promotionRate === null || isNaN(school.promotionRate))) {
+                         // If a minimum rate is set but school has no rate, it doesn't match
+                        matchesPromotionRate = false;
+                    }
+                }
+
+                return matchesDistrict && matchesSchoolType && matchesSchoolGender && matchesOneStop && matchesTeachingLanguage && matchesTuition && matchesPromotionRate;
+            });
+
+            renderSchoolCards(filteredSchools);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // --- Data Normalization and One-Stop Status Update ---
+            const newOneStopList = [
+                "嘉諾撒聖心幼稚園",
+                "高主教書院幼稚園部",
+                "銅鑼灣維多利亞幼稚園",
+                "聖保祿幼稚園",
+                "救恩學校(幼稚園)",
+                "香港真光中學（幼稚園部）",
+                "蘇浙小學（幼稚園）",
+                "聖嘉勒小學暨幼稚園",
+                "聖士提反女子中學附屬幼稚園",
+                "崇真小學暨幼稚園（本地課程）",
+                "聖若望英文書院（幼稚園部）",
+                "香港培道小學幼稚園",
+                "啓思小學附屬幼稚園",
+                "德望小學暨幼稚園",
+                "民生書院幼稚園",
+                "香港培正小學（幼稚園）",
+                "宣道幼稚園",
+                "聖三一中心幼稚園",
+                "聖母幼稚園",
+                "玫瑰崗幼稚園"
+            ];
+
+            // Map to easily check one-stop status
+            const newOneStopMap = new Set(newOneStopList);
+
+            schoolsData.forEach(school => {
+                const originalOneStop = school.oneStop; // Store original for discrepancy check
+                const originalSchoolType = school.schoolType;
+                const originalTuitionFee = school.tuitionFee;
+                const originalTuitionFeeText = school.tuitionFeeText;
+                const originalPrimaryInfo = school.primaryInfo;
+                const originalSchoolGender = school.schoolGender;
+
+                // Update oneStop status based on the new list
+                if (newOneStopMap.has(school.name)) {
+                    school.oneStop = "是";
+                } else {
+                    school.oneStop = "否";
+                }
+
+                // Update specific school details from the new provided text
+                switch (school.name) {
+                    case "嘉諾撒聖心幼稚園":
+                        school.schoolType = "非牟利天主教男女校";
+                        school.tuitionFee = 1570; // Updated from 0 to 1570
+                        school.tuitionFeeText = "$1,570.00（10）"; // Updated tuition text
+                        school.primaryInfo = "嘉諾撒聖心學校私立部，41%畢業生升讀嘉諾撒聖心學校，13%升讀嘉諾撒聖心學校（私立部）。"; // Updated primaryInfo
+                        school.englishName = "Sacred Heart Canossian Kindergarten";
+                        school.website = "http://www.shck.edu.hk";
+                        break;
+                    case "高主教書院幼稚園部":
+                        school.schoolType = "非牟利天主教男女校";
+                        school.tuitionFee = 40800;
+                        school.tuitionFeeText = "$40,800（分10期）";
+                        school.primaryInfo = "高主教書院小學部";
+                        school.englishName = "Raimondi College Kindergarten Section";
+                        school.website = "http://www.rckg.edu.hk";
+                        break;
+                    case "銅鑼灣維多利亞幼稚園":
+                        school.schoolType = "私立男女校";
+                        school.tuitionFee = 91564; // Using the lowest provided fee for filtering
+                        school.tuitionFeeText = "幼兒班全年學費：$91,564（11）低班班全年學費：$83,860（10）高班全年學費：$86,090（10）";
+                        school.primaryInfo = "滬江維多利亞學校 (58%升讀)"; // Added percentage from text
+                        school.englishName = "Victoria (Causeway Bay) Kindergarten";
+                        school.website = "https://www.victoria.edu.hk/en/kindergarten/causeway-bay.php";
+                        school.promotionRate = 58;
+                        break;
+                    case "聖保祿幼稚園": // This is the one in Wanchai, original rank 9
+                        school.schoolType = "非牟利天主教女子學校";
+                        school.tuitionFee = 34050;
+                        school.tuitionFeeText = "$34,050（分10期）";
+                        school.primaryInfo = "聖保祿學校（小學部）";
+                        school.schoolGender = "女校";
+                        school.englishName = "St. Paul's Kindergarten";
+                        school.website = "https://www.spk.edu.hk";
+                        break;
+                    case "救恩學校(幼稚園)": // Original name was 救恩學校(幼稚園)
+                        school.schoolType = "非牟利私立基督教男女校";
+                        school.tuitionFee = 9550; // Updated from 6720 to 9550
+                        school.tuitionFeeText = "$9,550（10）";
+                        school.primaryInfo = "救恩學校（小學部）";
+                        school.englishName = "Kau Yan School (Kindergarten)";
+                        school.website = "https://www.kauyan.edu.hk/kindergarten";
+                        break;
+                    case "香港真光中學（幼稚園部）":
+                        school.schoolType = "私立男女校";
+                        school.tuitionFee = 66880;
+                        school.tuitionFeeText = "$66,880（分10期）";
+                        school.primaryInfo = "香港真光中學（小學部）";
+                        school.englishName = "True Light Middle School of Hong Kong (Kindergarten)";
+                        school.website = "http://www.tlmshkps.edu.hk/kindergarten";
+                        break;
+                    case "蘇浙小學校":
+                        school.schoolType = "非牟利私立男女校";
+                        school.tuitionFee = 45300; // Using lowest for filter
+                        school.tuitionFeeText = "幼兒班全年學費：$48,800(10) 低班班全年學費：$48,800(10)-$82,400(10)／$48,800(10)-$82,400(10)／$63,500(10) 高班全年學費：$48,800(10)-$82,400(10)／$48,800(10)-$82,400(10)／$63,500(10)";
+                        school.primaryInfo = "蘇浙小學";
+                        school.englishName = "Kiangsu & Chekiang Primary School (Kindergarten)";
+                        school.website = "http://www.kcs.edu.hk";
+                        break;
+                    case "聖嘉勒小學暨幼稚園":
+                        school.schoolType = "非牟利天主教女校";
+                        school.tuitionFee = 0;
+                        school.tuitionFeeText = "免費";
+                        school.primaryInfo = "聖嘉勒小學";
+                        school.englishName = "St. Clare's Primary School cum Kindergarten";
+                        school.website = "http://kg.scps.edu.hk";
+                        break;
+                    case "聖士提反女子中學附屬幼稚園":
+                        school.schoolType = "非牟利基督教女校";
+                        school.tuitionFee = 0;
+                        school.tuitionFeeText = "免費";
+                        school.primaryInfo = "聖士提反女子中學附屬小學";
+                        school.englishName = "St. Stephen's Girls' College Primary School & Kindergarten";
+                        school.website = "https://www.ssgc.edu.hk";
+                        break;
+                    case "九龍禮賢學校暨幼稚園":
+                        school.schoolType = "非牟利基督教男女校";
+                        school.tuitionFee = 37600;
+                        school.tuitionFeeText = "$37,600（分10期）";
+                        school.primaryInfo = "九龍禮賢學校";
+                        school.englishName = "Kowloon Rhenish School and Kindergarten";
+                        school.website = "http://krs.school.hk/~kindergarten";
+                        break;
+                    case "崇真小學暨幼稚園（本地課程）":
+                        school.schoolType = "非牟利基督教男女校";
+                        school.tuitionFee = 4160;
+                        school.tuitionFeeText = "$4,160（10）";
+                        school.primaryInfo = "崇真小學暨幼稚園(小學部) (7成位置)"; // Added percentage from text
+                        school.englishName = "Tsung Tsin Primary School and Kindergarten (Local Curriculum)";
+                        school.website = "http://www.ttpskg.edu.hk";
+                        break;
+                    case "聖母幼稚園":
+                        school.schoolType = "非牟利天主教男女校";
+                        school.tuitionFee = 0; // Using lowest for filter
+                        school.tuitionFeeText = "幼兒班全年學費：免費 低班班全年學費：免費 高班全年學費：$10,000(10)";
+                        school.primaryInfo = "聖母小學";
+                        school.englishName = "Our Lady's Kindergarten";
+                        school.website = "http://www.olk.edu.hk";
+                        break;
+                    case "德望小學暨幼稚園": // Note: User provided "德望小學暨幼稚園(幼稚園部)" but the name in data is "德望小學暨幼稚園"
+                        school.schoolType = "天主教私立女校";
+                        school.tuitionFee = 45000;
+                        school.tuitionFeeText = "$45,000（分10期）";
+                        school.primaryInfo = "德望小學暨幼稚園";
+                        school.englishName = "Good Hope Primary School cum Kindergarten";
+                        school.website = "https://www3.ghs.edu.hk";
+                        break;
+                    case "香港培正小學（幼稚園）":
+                        school.schoolType = "非牟利男女校";
+                        school.tuitionFee = 46210;
+                        school.tuitionFeeText = "$46,210（分10期）";
+                        school.primaryInfo = "香港培正小學 (男女校)，約85%升學率";
+                        school.englishName = "Pui Ching Primary School (Kindergarten)";
+                        school.website = "https://www.pcps.edu.hk/kg";
+                        school.promotionRate = 85;
+                        break;
+                    case "民生書院幼稚園":
+                        school.schoolType = "基督教私立男女校";
+                        school.tuitionFee = 49880;
+                        school.tuitionFeeText = "$49,880（分10期）";
+                        school.primaryInfo = "民生書院小學 (不少於85%優先取錄)"; // Added percentage from text
+                        school.englishName = "Munsang College Kindergarten";
+                        school.website = "https://kindergarten.munsang.edu.hk";
+                        school.promotionRate = 85; // Extracted from text
+                        break;
+                    case "香港培道小學幼稚園":
+                        school.schoolType = "非牟利私立男女校";
+                        school.tuitionFee = 0;
+                        school.tuitionFeeText = "免費";
+                        school.primaryInfo = "香港培道小學 (100%升讀)"; // Added percentage from text
+                        school.englishName = "Pooi To Primary School Kindergarten";
+                        school.website = "http://kids.ptps.edu.hk";
+                        school.promotionRate = 100; // Extracted from text
+                        break;
+                    case "宣道幼稚園":
+                        school.schoolType = "非牟利基督教男女校";
+                        school.tuitionFee = 38930;
+                        school.tuitionFeeText = "$38,930（分10期）";
+                        school.primaryInfo = "九龍塘宣道小學";
+                        school.englishName = "Kowloon Tong Alliance Kindergarten";
+                        school.website = "http://www.ktak.edu.hk";
+                        break;
+                    case "啓思小學附屬幼稚園":
+                        school.schoolType = "私立獨立男女校";
+                        school.tuitionFee = 69630;
+                        school.tuitionFeeText = "$69,630（分11期）";
+                        school.primaryInfo = "啓思小學";
+                        school.englishName = "Creative Primary School's Kindergarten";
+                        school.website = "http://www.cpskg.edu.hk";
+                        break;
+                    case "聖三一中心幼稚園":
+                        school.schoolType = "非牟利基督教男女校";
+                        school.tuitionFee = 19290;
+                        school.tuitionFeeText = "$19,290（分10期）";
+                        school.primaryInfo = "聖三一堂小學";
+                        school.englishName = "Holy Trinity Centre Kindergarten";
+                        school.website = "http://www.htckg.edu.hk";
+                        break;
+                    case "聖若望英文書院（幼稚園部）":
+                        school.schoolType = "私立獨立男女校";
+                        school.tuitionFee = 58000; // Using lowest for filter
+                        school.tuitionFeeText = "半日：$58,000（分12期）全日：$72,000（分12期）";
+                        school.primaryInfo = "聖若望英文書院（小學部）";
+                        school.englishName = "St. Johannes College (Kindergarten Section)";
+                        school.website = "http://www.st-johannes.edu.hk";
+                        break;
+                    case "玫瑰崗幼稚園": // Added new school
+                        school.rank = null; // No rank in the provided list
+                        school.district = "灣仔區";
+                        school.schoolType = "非牟利天主教男女校";
+                        school.kgpScheme = "無";
+                        school.oneStop = "是";
+                        school.teachingLanguage = "沒有資料"; // Not specified in text
+                        school.primaryInfo = "玫瑰崗學校（小學部）";
+                        school.schoolGender = "男女校";
+                        school.tuitionFee = 35800; // Using lowest for filter
+                        school.tuitionFeeText = "上午及下午班$35,800-$32,700 /全日班$59,400（分10期）";
+                        school.teacherStudentRatio = "沒有資料"; // Not specified in text
+                        school.environmentScore = null; // Not specified in text
+                        school.promotionRate = null; // Not specified in text
+                        school.englishName = "Rosaryhill Kindergarten";
+                        school.website = "http://www.rhs.edu.hk";
+                        break;
+                    // Handle Victoria Education Organisation schools based on their original names
+                    case "維多利亞（寶翠園）幼稚園":
+                    case "維多利亞（何文田）國際幼兒園":
+                    case "銅鑼灣維多利亞國際幼稚園":
+                    case "維多利亞幼稚園":
+                    case "維多利亞（君匯港）幼稚園":
+                    case "維多利亞(康怡)幼兒園":
+                    case "銅鑼灣維多利亞洲(海峰園)幼兒園":
+                        // These are listed under "維多利亞教育機構屬下幼稚園" in the user's new list
+                        school.oneStop = "否"; // User specified not one-stop
+                        // Tuition fees and texts are already in the data, keep them as is or refine if new specific data is available.
+                        // For this update, I'll just mark them as one-stop.
+                        break;
+                }
+
+                // Check for discrepancy in oneStop status
+                if (originalOneStop !== school.oneStop ||
+                    originalSchoolType !== school.schoolType ||
+                    originalTuitionFee !== school.tuitionFee ||
+                    originalPrimaryInfo !== school.primaryInfo ||
+                    originalSchoolGender !== school.schoolGender) {
+                    school.discrepancy = true;
+                } else {
+                    school.discrepancy = false;
+                }
+            });
+
+            const districtFilter = document.getElementById('districtFilter');
+            const schoolTypeFilter = document.getElementById('schoolTypeFilter');
+            const oneStopFilter = document.getElementById('oneStopFilter');
+            const maxTuitionFilter = document.getElementById('maxTuitionFilter');
+            const minPromotionRateFilter = document.getElementById('minPromotionRateFilter');
+            const teachingLanguageFilter = document.getElementById('teachingLanguageFilter');
+
+            // Populate filters
+            const uniqueDistricts = new Set(schoolsData.map(s => s.district));
+            const uniqueSchoolTypes = new Set(schoolsData.map(s => s.schoolType));
+            const uniqueTeachingLanguages = new Set();
+            
+            // Collect unique tuition fees for dropdown
+            const uniqueTuitions = new Set();
+            schoolsData.forEach(school => {
+                if (school.tuitionFee !== null && !isNaN(school.tuitionFee)) {
+                    uniqueTuitions.add(school.tuitionFee);
+                }
+            });
+            const sortedTuitions = Array.from(uniqueTuitions).sort((a, b) => a - b);
+
+            // Collect unique promotion rates for dropdown
+            const uniquePromotionRates = new Set();
+            schoolsData.forEach(school => {
+                if (school.promotionRate !== null && !isNaN(school.promotionRate)) {
+                    uniquePromotionRates.add(school.promotionRate);
+                }
+            });
+            const sortedPromotionRates = Array.from(uniquePromotionRates).sort((a, b) => a - b);
+
+            // Populate unique teaching languages (simplified for clearer options)
+            const simplifiedLanguages = new Set();
+            schoolsData.forEach(school => {
+                if (school.teachingLanguage && school.teachingLanguage !== "沒有資料") {
+                    const languages = school.teachingLanguage.split(',').map(lang => lang.trim());
+                    languages.forEach(lang => {
+                        if (lang.includes('中文') || lang.includes('粵語') || lang.includes('普通話')) simplifiedLanguages.add('中文');
+                        if (lang.includes('英文')) simplifiedLanguages.add('英文');
+                        if (lang.includes('德文')) simplifiedLanguages.add('德文');
+                        if (lang.includes('西班牙文')) simplifiedLanguages.add('西班牙文');
+                        // Add other specific languages if needed
+                    });
+                }
+            });
+
+            Array.from(uniqueDistricts).sort().forEach(district => {
                 const option = document.createElement('option');
-                option.value = d;
-                option.textContent = d;
+                option.value = district;
+                option.textContent = district;
                 districtFilter.appendChild(option);
             });
 
-            function renderCards(schools) {
-                resultsContainer.innerHTML = '';
-                if (schools.length === 0) {
-                    resultsContainer.innerHTML = `<p class="text-gray-500 col-span-full text-center">沒有找到符合條件的學校。 / No schools found matching the criteria.</p>`;
-                    return;
-                }
-                schools.forEach(school => {
-                    const card = document.createElement('div');
-                    card.className = 'bg-white rounded-lg shadow-md overflow-hidden transform hover:-translate-y-1 transition-transform duration-300 cursor-pointer';
-                    card.innerHTML = `
-                        <div class="p-6">
-                            <h3 class="text-xl font-bold mb-2 text-gray-800">${school.name} / ${school.englishName}</h3>
-                            <p class="text-sm text-gray-500 mb-4">${school.district}</p>
-                            <div class="space-y-2 text-gray-700">
-                                <p><strong>聯繫小學：</strong> ${school.primary} / <br class="md:hidden"><strong>Associated Primary:</strong> ${school.primary}</p>
-                                <p><strong>升學率：</strong> ${school.progressionText} ${school.progressionRate > 0 ? `(${school.progressionRate}%)` : ''} / <br class="md:hidden"><strong>Progression Rate:</strong> ${school.progressionText} ${school.progressionRate > 0 ? `(${school.progressionRate}%)` : ''}</p>
-                                <p><strong>學費：</strong> ${school.feeText} / <br class="md:hidden"><strong>Fee:</strong> ${school.feeText}</p>
-                                <p><strong>性別(幼稚園)：</strong> ${school.genderK} / <br class="md:hidden"><strong>Gender (Kindergarten):</strong> ${school.genderK}</p>
-                                <p><strong>性別(小學)：</strong> ${school.genderP} ${school.genderK !== school.genderP ? '<span class="text-red-500 font-bold ml-2">!注意 / !Warning</span>' : ''} / <br class="md:hidden"><strong>Gender (Primary):</strong> ${school.genderP} ${school.genderK !== school.genderP ? '<span class="text-red-500 font-bold ml-2">!注意 / !Warning</span>' : ''}</p>
-                            </div>
-                        </div>
-                    `;
-                    card.addEventListener('click', () => openModal(school));
-                    resultsContainer.appendChild(card);
-                });
-            }
+            Array.from(uniqueSchoolTypes).sort().forEach(type => {
+                const option = document.createElement('option');
+                option.value = type;
+                option.textContent = type;
+                schoolTypeFilter.appendChild(option);
+            });
 
-            function updateCharts(schools) {
-                const chartLabels = schools.map(s => s.name);
-                const feeData = schools.map(s => s.fee);
-                const progressionData = schools.map(s => s.progressionRate);
-                
-                if (feeChart) feeChart.destroy();
-                if (progressionChart) progressionChart.destroy();
-                
-                const feeCtx = document.getElementById('feeChart').getContext('2d');
-                feeChart = new Chart(feeCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: chartLabels,
-                        datasets: [{
-                            label: '全年學費 (HKD) / Annual Fee (HKD)',
-                            data: feeData,
-                            backgroundColor: 'rgba(74, 144, 226, 0.6)',
-                            borderColor: 'rgba(74, 144, 226, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { display: false },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.x !== null) {
-                                            label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'HKD' }).format(context.parsed.x);
-                                        }
-                                        return label;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                beginAtZero: true
-                            },
-                            y: {
-                                ticks: {
-                                  autoSkip: false,
-                                  callback: function(value, index, values) {
-                                    const label = this.getLabelForValue(value);
-                                    return label.length > 12 ? label.substring(0, 10) + '...' : label;
-                                  }
-                                }
-                            }
-                        }
-                    }
-                });
+            // Populate teachingLanguageFilter with simplified options
+            Array.from(simplifiedLanguages).sort().forEach(lang => {
+                const option = document.createElement('option');
+                option.value = lang;
+                option.textContent = lang;
+                teachingLanguageFilter.appendChild(option);
+            });
 
-                const progressionCtx = document.getElementById('progressionChart').getContext('2d');
-                progressionChart = new Chart(progressionCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: chartLabels,
-                        datasets: [{
-                            label: '升學率 (%) / Progression Rate (%)',
-                            data: progressionData,
-                            backgroundColor: 'rgba(80, 227, 194, 0.6)',
-                            borderColor: 'rgba(80, 227, 194, 1)',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        indexAxis: 'y',
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                           legend: { display: false },
-                           tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.dataset.label || '';
-                                        if (label) {
-                                            label += ': ';
-                                        }
-                                        if (context.parsed.x !== null) {
-                                            label += context.parsed.x + '%';
-                                        }
-                                        return label;
-                                    }
-                                }
-                            }
-                        },
-                        scales: {
-                            x: {
-                                beginAtZero: true,
-                                max: 100
-                            },
-                            y: {
-                                ticks: {
-                                  autoSkip: false,
-                                  callback: function(value, index, values) {
-                                    const label = this.getLabelForValue(value);
-                                    return label.length > 12 ? label.substring(0, 10) + '...' : label;
-                                  }
-                                }
-                            }
-                        }
-                    }
-                });
-            }
+            // Populate maxTuitionFilter
+            sortedTuitions.forEach(tuition => {
+                const option = document.createElement('option');
+                option.value = tuition;
+                option.textContent = `$${tuition.toLocaleString()}`;
+                maxTuitionFilter.appendChild(option);
+            });
 
-            function applyFilters() {
-                const district = districtFilter.value;
-                const gender = document.querySelector('#gender-filter .bg-blue-500').dataset.value;
-                const maxFee = parseInt(feeFilter.value);
-                const minProgression = parseInt(progressionFilter.value);
+            // Populate minPromotionRateFilter
+            sortedPromotionRates.forEach(rate => {
+                const option = document.createElement('option');
+                option.value = rate;
+                option.textContent = `${rate}%`;
+                minPromotionRateFilter.appendChild(option);
+            });
 
-                const filteredSchools = schoolData.filter(school => {
-                    const districtMatch = district === 'all' || school.district === district;
-                    const genderMatch = gender === 'all' || school.genderK === gender;
-                    const feeMatch = school.fee <= maxFee;
-                    const progressionMatch = school.progressionRate >= minProgression;
-                    return districtMatch && genderMatch && feeMatch && progressionMatch;
-                });
 
-                renderCards(filteredSchools);
-                updateCharts(filteredSchools);
-            }
-
+            // Add event listeners
             districtFilter.addEventListener('change', applyFilters);
-            
-            genderFilter.addEventListener('click', (e) => {
-                if (e.target.tagName === 'BUTTON') {
-                    genderFilter.querySelectorAll('button').forEach(btn => {
-                        btn.classList.remove('bg-blue-500', 'text-white');
-                        btn.classList.add('bg-gray-200', 'text-gray-700');
-                    });
-                    e.target.classList.add('bg-blue-500', 'text-white');
-                    e.target.classList.remove('bg-gray-200', 'text-gray-700');
-                    applyFilters();
-                }
-            });
+            schoolTypeFilter.addEventListener('change', applyFilters);
+            document.getElementById('schoolGenderFilter').addEventListener('change', applyFilters);
+            oneStopFilter.addEventListener('change', applyFilters);
+            teachingLanguageFilter.addEventListener('change', applyFilters);
+            maxTuitionFilter.addEventListener('change', applyFilters);
+            minPromotionRateFilter.addEventListener('change', applyFilters);
 
-            feeFilter.addEventListener('input', (e) => {
-                feeValue.textContent = parseInt(e.target.value).toLocaleString();
-            });
-            feeFilter.addEventListener('change', applyFilters);
-
-            progressionFilter.addEventListener('input', (e) => {
-                progressionValue.textContent = e.target.value;
-            });
-            progressionFilter.addEventListener('change', applyFilters);
-            
+            // Initial render
             applyFilters();
         });
-
-        const modal = document.getElementById('modal');
-        const modalContent = document.getElementById('modal-content');
-        const modalTitle = document.getElementById('modal-title');
-        const modalBody = document.getElementById('modal-body');
-        const modalClose = document.getElementById('modal-close');
-
-        function openModal(school) {
-            modalTitle.textContent = school.name + ' / ' + school.englishName;
-            modalBody.innerHTML = school.details;
-            modal.classList.remove('opacity-0', 'pointer-events-none');
-            modalContent.classList.remove('scale-95');
-        }
-
-        function closeModal() {
-            modal.classList.add('opacity-0');
-            modalContent.classList.add('scale-95');
-            setTimeout(() => {
-                modal.classList.add('pointer-events-none');
-            }, 300);
-        }
-
-        modalClose.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeModal();
-            }
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeModal();
-            }
-        });
-
     </script>
 </body>
 </html>
