@@ -147,16 +147,17 @@
                 rank: 3,
                 englishName: 'KENTVILLE KINDERGARTEN',
                 chineseName: '根德園幼稚園',
-                freeScheme: '沒有',
+                freeScheme: '沒有', // Changed back to '沒有' for filter consistency
                 district: '九龍城區',
-                tuition: '$46,000 (10)',
+                tuition: '$46,000 (10)', // Changed back to original tuition
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
+                relationship: '獨立幼稚園', // Changed back to '獨立幼稚園'
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
                 website: 'http://www.kentville.edu.hk', // Updated
-                address: '九龍根德道9號地下及多實街5-7號地下及1樓' // Added address
+                address: '九龍根德道9號地下及多實街5-7號地下及1樓', // Updated
+                closureStatus: '2025/26學年後閉校' // Simplified closure status for display
             },
             {
                 id: 'kindergarten-4',
@@ -563,7 +564,7 @@
                 chineseName: '維多利亞（君匯港）幼稚園',
                 freeScheme: '沒有',
                 district: '油尖旺區',
-                tuition: '~$99,253 (11)',
+                tuition: '$99,253 (11)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
@@ -1753,15 +1754,23 @@
                 <p class="text-gray-700 mb-1"><strong>幼稚園名稱 (英文):</strong> ${kindergarten.englishName}</p>
                 <p class="text-gray-700 mb-1"><strong>免費幼稚園計劃:</strong> ${kindergarten.freeScheme}</p>
                 <p class="text-gray-700 mb-1"><strong>地區:</strong> ${kindergarten.district}</p>
-                <p class="text-gray-700 mb-1"><strong>性別:</strong> ${kindergarten.gender}</p>
+                <p class="text-700 mb-1"><strong>性別:</strong> ${kindergarten.gender}</p>
                 <p class="text-gray-700 mb-1"><strong>教學語言:</strong> ${kindergarten.teachingLanguage}</p>
+                ${kindergarten.id === 'kindergarten-3' ? `<p class="text-red-600 font-bold mt-2"><strong>${kindergarten.closureStatus}</strong></p>` : ''}
             `;
             cardDiv.appendChild(visibleDetailsDiv);
 
 
             // Toggleable details
             const toggleableDetailsDiv = document.createElement('div');
-            toggleableDetailsDiv.className = 'kindergarten-details-toggleable'; // Apply toggleable class
+            // For Kentville Kindergarten, always show details
+            if (kindergarten.id === 'kindergarten-3') { // Check for Kentville Kindergarten by ID
+                toggleableDetailsDiv.classList.add('active'); // Add active class directly
+            } else {
+                toggleableDetailsDiv.classList.remove('active'); // Ensure it's not active by default
+            }
+            toggleableDetailsDiv.className += ' kindergarten-details-toggleable'; // Apply toggleable class
+
 
             // Define the starting point for Google Maps directions
             const originAddress = encodeURIComponent('順利紀律部隊宿舍茶寮坳利安道32號');
@@ -1781,14 +1790,17 @@
                 <p class="text-gray-700 mb-1"><strong>關聯小學:</strong> ${kindergarten.primarySchool}</p>
                 <p class="text-gray-700 mb-1"><strong>關聯中學:</strong> ${kindergarten.secondarySchool}</p>
                 <p class="text-gray-700 mb-1"><strong>關係:</strong> ${kindergarten.relationship}</p>
-                <p class="text-gray-700 mb-1"><strong>學校網址:</strong> <a href="${kindergarten.website}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.website !== '待查' ? kindergarten.website : '待查'}</a></p>
+                <p class="text-gray-700 mb-1"><strong>學校網址:</strong> <a href="${googleMapsUrl}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.website !== '待查' ? kindergarten.website : '待查'}</a></p>
                 <p class="text-gray-700"><strong>地址:</strong> <a href="${googleMapsUrl}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.address || '待查'}</a></p>
             `;
             cardDiv.appendChild(toggleableDetailsDiv);
 
             // Add click event listener to toggle details visibility
             cardDiv.addEventListener('click', () => {
-                toggleableDetailsDiv.classList.toggle('active');
+                // Only toggle if it's not Kentville Kindergarten
+                if (kindergarten.id !== 'kindergarten-3') {
+                    toggleableDetailsDiv.classList.toggle('active');
+                }
             });
 
             return cardDiv;
