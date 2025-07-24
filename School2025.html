@@ -1767,8 +1767,16 @@
             const originAddress = encodeURIComponent('順利紀律部隊宿舍茶寮坳利安道32號');
             const destinationAddress = encodeURIComponent(kindergarten.address || ''); // Use kindergarten's address, encode it
 
-            // Google Maps URL with public transit and arrival time 08:45 AM
-            const googleMapsUrl = `https://www.google.com/maps/dir/${originAddress}/${destinationAddress}?travelmode=transit&destination_time=0845`;
+            // Get current date for destination_time parameter
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            const arrivalTime = '0845'; // HHMM format for 08:45 AM
+
+            // Google Maps URL with public transit and arrival time (including current date)
+            const googleMapsUrl = `https://www.google.com/maps/dir/${originAddress}/${destinationAddress}?travelmode=transit&destination_time=${year}${month}${day}${arrivalTime}`;
+
 
             toggleableDetailsDiv.innerHTML = `
                 <p class="text-gray-700 mb-1"><strong>學費:</strong> ${kindergarten.tuition}</p>
