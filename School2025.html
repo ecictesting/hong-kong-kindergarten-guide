@@ -16,11 +16,12 @@
         /* Style for the kindergarten cards */
         .kindergarten-card {
             transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
-            position: relative; /* Needed for absolute positioning of bookmarks */
-            cursor: pointer; /* Indicate clickable card */
-            display: flex; /* Use flexbox for layout */
-            flex-direction: column; /* Stack content vertically */
-            justify-content: space-between; /* Push toggleable content to bottom if needed */
+            position: relative;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 250px; /* Ensure consistent initial card height */
         }
         .kindergarten-card:hover {
             transform: translateY(-3px); /* Slight lift on hover */
@@ -32,12 +33,12 @@
             border: 2px solid #10b981; /* Green border (tailwind green-500) */
         }
         /* Hidden details styling - initially hidden */
-        .kindergarten-details-toggleable { /* New class for toggleable details */
+        .kindergarten-details-toggleable {
             max-height: 0;
             overflow: hidden;
             transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
             opacity: 0;
-            margin-top: 0; /* Remove initial margin */
+            margin-top: 0;
         }
         /* Active state for visible toggleable details */
         .kindergarten-details-toggleable.active {
@@ -48,8 +49,14 @@
         /* Ensure URLs break and wrap within their container */
         .kindergarten-details-toggleable a {
             word-break: break-all; /* Breaks words at any character to prevent overflow */
-            /* Alternatively, for better readability, you might use:
-            overflow-wrap: break-word; */
+            overflow-wrap: break-word; /* Also helps with long words */
+        }
+        /* Style for filter containers */
+        .filter-container {
+            background-color: #ffffff;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
@@ -59,7 +66,7 @@
 
         <!-- Filter Controls -->
         <div class="mb-6 flex flex-wrap items-center justify-center gap-4">
-            <div>
+            <div class="filter-container">
                 <label for="association-filter" class="block text-sm font-medium text-gray-700 mb-1">關聯學校篩選:</label>
                 <select id="association-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                     <option value="all">所有</option>
@@ -68,7 +75,7 @@
                 </select>
             </div>
 
-            <div>
+            <div class="filter-container">
                 <label for="gender-filter" class="block text-sm font-medium text-gray-700 mb-1">性別篩選:</label>
                 <select id="gender-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                     <option value="all">所有</option>
@@ -78,7 +85,7 @@
                 </select>
             </div>
 
-            <div>
+            <div class="filter-container">
                 <label for="language-filter" class="block text-sm font-medium text-gray-700 mb-1">教學語言篩選:</label>
                 <select id="language-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                     <option value="all">所有</option>
@@ -90,7 +97,7 @@
             </div>
 
             <!-- New filter for Free Kindergarten Scheme -->
-            <div>
+            <div class="filter-container">
                 <label for="free-scheme-filter" class="block text-sm font-medium text-gray-700 mb-1">免費幼稚園計劃篩選:</label>
                 <select id="free-scheme-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
                     <option value="all">所有</option>
@@ -101,7 +108,7 @@
             </div>
 
             <!-- New filter for District (multi-select) -->
-            <div>
+            <div class="filter-container">
                 <label for="district-filter" class="block text-sm font-medium text-gray-700 mb-1">地區篩選 (可多選):</label>
                 <select id="district-filter" multiple class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md h-32">
                     <!-- Options will be dynamically populated by JavaScript -->
@@ -1859,7 +1866,7 @@
         genderFilter.addEventListener('change', renderKindergartens);
         languageFilter.addEventListener('change', renderKindergartens);
         freeSchemeFilter.addEventListener('change', renderKindergartens);
-        districtFilter.addEventListener('change', renderKindergartens); // Add event listener for new district filter
+        districtFilter.addEventListener('change', renderKindergartens); // Add event listener for new filter
 
         // Initial population and render on page load
         populateDistrictFilter(); // Populate district filter options
