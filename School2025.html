@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="zh-HK">
 <head>
     <meta charset="UTF-8">
@@ -8,8 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Font: Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <!-- Font Awesome for icons -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -32,38 +30,6 @@
         /* Details are always visible, no hidden state */
         .kindergarten-details {
             margin-top: 1rem; /* Add space below the name */
-        }
-        .bookmark-button-single { /* Changed class name for single button */
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            display: flex;
-            gap: 0.5rem;
-        }
-        .bookmark-btn {
-            background-color: #cbd5e1; /* Light gray */
-            color: #475569; /* Darker gray text */
-            padding: 0.4rem 0.6rem;
-            border-radius: 9999px; /* Full rounded */
-            cursor: pointer;
-            transition: all 0.2s ease-in-out;
-            font-size: 0.8rem;
-            display: flex;
-            align-items: center;
-            justify-content: center; /* Center the star icon */
-            width: 2.5rem; /* Fixed width for a square-ish button */
-            height: 2.5rem; /* Fixed height for a square-ish button */
-        }
-        .bookmark-btn:hover {
-            background-color: #94a3b8; /* Medium gray on hover */
-            color: #f8fafc; /* Lighter text on hover */
-        }
-        .bookmark-btn.bookmarked {
-            background-color: #fcd34d; /* Amber-300 */
-            color: #b45309; /* Amber-800 */
-        }
-        .bookmark-btn.bookmarked:hover {
-            background-color: #fbbf24; /* Amber-400 */
         }
     </style>
 </head>
@@ -111,24 +77,7 @@
     </div>
 
     <script type="module">
-        // Firebase SDK imports
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Firebase configuration (provided by Canvas environment)
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
-
-        // Initialize Firebase
-        let app;
-        let db;
-        let auth;
-        let currentUserId = null;
-        let userAId = 'userA'; // Hardcoded user ID for demonstration
-
-        // Data for kindergartens (static data for now, will be augmented with bookmarks and new info)
+        // Data for kindergartens (static data for now, will be augmented with simplified language)
         const kindergartens = [
             {
                 id: 'kindergarten-1', // Unique ID for Firestore
@@ -143,7 +92,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: '待查' // New field
+                website: 'http://www.stcatherines.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-2',
@@ -158,7 +107,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.skhkg.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-3',
@@ -173,7 +122,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.kentville.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-4',
@@ -188,7 +137,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.braemarhillnurseryschool.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-5',
@@ -203,7 +152,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.stmkg.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-6',
@@ -218,7 +167,7 @@
                 relationship: '直屬',
                 gender: '女校',
                 teachingLanguage: '主要粵語',
-                website: '待查'
+                website: 'http://www.shck.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-7',
@@ -233,7 +182,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'https://np.stpaulchurchkg.edu.hk/index.php' // Updated
             },
             {
                 id: 'kindergarten-8',
@@ -248,7 +197,7 @@
                 relationship: '直屬',
                 gender: '女校',
                 teachingLanguage: '粵語輔以英語及普通話',
-                website: '待查'
+                website: 'http://www.spk.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-9',
@@ -263,7 +212,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.victoria.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-10',
@@ -272,13 +221,13 @@
                 chineseName: '劍鳴幼稚園',
                 freeScheme: '沒有',
                 district: '九龍城區',
-                tuition: '$64,350 (11)',
+                tuition: '$64,350 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.keenmind.com.hk' // Updated
             },
             {
                 id: 'kindergarten-11',
@@ -293,7 +242,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.cbvictoria.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-12',
@@ -308,7 +257,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
             },
             {
                 id: 'kindergarten-13',
@@ -323,7 +272,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://pbkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-14',
@@ -338,7 +287,7 @@
                 relationship: '直屬',
                 gender: '男女校',
                 teachingLanguage: '兩文三語（英語、粵語、普通話）',
-                website: 'https://kindergarten.munsang.edu.hk/' // Example data
+                website: 'https://kindergarten.munsang.edu.hk/'
             },
             {
                 id: 'kindergarten-15',
@@ -353,7 +302,7 @@
                 relationship: '直屬',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.pcps.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-16',
@@ -368,7 +317,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.york.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-17',
@@ -383,7 +332,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.hklk.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-18',
@@ -398,7 +347,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.york.edu.hk/' // Updated (same as York International)
             },
             {
                 id: 'kindergarten-19',
@@ -412,7 +361,7 @@
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
-                website: '待查'
+                website: 'http://www.stcatherines.edu.hk' // Updated (same as main St. Catherine's)
             },
             {
                 id: 'kindergarten-20',
@@ -427,7 +376,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
             },
             {
                 id: 'kindergarten-21',
@@ -442,7 +391,7 @@
                 relationship: '沒有',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'https://www.kcs.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-22',
@@ -457,7 +406,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
             },
             {
                 id: 'kindergarten-23',
@@ -472,7 +421,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.stpaulchurchkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-24',
@@ -487,7 +436,7 @@
                 relationship: '聯繫',
                 gender: '女校',
                 teachingLanguage: '中文及英文',
-                website: '待查'
+                website: 'https://www3.ghs.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-25',
@@ -502,7 +451,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.npmckg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-26',
@@ -517,7 +466,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.ycis-hk.com/' // Updated (no .edu.hk found)
             },
             {
                 id: 'kindergarten-27',
@@ -532,7 +481,7 @@
                 relationship: '聯繫',
                 gender: '女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.tlmshk.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-28',
@@ -547,7 +496,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
             },
             {
                 id: 'kindergarten-29',
@@ -562,7 +511,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
             },
             {
                 id: 'kindergarten-30',
@@ -577,7 +526,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.learninghabitat.org/' // Updated
             },
             {
                 id: 'kindergarten-31',
@@ -592,7 +541,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.learninghabitat.org/' // Updated (same as main Learning Habitat)
             },
             {
                 id: 'kindergarten-32',
@@ -607,7 +556,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.york.edu.hk/' // Updated (same as York group site)
             },
             {
                 id: 'kindergarten-33',
@@ -622,7 +571,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.mingwai.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-34',
@@ -637,7 +586,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: '待查'
+                website: 'http://www.cckg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-35',
@@ -652,7 +601,7 @@
                 relationship: '直屬',
                 gender: '女校',
                 teachingLanguage: '英文 (主要)',
-                website: '待查'
+                website: 'http://www.ssgc.edu.hk/' // Updated (secondary school site)
             },
             {
                 id: 'kindergarten-36',
@@ -667,7 +616,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: '待查'
+                website: 'http://www.stnicholaskg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-37',
@@ -682,7 +631,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.hksoka.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-38',
@@ -697,7 +646,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.learninghabitat.org/' // Updated (same as main Learning Habitat)
             },
             {
                 id: 'kindergarten-39',
@@ -712,7 +661,7 @@
                 relationship: '獨立幼稚園',
                 gender: '女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.hys.edu.hk/' // Updated (secondary school site)
             },
             {
                 id: 'kindergarten-40',
@@ -727,10 +676,11 @@
                 relationship: '聯繫',
                 gender: '男女校',
                 teachingLanguage: '主要中文，英文科全英語教學',
-                website: '待查'
+                website: 'http://www.kauyan.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-41',
+                rank: 41,
                 englishName: 'CREATIVE PRIMARY SCHOOL’S KINDERGARTEN',
                 chineseName: '啓思小學附屬幼稚園',
                 freeScheme: '不是',
@@ -741,24 +691,26 @@
                 relationship: '沒關係',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.cpskg.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-42',
+                rank: 42,
                 englishName: 'OI KWAN ROAD BAPTIST CHURCH LUI KWOK PAT FONG KINDERGARTEN',
                 chineseName: '愛群道浸信會呂郭碧鳳幼稚園',
                 freeScheme: '有',
                 district: '灣仔區',
-                tuition: '半日班：免費<br>全日班：$18,230(10)',
+                tuition: '半日班：$18,230(10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.lkpfkg.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-43',
+                rank: 43,
                 englishName: 'ESF INTERNATIONAL KINDERGARTEN（HILLSIDE）',
                 chineseName: '英基國際幼稚園（曉新）',
                 freeScheme: '沒有',
@@ -769,10 +721,11 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: '待查'
+                website: 'https://www.hillside.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-44',
+                rank: 44,
                 englishName: 'MING WAI KINDERGARTEN',
                 chineseName: '明慧國際幼稚園',
                 freeScheme: '沒有',
@@ -783,7 +736,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.mingwai.edu.hk' // Updated
             },
             {
                 id: 'kindergarten-45',
@@ -798,7 +751,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.rhs.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-46',
@@ -813,7 +766,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.bpl.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-47',
@@ -828,7 +781,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.ststephens.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-48',
@@ -843,7 +796,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.skhspk.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-49',
@@ -858,7 +811,7 @@
                 relationship: '聯繫',
                 gender: '女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.ptps.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-50',
@@ -873,7 +826,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '德文/英文',
-                website: '待查'
+                website: 'http://www.gsis.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-51',
@@ -888,7 +841,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: '待查'
+                website: 'http://www.harrowschool.hk/' // Updated
             },
             {
                 id: 'kindergarten-52',
@@ -903,7 +856,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.ltllkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-53',
@@ -918,7 +871,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.cis.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-54',
@@ -933,7 +886,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.greenfield.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-55',
@@ -948,7 +901,7 @@
                 relationship: '結龍',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
             },
             {
                 id: 'kindergarten-56',
@@ -963,7 +916,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.strosakg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-57',
@@ -978,7 +931,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.choice.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-58',
@@ -993,7 +946,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.anchors.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-59',
@@ -1008,7 +961,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.jameskg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-60',
@@ -1023,7 +976,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.llckg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-61',
@@ -1038,7 +991,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.wellcomekg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-62',
@@ -1053,7 +1006,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.cotckg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-63',
@@ -1068,7 +1021,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.plktasfkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-64',
@@ -1083,7 +1036,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.hkvnskg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-65',
@@ -1098,7 +1051,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.lykg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-66',
@@ -1113,7 +1066,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.stlorraine.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-67',
@@ -1128,7 +1081,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.skhspk.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-68',
@@ -1143,7 +1096,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.tackchingkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-69',
@@ -1158,7 +1111,7 @@
                 relationship: '聯繫',
                 gender: '男女校',
                 teachingLanguage: '中文（包括普通話）及英文',
-                website: '待查'
+                website: 'http://www.ttpskg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-70',
@@ -1173,7 +1126,7 @@
                 relationship: '聯繫',
                 gender: '男女校',
                 teachingLanguage: '中文、英文',
-                website: '待查'
+                website: 'http://www.htckg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-71',
@@ -1188,7 +1141,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.joyfulworld.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-72',
@@ -1203,7 +1156,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.cuhkfaa.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-73',
@@ -1218,7 +1171,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.smcbk.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-74',
@@ -1233,7 +1186,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.joyfulworld.edu.hk/' // Updated (same as main Joyful World)
             },
             {
                 id: 'kindergarten-75',
@@ -1248,7 +1201,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.mingwai.edu.hk' // Updated (same as main Ming Wai)
             },
             {
                 id: 'kindergarten-76',
@@ -1263,7 +1216,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.chkskg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-77',
@@ -1278,7 +1231,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.ylllkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-78',
@@ -1293,7 +1246,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.hkmansk.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-79',
@@ -1308,7 +1261,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.think.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-80',
@@ -1323,7 +1276,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.mosllkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-81',
@@ -1338,7 +1291,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.tytakg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-82',
@@ -1353,7 +1306,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.hyccpw.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-83',
@@ -1368,7 +1321,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.stbarnabas.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-84',
@@ -1383,7 +1336,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.zenith.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-85',
@@ -1398,7 +1351,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.ylllkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-86',
@@ -1428,7 +1381,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.zenith.edu.hk/' // Updated (same as Zenith Kindergarten)
             },
             {
                 id: 'kindergarten-88',
@@ -1443,7 +1396,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.anchors.edu.hk/' // Updated (same as Anchors Kindergarten)
             },
             {
                 id: 'kindergarten-89',
@@ -1458,7 +1411,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.plkcpmykg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-90',
@@ -1473,7 +1426,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.plkltcs.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-91',
@@ -1488,7 +1441,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.sjskmkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-92',
@@ -1503,7 +1456,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.yotplsykg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-93',
@@ -1518,7 +1471,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.plktkpshkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-94',
@@ -1533,7 +1486,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.william.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-95',
@@ -1548,7 +1501,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.rms.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-96',
@@ -1563,7 +1516,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'https://creative.edu.hk/' // Updated (no .edu.hk found)
             },
             {
                 id: 'kindergarten-97',
@@ -1578,7 +1531,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.talentkg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-98',
@@ -1593,7 +1546,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.cotckg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-99',
@@ -1608,7 +1561,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: '待查'
+                website: 'http://www.prg.edu.hk/' // Updated
             },
             {
                 id: 'kindergarten-100',
@@ -1623,7 +1576,7 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.dhllkg.edu.hk/' // Updated
             }
         ];
 
@@ -1649,8 +1602,6 @@
         // Augment kindergarten data with simplified language for filtering
         kindergartens.forEach(k => {
             k.simplifiedTeachingLanguage = getSimplifiedLanguage(k.teachingLanguage);
-            // Initialize bookmark status for each kindergarten for userAId
-            k.bookmarkedBy = { [userAId]: false }; // Only one user bookmark state
         });
 
         const kindergartenListDiv = document.getElementById('kindergarten-list');
@@ -1668,22 +1619,6 @@
             nameHeading.className = 'text-xl font-semibold text-blue-700 mb-2';
             nameHeading.textContent = `${kindergarten.rank}. ${kindergarten.chineseName}`;
             cardDiv.appendChild(nameHeading);
-
-            // Single Bookmark button container
-            const bookmarkButtonsDiv = document.createElement('div');
-            bookmarkButtonsDiv.className = 'bookmark-button-single'; // Changed class name
-
-            // Single Bookmark Button
-            const bookmarkBtn = document.createElement('button');
-            // Use userAId to check bookmark status, as it's the only one displayed
-            bookmarkBtn.className = `bookmark-btn ${kindergarten.bookmarkedBy[userAId] ? 'bookmarked' : ''}`;
-            bookmarkBtn.innerHTML = `<i class="fa-solid fa-star"></i>`; // No text
-            bookmarkBtn.dataset.kindergartenId = kindergarten.id;
-            bookmarkBtn.dataset.userId = userAId; // Still tie to userAId for Firestore storage
-            bookmarkBtn.addEventListener('click', (event) => toggleBookmark(event, kindergarten.id, userAId));
-            bookmarkButtonsDiv.appendChild(bookmarkBtn);
-
-            cardDiv.appendChild(bookmarkButtonsDiv);
 
             const detailsDiv = document.createElement('div');
             detailsDiv.className = 'kindergarten-details active'; // Always active
@@ -1705,7 +1640,7 @@
             return cardDiv;
         }
 
-        // Function to render kindergartens based on filters and current bookmark state
+        // Function to render kindergartens based on filters
         function renderKindergartens() {
             kindergartenListDiv.innerHTML = ''; // Clear current list
 
@@ -1729,105 +1664,13 @@
             });
         }
 
-        // Firestore functions for bookmarks
-        async function getBookmarkDocRef(kindergartenId) {
-            // Corrected path structure for doc reference
-            return doc(db, 'artifacts', appId, 'public', 'data', 'bookmarks', kindergartenId);
-        }
-
-        async function loadBookmarks() {
-            try {
-                // Corrected path structure for collection reference
-                onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'bookmarks'), (snapshot) => {
-                    snapshot.docChanges().forEach(change => {
-                        const bookmarkData = change.doc.data();
-                        const kindergartenId = change.doc.id;
-
-                        // Find the kindergarten in our local data and update its bookmark status
-                        const index = kindergartens.findIndex(k => k.id === kindergartenId);
-                        if (index !== -1) {
-                            // Only update the userAId bookmark state as it's the only one displayed
-                            kindergartens[index].bookmarkedBy[userAId] = bookmarkData.bookmarkedBy && bookmarkData.bookmarkedBy[userAId] || false;
-                        }
-                    });
-                    renderKindergartens(); // Re-render after updating bookmarks
-                });
-            } catch (error) {
-                console.error("Error loading bookmarks:", error);
-            }
-        }
-
-        async function toggleBookmark(event, kindergartenId, userId) {
-            event.stopPropagation(); // Prevent card click event from firing
-
-            if (!db) {
-                console.error("Firestore not initialized.");
-                return;
-            }
-
-            const docRef = await getBookmarkDocRef(kindergartenId);
-
-            try {
-                const docSnap = await getDoc(docRef);
-                let currentBookmarks = {};
-
-                if (docSnap.exists()) {
-                    currentBookmarks = docSnap.data().bookmarkedBy || {};
-                }
-
-                // Toggle the bookmark status for the specific user (userAId in this case)
-                currentBookmarks[userId] = !currentBookmarks[userId];
-
-                await setDoc(docRef, { bookmarkedBy: currentBookmarks }, { merge: true });
-                console.log(`Bookmark for ${kindergartenId} by ${userId} toggled to ${currentBookmarks[userId]}`);
-
-            } catch (e) {
-                console.error("Error toggling bookmark: ", e);
-            }
-        }
-
-        // Initialize Firebase and load bookmarks
-        async function initializeAppAndLoadData() {
-            try {
-                app = initializeApp(firebaseConfig);
-                db = getFirestore(app);
-                auth = getAuth(app);
-
-                // Sign in anonymously if no custom token, otherwise use custom token
-                if (initialAuthToken) {
-                    await signInWithCustomToken(auth, initialAuthToken);
-                } else {
-                    await signInAnonymously(auth);
-                }
-
-                onAuthStateChanged(auth, (user) => {
-                    if (user) {
-                        currentUserId = user.uid;
-                        console.log("Firebase authenticated. User ID:", currentUserId);
-                        loadBookmarks(); // Load bookmarks once authenticated
-                    } else {
-                        console.log("No user signed in.");
-                        // Handle unauthenticated state if necessary
-                    }
-                });
-
-            } catch (error) {
-                console.error("Error initializing Firebase:", error);
-                // Display a user-friendly message about the error
-                const errorDiv = document.createElement('div');
-                errorDiv.className = 'text-red-500 text-center mt-4';
-                errorDiv.textContent = '無法加載書籤功能。請檢查您的網絡連接或稍後再試。';
-                document.body.appendChild(errorDiv);
-            }
-        }
-
         // Add event listeners to filters
         associationFilter.addEventListener('change', renderKindergartens);
         genderFilter.addEventListener('change', renderKindergartens);
         languageFilter.addEventListener('change', renderKindergartens);
 
-        // Call initialization function on window load
-        window.onload = initializeAppAndLoadData;
+        // Initial render
+        renderKindergartens();
 
     </script>
 </body>
