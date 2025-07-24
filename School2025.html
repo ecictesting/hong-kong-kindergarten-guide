@@ -563,7 +563,7 @@
                 chineseName: '維多利亞（君匯港）幼稚園',
                 freeScheme: '沒有',
                 district: '油尖旺區',
-                tuition: '$99,253 (11)',
+                tuition: '~$99,253 (11)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
@@ -832,7 +832,7 @@
                 chineseName: '浸信會培理學校',
                 freeScheme: '有',
                 district: '東區',
-                tuition: '半日班：免費<br>全日班：$15,570 (10)',
+                tuition: '半日班：$15,570 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
@@ -848,7 +848,7 @@
                 chineseName: '聖士提反堂小學暨幼稚園',
                 freeScheme: '有',
                 district: '中西區',
-                tuition: '半日班：免費<br>全日班：$12,290(10)',
+                tuition: '半日班：$12,290(10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
@@ -1648,7 +1648,7 @@
                 chineseName: '天樂幼稚園',
                 freeScheme: '有',
                 district: '元朗區',
-                tuition: '半日班：免費<br>全日班：$8,160 (12)',
+                tuition: '半日班：$8,160 (12)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
@@ -1767,15 +1767,13 @@
             const originAddress = encodeURIComponent('順利紀律部隊宿舍茶寮坳利安道32號');
             const destinationAddress = encodeURIComponent(kindergarten.address || ''); // Use kindergarten's address, encode it
 
-            // Get current date for destination_time parameter
+            // Get current date and set time for arrival_time parameter (Unix timestamp in seconds)
             const now = new Date();
-            const year = now.getFullYear();
-            const month = (now.getMonth() + 1).toString().padStart(2, '0');
-            const day = now.getDate().toString().padStart(2, '0');
-            const arrivalTime = '0845'; // HHMM format for 08:45 AM
+            now.setHours(8, 45, 0, 0); // Set to 08:45:00.000 today
+            const arrivalTimestamp = Math.floor(now.getTime() / 1000); // Unix timestamp in seconds
 
-            // Google Maps URL with public transit and arrival time (including current date)
-            const googleMapsUrl = `https://www.google.com/maps/dir/${originAddress}/${destinationAddress}?travelmode=transit&destination_time=${year}${month}${day}${arrivalTime}`;
+            // Google Maps URL with public transit and arrival time (Unix timestamp)
+            const googleMapsUrl = `https://www.google.com/maps/dir/${originAddress}/${destinationAddress}?travelmode=transit&arrival_time=${arrivalTimestamp}`;
 
 
             toggleableDetailsDiv.innerHTML = `
