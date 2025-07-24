@@ -17,6 +17,10 @@
         .kindergarten-card {
             transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
             position: relative; /* Needed for absolute positioning of bookmarks */
+            cursor: pointer; /* Indicate clickable card */
+            display: flex; /* Use flexbox for layout */
+            flex-direction: column; /* Stack content vertically */
+            justify-content: space-between; /* Push toggleable content to bottom if needed */
         }
         .kindergarten-card:hover {
             transform: translateY(-3px); /* Slight lift on hover */
@@ -27,12 +31,22 @@
             background-color: #e6ffed; /* Lighter green background for highlighted cards */
             border: 2px solid #10b981; /* Green border (tailwind green-500) */
         }
-        /* Details are always visible, no hidden state */
-        .kindergarten-details {
-            margin-top: 1rem; /* Add space below the name */
+        /* Hidden details styling - initially hidden */
+        .kindergarten-details-toggleable { /* New class for toggleable details */
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            opacity: 0;
+            margin-top: 0; /* Remove initial margin */
+        }
+        /* Active state for visible toggleable details */
+        .kindergarten-details-toggleable.active {
+            max-height: 500px; /* Adjust based on maximum content height */
+            opacity: 1;
+            margin-top: 1rem; /* Add space when expanded */
         }
         /* Ensure URLs break and wrap within their container */
-        .kindergarten-details a {
+        .kindergarten-details-toggleable a {
             word-break: break-all; /* Breaks words at any character to prevent overflow */
             /* Alternatively, for better readability, you might use:
             overflow-wrap: break-word; */
@@ -1234,7 +1248,7 @@
                 chineseName: '香港中文大學校友會聯會張煊昌幼稚園',
                 freeScheme: '有',
                 district: '沙田區',
-                tuition: '半日班：免費<br>全日班：$9,880 (10)',
+                tuition: '半日班：$9,880 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
@@ -1506,7 +1520,7 @@
                 chineseName: '保良局張潘美意幼稚園',
                 freeScheme: '有',
                 district: '離島區',
-                tuition: '半日班：免費<br>全日班：$11,240 (10)',
+                tuition: '半日班：$11,240 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
@@ -1522,7 +1536,7 @@
                 chineseName: '保良局李徐松聲紀念幼稚園',
                 freeScheme: '有',
                 district: '九龍城區',
-                tuition: '半日班：免費<br>全日班：$10,250 (10)',
+                tuition: '半日班：$10,250 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
@@ -1666,7 +1680,7 @@
                 chineseName: '栢基海韻幼稚園',
                 freeScheme: '有',
                 district: '荃灣區',
-                tuition: '半日班：免費<br>全日班：$4,184 (10)',
+                tuition: '半日班：$4,184 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
@@ -1732,29 +1746,44 @@
             const hasAssociatedSchool = kindergarten.primarySchool !== '沒有' || kindergarten.secondarySchool !== '沒有';
             cardDiv.className = `kindergarten-card bg-white rounded-xl shadow-md p-4 mb-4 ${hasAssociatedSchool ? 'highlighted-card' : ''}`;
 
-            const nameHeading = document.createElement('h2');
-            // Use displayRank for sequential numbering
-            nameHeading.className = 'text-xl font-semibold text-blue-700 mb-2';
-            nameHeading.textContent = `${displayRank}. ${kindergarten.chineseName}`;
-            cardDiv.appendChild(nameHeading);
-
-            const detailsDiv = document.createElement('div');
-            detailsDiv.className = 'kindergarten-details active'; // Always active
-
-            detailsDiv.innerHTML = `
+            // Always visible details
+            const visibleDetailsDiv = document.createElement('div');
+            visibleDetailsDiv.innerHTML = `
+                <h2 class="text-xl font-semibold text-blue-700 mb-2">${displayRank}. ${kindergarten.chineseName}</h2>
                 <p class="text-gray-700 mb-1"><strong>幼稚園名稱 (英文):</strong> ${kindergarten.englishName}</p>
                 <p class="text-gray-700 mb-1"><strong>免費幼稚園計劃:</strong> ${kindergarten.freeScheme}</p>
                 <p class="text-gray-700 mb-1"><strong>地區:</strong> ${kindergarten.district}</p>
                 <p class="text-gray-700 mb-1"><strong>性別:</strong> ${kindergarten.gender}</p>
                 <p class="text-gray-700 mb-1"><strong>教學語言:</strong> ${kindergarten.teachingLanguage}</p>
+            `;
+            cardDiv.appendChild(visibleDetailsDiv);
+
+
+            // Toggleable details
+            const toggleableDetailsDiv = document.createElement('div');
+            toggleableDetailsDiv.className = 'kindergarten-details-toggleable'; // Apply toggleable class
+
+            // Define the starting point for Google Maps directions
+            const originAddress = encodeURIComponent('順利紀律部隊宿舍茶寮坳利安道32號');
+            const destinationAddress = encodeURIComponent(kindergarten.address || ''); // Use kindergarten's address, encode it
+
+            // Google Maps URL with public transit and arrival time 08:45 AM
+            const googleMapsUrl = `https://www.google.com/maps/dir/${originAddress}/${destinationAddress}?travelmode=transit&destination_time=0845`;
+
+            toggleableDetailsDiv.innerHTML = `
                 <p class="text-gray-700 mb-1"><strong>學費:</strong> ${kindergarten.tuition}</p>
                 <p class="text-gray-700 mb-1"><strong>關聯小學:</strong> ${kindergarten.primarySchool}</p>
                 <p class="text-gray-700 mb-1"><strong>關聯中學:</strong> ${kindergarten.secondarySchool}</p>
                 <p class="text-gray-700 mb-1"><strong>關係:</strong> ${kindergarten.relationship}</p>
                 <p class="text-gray-700 mb-1"><strong>學校網址:</strong> <a href="${kindergarten.website}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.website !== '待查' ? kindergarten.website : '待查'}</a></p>
-                <p class="text-gray-700"><strong>地址:</strong> ${kindergarten.address || '待查'}</p>
+                <p class="text-gray-700"><strong>地址:</strong> <a href="${googleMapsUrl}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.address || '待查'}</a></p>
             `;
-            cardDiv.appendChild(detailsDiv);
+            cardDiv.appendChild(toggleableDetailsDiv);
+
+            // Add click event listener to toggle details visibility
+            cardDiv.addEventListener('click', () => {
+                toggleableDetailsDiv.classList.toggle('active');
+            });
 
             return cardDiv;
         }
