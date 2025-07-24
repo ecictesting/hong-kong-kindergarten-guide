@@ -99,6 +99,14 @@
                     <option value="不是">不是</option> <!-- "不是" is used for some cases in your data -->
                 </select>
             </div>
+
+            <!-- New filter for District (multi-select) -->
+            <div>
+                <label for="district-filter" class="block text-sm font-medium text-gray-700 mb-1">地區篩選 (可多選):</label>
+                <select id="district-filter" multiple class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md h-32">
+                    <!-- Options will be dynamically populated by JavaScript -->
+                </select>
+            </div>
         </div>
 
         <!-- Display 5 cards horizontally on large screens -->
@@ -1740,6 +1748,19 @@
         const genderFilter = document.getElementById('gender-filter');
         const languageFilter = document.getElementById('language-filter');
         const freeSchemeFilter = document.getElementById('free-scheme-filter'); // New filter element
+        const districtFilter = document.getElementById('district-filter'); // New district filter element
+
+        // Populate district filter options dynamically
+        function populateDistrictFilter() {
+            const districts = [...new Set(kindergartens.map(k => k.district))].sort(); // Get unique sorted districts
+            districtFilter.innerHTML = '<option value="all">所有</option>'; // Add "All" option first
+            districts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district;
+                option.textContent = district;
+                districtFilter.appendChild(option);
+            });
+        }
 
         // Function to create a kindergarten card
         function createKindergartenCard(kindergarten, displayRank) { // Added displayRank parameter
@@ -1751,26 +1772,19 @@
             const visibleDetailsDiv = document.createElement('div');
             visibleDetailsDiv.innerHTML = `
                 <h2 class="text-xl font-semibold text-blue-700 mb-2">${displayRank}. ${kindergarten.chineseName}</h2>
+                ${kindergarten.id === 'kindergarten-3' ? `<p class="text-red-600 font-bold mt-2"><strong>${kindergarten.closureStatus}</strong></p>` : ''}
                 <p class="text-gray-700 mb-1"><strong>幼稚園名稱 (英文):</strong> ${kindergarten.englishName}</p>
                 <p class="text-gray-700 mb-1"><strong>免費幼稚園計劃:</strong> ${kindergarten.freeScheme}</p>
                 <p class="text-gray-700 mb-1"><strong>地區:</strong> ${kindergarten.district}</p>
-                <p class="text-700 mb-1"><strong>性別:</strong> ${kindergarten.gender}</p>
+                <p class="text-gray-700 mb-1"><strong>性別:</strong> ${kindergarten.gender}</p>
                 <p class="text-gray-700 mb-1"><strong>教學語言:</strong> ${kindergarten.teachingLanguage}</p>
-                ${kindergarten.id === 'kindergarten-3' ? `<p class="text-red-600 font-bold mt-2"><strong>${kindergarten.closureStatus}</strong></p>` : ''}
             `;
             cardDiv.appendChild(visibleDetailsDiv);
 
 
             // Toggleable details
             const toggleableDetailsDiv = document.createElement('div');
-            // For Kentville Kindergarten, always show details
-            if (kindergarten.id === 'kindergarten-3') { // Check for Kentville Kindergarten by ID
-                toggleableDetailsDiv.classList.add('active'); // Add active class directly
-            } else {
-                toggleableDetailsDiv.classList.remove('active'); // Ensure it's not active by default
-            }
-            toggleableDetailsDiv.className += ' kindergarten-details-toggleable'; // Apply toggleable class
-
+            toggleableDetailsDiv.className = 'kindergarten-details-toggleable'; // Apply toggleable class
 
             // Define the starting point for Google Maps directions
             const originAddress = encodeURIComponent('順利紀律部隊宿舍茶寮坳利安道32號');
@@ -1790,18 +1804,20 @@
                 <p class="text-gray-700 mb-1"><strong>關聯小學:</strong> ${kindergarten.primarySchool}</p>
                 <p class="text-gray-700 mb-1"><strong>關聯中學:</strong> ${kindergarten.secondarySchool}</p>
                 <p class="text-gray-700 mb-1"><strong>關係:</strong> ${kindergarten.relationship}</p>
-                <p class="text-gray-700 mb-1"><strong>學校網址:</strong> <a href="${googleMapsUrl}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.website !== '待查' ? kindergarten.website : '待查'}</a></p>
+                <p class="text-gray-700 mb-1"><strong>學校網址:</strong> <a href="${kindergarten.website}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.website !== '待查' ? kindergarten.website : '待查'}</a></p>
                 <p class="text-gray-700"><strong>地址:</strong> <a href="${googleMapsUrl}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.address || '待查'}</a></p>
             `;
             cardDiv.appendChild(toggleableDetailsDiv);
 
             // Add click event listener to toggle details visibility
             cardDiv.addEventListener('click', () => {
-                // Only toggle if it's not Kentville Kindergarten
-                if (kindergarten.id !== 'kindergarten-3') {
-                    toggleableDetailsDiv.classList.toggle('active');
-                }
+                toggleableDetailsDiv.classList.toggle('active');
             });
+
+            // If it's Kentville Kindergarten, ensure details are always visible
+            if (kindergarten.id === 'kindergarten-3') {
+                toggleableDetailsDiv.classList.add('active');
+            }
 
             return cardDiv;
         }
@@ -1813,7 +1829,9 @@
             const selectedAssociationFilter = associationFilter.value;
             const selectedGenderFilter = genderFilter.value;
             const selectedLanguageFilter = languageFilter.value;
-            const selectedFreeSchemeFilter = freeSchemeFilter.value; // Get selected value for new filter
+            const selectedFreeSchemeFilter = freeSchemeFilter.value;
+            // Get all selected districts from the multi-select filter
+            const selectedDistricts = Array.from(districtFilter.selectedOptions).map(option => option.value);
 
             const filteredKindergartens = kindergartens.filter(kindergarten => {
                 const matchesAssociation = (selectedAssociationFilter === 'all') ||
@@ -1822,10 +1840,13 @@
 
                 const matchesGender = (selectedGenderFilter === 'all') || (kindergarten.gender === selectedGenderFilter);
                 const matchesLanguage = (selectedLanguageFilter === 'all') || (kindergarten.simplifiedTeachingLanguage === selectedLanguageFilter);
-                // New filter logic
                 const matchesFreeScheme = (selectedFreeSchemeFilter === 'all') || (kindergarten.freeScheme === selectedFreeSchemeFilter);
+                // District filter logic: if 'all' is selected or no specific districts are selected, all pass.
+                // Otherwise, check if the kindergarten's district is in the selectedDistricts array.
+                const matchesDistrict = (selectedDistricts.length === 0 || selectedDistricts.includes('all')) || selectedDistricts.includes(kindergarten.district);
 
-                return matchesAssociation && matchesGender && matchesLanguage && matchesFreeScheme; // Combine all filters
+
+                return matchesAssociation && matchesGender && matchesLanguage && matchesFreeScheme && matchesDistrict; // Combine all filters
             });
 
             filteredKindergartens.forEach((kindergarten, index) => { // Pass index + 1 as displayRank
@@ -1837,9 +1858,11 @@
         associationFilter.addEventListener('change', renderKindergartens);
         genderFilter.addEventListener('change', renderKindergartens);
         languageFilter.addEventListener('change', renderKindergartens);
-        freeSchemeFilter.addEventListener('change', renderKindergartens); // Add event listener for new filter
+        freeSchemeFilter.addEventListener('change', renderKindergartens);
+        districtFilter.addEventListener('change', renderKindergartens); // Add event listener for new district filter
 
-        // Initial render
+        // Initial population and render on page load
+        populateDistrictFilter(); // Populate district filter options
         renderKindergartens();
 
     </script>
