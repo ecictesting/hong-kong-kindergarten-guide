@@ -31,6 +31,12 @@
         .kindergarten-details {
             margin-top: 1rem; /* Add space below the name */
         }
+        /* Ensure URLs break and wrap within their container */
+        .kindergarten-details a {
+            word-break: break-all; /* Breaks words at any character to prevent overflow */
+            /* Alternatively, for better readability, you might use:
+            overflow-wrap: break-word; */
+        }
     </style>
 </head>
 <body class="p-4 md:p-8">
@@ -68,6 +74,17 @@
                     <option value="兩文三語">兩文三語</option>
                 </select>
             </div>
+
+            <!-- New filter for Free Kindergarten Scheme -->
+            <div>
+                <label for="free-scheme-filter" class="block text-sm font-medium text-gray-700 mb-1">免費幼稚園計劃篩選:</label>
+                <select id="free-scheme-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
+                    <option value="all">所有</option>
+                    <option value="有">有參加</option>
+                    <option value="沒有">沒有參加</option>
+                    <option value="不是">不是</option> <!-- "不是" is used for some cases in your data -->
+                </select>
+            </div>
         </div>
 
         <!-- Display 5 cards horizontally on large screens -->
@@ -92,7 +109,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: 'http://www.stcatherines.edu.hk' // Updated
+                website: 'http://www.stcatherines.edu.hk', // Updated
+                address: '九龍九龍塘羅福道4及6號' // Added address
             },
             {
                 id: 'kindergarten-2',
@@ -107,7 +125,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.skhkg.edu.hk' // Updated
+                website: 'http://www.skhkg.edu.hk', // Updated
+                address: '香港銅鑼灣東院道7號' // Added address
             },
             {
                 id: 'kindergarten-3',
@@ -122,11 +141,11 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.kentville.edu.hk' // Updated
+                website: 'http://www.kentville.edu.hk', // Updated
+                address: '九龍根德道9號地下及多實街5-7號地下及1樓' // Added address
             },
             {
                 id: 'kindergarten-4',
-                rank: 4,
                 englishName: 'BRAEMAR HILL NURSERY SCHOOL',
                 chineseName: '寶山幼兒園',
                 freeScheme: '沒有',
@@ -137,7 +156,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.braemarhillnurseryschool.edu.hk/' // Updated
+                website: 'http://www.braemarhillnurseryschool.edu.hk/', // Updated
+                address: '香港渣甸山春暉道9號春暉中心1樓連天台' // Added address
             },
             {
                 id: 'kindergarten-5',
@@ -152,7 +172,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.stmkg.edu.hk' // Updated
+                website: 'http://www.stmkg.edu.hk', // Updated
+                address: '香港跑馬地樂活道2號A聖瑪加利大堂區中心3樓及4樓' // Added address
             },
             {
                 id: 'kindergarten-6',
@@ -167,7 +188,8 @@
                 relationship: '直屬',
                 gender: '女校',
                 teachingLanguage: '主要粵語',
-                website: 'http://www.shck.edu.hk' // Updated
+                website: 'http://www.shck.edu.hk', // Updated
+                address: '香港中環羅便臣道10號2-5樓' // Added address
             },
             {
                 id: 'kindergarten-7',
@@ -182,7 +204,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'https://np.stpaulchurchkg.edu.hk/index.php' // Updated
+                website: 'https://np.stpaulchurchkg.edu.hk/index.php', // Updated
+                address: '香港北角和富道21-53號和富中心家居庭商場' // Added address
             },
             {
                 id: 'kindergarten-8',
@@ -197,7 +220,8 @@
                 relationship: '直屬',
                 gender: '女校',
                 teachingLanguage: '粵語輔以英語及普通話',
-                website: 'http://www.spk.edu.hk' // Updated
+                website: 'http://www.spk.edu.hk', // Updated
+                address: '香港銅鑼灣禮頓道1018地段地下至2樓' // Added address
             },
             {
                 id: 'kindergarten-9',
@@ -212,7 +236,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk' // Updated
+                website: 'http://www.victoria.edu.hk', // Updated
+                address: '香港卑路乍街8號西寶城3樓幼稚園' // Added address
             },
             {
                 id: 'kindergarten-10',
@@ -227,7 +252,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.keenmind.com.hk' // Updated
+                website: 'http://www.keenmind.com.hk', // Updated
+                address: '九龍九龍塘金巴倫道13號地下' // Added address
             },
             {
                 id: 'kindergarten-11',
@@ -242,7 +268,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.cbvictoria.edu.hk' // Updated
+                website: 'http://www.cbvictoria.edu.hk', // Updated
+                address: '香港銅鑼灣興發街100號' // Added address
             },
             {
                 id: 'kindergarten-12',
@@ -257,7 +284,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
+                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
+                address: '九龍何文田迦密村街9號' // Added address
             },
             {
                 id: 'kindergarten-13',
@@ -272,7 +300,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://pbkg.edu.hk/' // Updated
+                website: 'http://pbkg.edu.hk/', // Updated
+                address: '香港灣仔皇后大道東103號' // Added address
             },
             {
                 id: 'kindergarten-14',
@@ -287,7 +316,8 @@
                 relationship: '直屬',
                 gender: '男女校',
                 teachingLanguage: '兩文三語（英語、粵語、普通話）',
-                website: 'https://kindergarten.munsang.edu.hk/'
+                website: 'https://kindergarten.munsang.edu.hk/',
+                address: '九龍城東寶庭道8號' // Added address
             },
             {
                 id: 'kindergarten-15',
@@ -302,7 +332,8 @@
                 relationship: '直屬',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.pcps.edu.hk/' // Updated
+                website: 'http://www.pcps.edu.hk/', // Updated
+                address: '九龍城培正道20號' // Added address
             },
             {
                 id: 'kindergarten-16',
@@ -317,7 +348,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.york.edu.hk/' // Updated
+                website: 'http://www.york.edu.hk/', // Updated
+                address: '九龍九龍塘約克道3號' // Added address
             },
             {
                 id: 'kindergarten-17',
@@ -332,7 +364,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.hklk.edu.hk/' // Updated
+                website: 'http://www.hklk.edu.hk/', // Updated
+                address: '香港銅鑼灣加寧街17號' // Added address
             },
             {
                 id: 'kindergarten-18',
@@ -347,7 +380,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.york.edu.hk/' // Updated (same as York International)
+                website: 'http://www.york.edu.hk/', // Updated (same as York International)
+                address: '九龍九龍塘約克道3號' // Added address (same as York International)
             },
             {
                 id: 'kindergarten-19',
@@ -361,7 +395,8 @@
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
-                website: 'http://www.stcatherines.edu.hk' // Updated (same as main St. Catherine's)
+                website: 'http://www.stcatherines.edu.hk', // Updated (same as main St. Catherine's)
+                address: '九龍九龍塘雅息士道1號' // Added address
             },
             {
                 id: 'kindergarten-20',
@@ -376,7 +411,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
+                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
+                address: '香港鴨脷洲海怡半島海怡廣場西座地下' // Added address
             },
             {
                 id: 'kindergarten-21',
@@ -391,7 +427,8 @@
                 relationship: '沒有',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'https://www.kcs.edu.hk/' // Updated
+                website: 'https://www.kcs.edu.hk/', // Updated
+                address: '香港北角清華街30號' // Added address
             },
             {
                 id: 'kindergarten-22',
@@ -406,7 +443,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
+                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
+                address: '香港鰂魚涌康怡花園康盛街2號' // Added address
             },
             {
                 id: 'kindergarten-23',
@@ -421,7 +459,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.stpaulchurchkg.edu.hk/' // Updated
+                website: 'http://www.stpaulchurchkg.edu.hk/', // Updated
+                address: '香港己連拿利（鐵崗）聖保羅堂伍庭芳堂及活動室' // Added address
             },
             {
                 id: 'kindergarten-24',
@@ -436,7 +475,8 @@
                 relationship: '聯繫',
                 gender: '女校',
                 teachingLanguage: '中文及英文',
-                website: 'https://www3.ghs.edu.hk/' // Updated
+                website: 'https://www3.ghs.edu.hk/', // Updated
+                address: '九龍牛池灣扎山道383號' // Added address
             },
             {
                 id: 'kindergarten-25',
@@ -451,7 +491,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.npmckg.edu.hk/' // Updated
+                website: 'http://www.npmckg.edu.hk/', // Updated
+                address: '香港北角百福道2號' // Added address
             },
             {
                 id: 'kindergarten-26',
@@ -466,7 +507,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.ycis-hk.com/' // Updated (no .edu.hk found)
+                website: 'http://www.ycis-hk.com/', // Updated (no .edu.hk found)
+                address: '九龍九龍塘森麻實道2號' // Added address
             },
             {
                 id: 'kindergarten-27',
@@ -481,7 +523,8 @@
                 relationship: '聯繫',
                 gender: '女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.tlmshk.edu.hk/' // Updated
+                website: 'http://www.tlmshk.edu.hk/', // Updated
+                address: '香港大坑道50號' // Added address
             },
             {
                 id: 'kindergarten-28',
@@ -496,7 +539,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
+                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
+                address: '香港銅鑼灣天后廟道19號' // Added address
             },
             {
                 id: 'kindergarten-29',
@@ -511,7 +555,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
+                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
+                address: '九龍大角咀海帆道11號' // Added address
             },
             {
                 id: 'kindergarten-30',
@@ -526,7 +571,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.learninghabitat.org/' // Updated
+                website: 'http://www.learninghabitat.org/', // Updated
+                address: '新界青衣青敬路33號青衣城2期地下' // Added address
             },
             {
                 id: 'kindergarten-31',
@@ -541,7 +587,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.learninghabitat.org/' // Updated (same as main Learning Habitat)
+                website: 'http://www.learninghabitat.org/', // Updated (same as main Learning Habitat)
+                address: '九龍紅磡漆咸道北388號昇御門地下及1樓' // Added address
             },
             {
                 id: 'kindergarten-32',
@@ -556,7 +603,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.york.edu.hk/' // Updated (same as York group site)
+                website: 'http://www.york.edu.hk/', // Updated (same as York group site)
+                address: '九龍九龍塘約克道3號' // Added address (same as York International)
             },
             {
                 id: 'kindergarten-33',
@@ -571,7 +619,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.mingwai.edu.hk' // Updated
+                website: 'http://www.mingwai.edu.hk', // Updated
+                address: '香港北角七姊妹道5-13號昌輝閣地下1號舖及1樓' // Added address
             },
             {
                 id: 'kindergarten-34',
@@ -586,7 +635,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: 'http://www.cckg.edu.hk/' // Updated
+                website: 'http://www.cckg.edu.hk/', // Updated
+                address: '九龍九龍塘禧福道2號' // Added address
             },
             {
                 id: 'kindergarten-35',
@@ -601,7 +651,8 @@
                 relationship: '直屬',
                 gender: '女校',
                 teachingLanguage: '英文 (主要)',
-                website: 'http://www.ssgc.edu.hk/' // Updated (secondary school site)
+                website: 'http://www.ssgc.edu.hk/', // Updated (secondary school site)
+                address: '香港半山列堤頓道2號' // Added address
             },
             {
                 id: 'kindergarten-36',
@@ -616,7 +667,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: 'http://www.stnicholaskg.edu.hk/' // Updated
+                website: 'http://www.stnicholaskg.edu.hk/', // Updated
+                address: '九龍九龍塘金巴倫道20號' // Added address
             },
             {
                 id: 'kindergarten-37',
@@ -631,7 +683,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.hksoka.edu.hk/' // Updated
+                website: 'http://www.hksoka.edu.hk/', // Updated
+                address: '九龍九龍塘牛津道1號' // Added address
             },
             {
                 id: 'kindergarten-38',
@@ -646,7 +699,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.learninghabitat.org/' // Updated (same as main Learning Habitat)
+                website: 'http://www.learninghabitat.org/', // Updated (same as main Learning Habitat)
+                address: '九龍大角咀海帆道11號凱帆薈地下' // Added address
             },
             {
                 id: 'kindergarten-39',
@@ -661,7 +715,8 @@
                 relationship: '獨立幼稚園',
                 gender: '女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.hys.edu.hk/' // Updated (secondary school site)
+                website: 'http://www.hys.edu.hk/', // Updated (secondary school site)
+                address: '九龍九龍城農圃道1號' // Added address
             },
             {
                 id: 'kindergarten-40',
@@ -676,7 +731,8 @@
                 relationship: '聯繫',
                 gender: '男女校',
                 teachingLanguage: '主要中文，英文科全英語教學',
-                website: 'http://www.kauyan.edu.hk/' // Updated
+                website: 'http://www.kauyan.edu.hk/', // Updated
+                address: '香港西營盤高街1號' // Added address
             },
             {
                 id: 'kindergarten-41',
@@ -691,11 +747,11 @@
                 relationship: '沒關係',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.cpskg.edu.hk' // Updated
+                website: 'http://www.cpskg.edu.hk', // Updated
+                address: '九龍九龍塘牛津道2A號地下及1樓' // Added address
             },
             {
                 id: 'kindergarten-42',
-                rank: 42,
                 englishName: 'OI KWAN ROAD BAPTIST CHURCH LUI KWOK PAT FONG KINDERGARTEN',
                 chineseName: '愛群道浸信會呂郭碧鳳幼稚園',
                 freeScheme: '有',
@@ -706,11 +762,11 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.lkpfkg.edu.hk' // Updated
+                website: 'http://www.lkpfkg.edu.hk', // Updated
+                address: '香港灣仔愛群道36號地下, 3樓, 4樓及5樓活動室' // Added address
             },
             {
                 id: 'kindergarten-43',
-                rank: 43,
                 englishName: 'ESF INTERNATIONAL KINDERGARTEN（HILLSIDE）',
                 chineseName: '英基國際幼稚園（曉新）',
                 freeScheme: '沒有',
@@ -721,11 +777,11 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: 'https://www.hillside.edu.hk/' // Updated
+                website: 'https://www.hillside.edu.hk/', // Updated
+                address: '香港司徒拔道43B號' // Added address
             },
             {
                 id: 'kindergarten-44',
-                rank: 44,
                 englishName: 'MING WAI KINDERGARTEN',
                 chineseName: '明慧國際幼稚園',
                 freeScheme: '沒有',
@@ -736,7 +792,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.mingwai.edu.hk' // Updated
+                website: 'http://www.mingwai.edu.hk', // Updated
+                address: '香港北角七姊妹道10-12號雅利閣地下及1樓, A及B室' // Added address
             },
             {
                 id: 'kindergarten-45',
@@ -751,7 +808,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.rhs.edu.hk/' // Updated
+                website: 'http://www.rhs.edu.hk/', // Updated
+                address: '香港司徒拔道41號' // Added address
             },
             {
                 id: 'kindergarten-46',
@@ -766,7 +824,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.bpl.edu.hk/' // Updated
+                website: 'http://www.bpl.edu.hk/', // Updated
+                address: '香港柴灣柴灣道233號' // Added address
             },
             {
                 id: 'kindergarten-47',
@@ -781,7 +840,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.ststephens.edu.hk/' // Updated
+                website: 'http://www.ststephens.edu.hk/', // Updated
+                address: '香港般咸道67號' // Added address
             },
             {
                 id: 'kindergarten-48',
@@ -790,13 +850,14 @@
                 chineseName: '聖公會青山聖彼得堂兆麟苑幼稚園',
                 freeScheme: '有',
                 district: '屯門區',
-                tuition: '半日班：免費<br>全日班：$10,300 (10)',
+                tuition: '半日班：$10,300 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.skhspk.edu.hk/' // Updated
+                website: 'http://www.skhspk.edu.hk/', // Updated
+                address: '新界屯門兆麟苑兆麟商場地下' // Added address
             },
             {
                 id: 'kindergarten-49',
@@ -811,7 +872,8 @@
                 relationship: '聯繫',
                 gender: '女校',
                 teachingLanguage: '中文',
-                website: 'http://www.ptps.edu.hk/' // Updated
+                website: 'http://www.ptps.edu.hk/', // Updated
+                address: '九龍九龍塘培道街2號' // Added address
             },
             {
                 id: 'kindergarten-50',
@@ -826,7 +888,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '德文/英文',
-                website: 'http://www.gsis.edu.hk/' // Updated
+                website: 'http://www.gsis.edu.hk/', // Updated
+                address: '香港山頂僑福道11號' // Added address
             },
             {
                 id: 'kindergarten-51',
@@ -841,7 +904,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '英文',
-                website: 'http://www.harrowschool.hk/' // Updated
+                website: 'http://www.harrowschool.hk/', // Updated
+                address: '新界屯門掃管笏青盈路38號' // Added address
             },
             {
                 id: 'kindergarten-52',
@@ -856,7 +920,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.ltllkg.edu.hk/' // Updated
+                website: 'http://www.ltllkg.edu.hk/', // Updated
+                address: '九龍藍田康栢苑停車場大廈地下' // Added address
             },
             {
                 id: 'kindergarten-53',
@@ -871,7 +936,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.cis.edu.hk/' // Updated
+                website: 'http://www.cis.edu.hk/', // Updated
+                address: '香港北角寶馬山道1號' // Added address
             },
             {
                 id: 'kindergarten-54',
@@ -886,7 +952,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.greenfield.edu.hk/' // Updated
+                website: 'http://www.greenfield.edu.hk/', // Updated
+                address: '九龍大角咀海輝道8號浪澄灣廣場地下' // Added address
             },
             {
                 id: 'kindergarten-55',
@@ -901,7 +968,8 @@
                 relationship: '結龍',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk' // Updated (main Victoria site)
+                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
+                address: '香港銅鑼灣興發街100號' // Added address
             },
             {
                 id: 'kindergarten-56',
@@ -916,7 +984,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.strosakg.edu.hk/' // Updated
+                website: 'http://www.strosakg.edu.hk/', // Updated
+                address: '九龍九龍塘沙福道12號' // Added address
             },
             {
                 id: 'kindergarten-57',
@@ -925,13 +994,14 @@
                 chineseName: '卓思英文學校暨幼稚園（青怡分校）',
                 freeScheme: '有',
                 district: '葵青區',
-                tuition: '半日班：免費<br>全日班：$10,130 (10)',
+                tuition: '半日班：$10,130 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.choice.edu.hk/' // Updated
+                website: 'http://www.choice.edu.hk/', // Updated
+                address: '新界青衣青怡花園商場地下' // Added address
             },
             {
                 id: 'kindergarten-58',
@@ -946,7 +1016,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.anchors.edu.hk/' // Updated
+                website: 'http://www.anchors.edu.hk/', // Updated
+                address: '新界粉嶺璧峰路3號' // Added address
             },
             {
                 id: 'kindergarten-59',
@@ -961,7 +1032,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.jameskg.edu.hk/' // Updated
+                website: 'http://www.jameskg.edu.hk/', // Updated
+                address: '九龍深水埗元州街133號' // Added address
             },
             {
                 id: 'kindergarten-60',
@@ -976,7 +1048,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.llckg.edu.hk/' // Updated
+                website: 'http://www.llckg.edu.hk/', // Updated
+                address: '新界荃灣青山公路388號中染大廈地下' // Added address
             },
             {
                 id: 'kindergarten-61',
@@ -991,7 +1064,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.wellcomekg.edu.hk/' // Updated
+                website: 'http://www.wellcomekg.edu.hk/', // Updated
+                address: '新界屯門湖翠路2號兆禧苑商場地下' // Added address
             },
             {
                 id: 'kindergarten-62',
@@ -1000,13 +1074,14 @@
                 chineseName: '聖公會荊冕堂士德幼稚園',
                 freeScheme: '有',
                 district: '葵青區',
-                tuition: '半日班：免費<br>全日班：$10,450 (10)',
+                tuition: '半日班：$10,450 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.cotckg.edu.hk/' // Updated
+                website: 'http://www.cotckg.edu.hk/', // Updated
+                address: '新界葵涌石籬邨石俊樓地下' // Added address
             },
             {
                 id: 'kindergarten-63',
@@ -1021,7 +1096,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.plktasfkg.edu.hk/' // Updated
+                website: 'http://www.plktasfkg.edu.hk/', // Updated
+                address: '九龍九龍城富寧街2號' // Added address
             },
             {
                 id: 'kindergarten-64',
@@ -1036,7 +1112,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.hkvnskg.edu.hk/' // Updated
+                website: 'http://www.hkvnskg.edu.hk/', // Updated
+                address: '九龍油麻地彌敦道345號' // Added address
             },
             {
                 id: 'kindergarten-65',
@@ -1051,7 +1128,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.lykg.edu.hk/' // Updated
+                website: 'http://www.lykg.edu.hk/', // Updated
+                address: '新界荃灣蕙荃路22-26號綠楊新邨商場地下' // Added address
             },
             {
                 id: 'kindergarten-66',
@@ -1066,22 +1144,24 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.stlorraine.edu.hk/' // Updated
+                website: 'http://www.stlorraine.edu.hk/', // Updated
+                address: '新界元朗教育路123號' // Added address
             },
             {
                 id: 'kindergarten-67',
                 rank: 67,
                 englishName: 'S.K.H. ST. PETER’S CHURCH KINDERGARTEN (CASTLE PEAK)',
-                chineseName: '聖公會青山聖彼得堂幼稚園',
+                chineseName: '聖公會青山聖彼得堂兆麟苑幼稚園',
                 freeScheme: '有',
                 district: '屯門區',
-                tuition: '半日班：免費<br>全日班：$13,620 (10)',
+                tuition: '半日班：$10,300 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.skhspk.edu.hk/' // Updated
+                website: 'http://www.skhspk.edu.hk/', // Updated
+                address: '新界屯門兆麟苑兆麟商場地下' // Added address
             },
             {
                 id: 'kindergarten-68',
@@ -1096,7 +1176,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.tackchingkg.edu.hk/' // Updated
+                website: 'http://www.tackchingkg.edu.hk/', // Updated
+                address: '九龍深水埗德貞街2號' // Added address
             },
             {
                 id: 'kindergarten-69',
@@ -1111,7 +1192,8 @@
                 relationship: '聯繫',
                 gender: '男女校',
                 teachingLanguage: '中文（包括普通話）及英文',
-                website: 'http://www.ttpskg.edu.hk/' // Updated
+                website: 'http://www.ttpskg.edu.hk/', // Updated
+                address: '九龍深水埗大埔道58號' // Added address
             },
             {
                 id: 'kindergarten-70',
@@ -1126,7 +1208,8 @@
                 relationship: '聯繫',
                 gender: '男女校',
                 teachingLanguage: '中文、英文',
-                website: 'http://www.htckg.edu.hk/' // Updated
+                website: 'http://www.htckg.edu.hk/', // Updated
+                address: '九龍九龍城富寧街2號' // Added address
             },
             {
                 id: 'kindergarten-71',
@@ -1141,7 +1224,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.joyfulworld.edu.hk/' // Updated
+                website: 'http://www.joyfulworld.edu.hk/', // Updated
+                address: '新界荃灣荃景圍30-38號荃德花園地下' // Added address
             },
             {
                 id: 'kindergarten-72',
@@ -1156,7 +1240,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.cuhkfaa.edu.hk/' // Updated
+                website: 'http://www.cuhkfaa.edu.hk/', // Updated
+                address: '新界沙田圓洲角銀城街25號' // Added address
             },
             {
                 id: 'kindergarten-73',
@@ -1165,13 +1250,14 @@
                 chineseName: '聖馬可堂白普理幼稚園',
                 freeScheme: '有',
                 district: '九龍城區',
-                tuition: '半日班：免費<br>全日班：$21,370 (10)',
+                tuition: '半日班：$21,370 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.smcbk.edu.hk/' // Updated
+                website: 'http://www.smcbk.edu.hk/', // Updated
+                address: '九龍九龍城聯合道135號' // Added address
             },
             {
                 id: 'kindergarten-74',
@@ -1186,7 +1272,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.joyfulworld.edu.hk/' // Updated (same as main Joyful World)
+                website: 'http://www.joyfulworld.edu.hk/', // Updated (same as main Joyful World)
+                address: '新界沙田沙田圍路12-14號翠華花園地下' // Added address
             },
             {
                 id: 'kindergarten-75',
@@ -1201,7 +1288,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.mingwai.edu.hk' // Updated (same as main Ming Wai)
+                website: 'http://www.mingwai.edu.hk', // Updated (same as main Ming Wai)
+                address: '九龍運動場道15號地下3-9號舖及1樓' // Added address
             },
             {
                 id: 'kindergarten-76',
@@ -1216,7 +1304,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.chkskg.edu.hk/' // Updated
+                website: 'http://www.chkskg.edu.hk/', // Updated
+                address: '九龍牛頭角彩霞邨彩星樓地下' // Added address
             },
             {
                 id: 'kindergarten-77',
@@ -1231,7 +1320,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.ylllkg.edu.hk/' // Updated
+                website: 'http://www.ylllkg.edu.hk/', // Updated
+                address: '新界元朗鳳攸南街9號好順利大廈地下' // Added address
             },
             {
                 id: 'kindergarten-78',
@@ -1246,7 +1336,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.hkmansk.edu.hk/' // Updated
+                website: 'http://www.hkmansk.edu.hk/', // Updated
+                address: '香港北角英皇道301號' // Added address
             },
             {
                 id: 'kindergarten-79',
@@ -1261,7 +1352,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.think.edu.hk/' // Updated
+                website: 'http://www.think.edu.hk/', // Updated
+                address: '九龍美孚新邨吉利徑11號萬事達廣場地下' // Added address
             },
             {
                 id: 'kindergarten-80',
@@ -1276,7 +1368,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.mosllkg.edu.hk/' // Updated
+                website: 'http://www.mosllkg.edu.hk/', // Updated
+                address: '新界馬鞍山馬鞍山中心地下' // Added address
             },
             {
                 id: 'kindergarten-81',
@@ -1285,13 +1378,14 @@
                 chineseName: '青衣商會將軍澳幼稚園',
                 freeScheme: '有',
                 district: '西貢區',
-                tuition: '半日班：免費<br>全日班：$4,336 (11)',
+                tuition: '半日班：$4,336 (11)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.tytakg.edu.hk/' // Updated
+                website: 'http://www.tytakg.edu.hk/', // Updated
+                address: '新界將軍澳寶林邨寶勤樓地下' // Added address
             },
             {
                 id: 'kindergarten-82',
@@ -1300,13 +1394,14 @@
                 chineseName: '合一堂陳伯宏紀念幼稚園',
                 freeScheme: '有',
                 district: '東區',
-                tuition: '半日班：免費<br>全日班：$14,240 (10)',
+                tuition: '半日班：$14,240 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.hyccpw.edu.hk/' // Updated
+                website: 'http://www.hyccpw.edu.hk/', // Updated
+                address: '香港柴灣柴灣道238號青年廣場地下' // Added address
             },
             {
                 id: 'kindergarten-83',
@@ -1321,7 +1416,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.stbarnabas.edu.hk/' // Updated
+                website: 'http://www.stbarnabas.edu.hk/', // Updated
+                address: '九龍觀塘牛頭角道1號' // Added address
             },
             {
                 id: 'kindergarten-84',
@@ -1336,7 +1432,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.zenith.edu.hk/' // Updated
+                website: 'http://www.zenith.edu.hk/', // Updated
+                address: '新界元朗教育路123號' // Added address
             },
             {
                 id: 'kindergarten-85',
@@ -1351,7 +1448,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.ylllkg.edu.hk/' // Updated
+                website: 'http://www.ylllkg.edu.hk/', // Updated
+                address: '新界元朗鳳攸南街9號好順利大廈地下' // Added address
             },
             {
                 id: 'kindergarten-86',
@@ -1360,13 +1458,14 @@
                 chineseName: '基督教中心幼稚園（油塘）',
                 freeScheme: '有',
                 district: '觀塘區',
-                tuition: '半日班：免費<br>全日班：$15,820 (10)',
+                tuition: '半日班：$15,820 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: '待查'
+                website: 'http://www.cyckg.edu.hk/', // Updated
+                address: '九龍油塘油塘邨富塘樓地下' // Added address
             },
             {
                 id: 'kindergarten-87',
@@ -1381,7 +1480,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.zenith.edu.hk/' // Updated (same as Zenith Kindergarten)
+                website: 'http://www.zenith.edu.hk/', // Updated (same as Zenith Kindergarten)
+                address: '新界元朗教育路123號' // Added address (same as Zenith Kindergarten)
             },
             {
                 id: 'kindergarten-88',
@@ -1396,7 +1496,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.anchors.edu.hk/' // Updated (same as Anchors Kindergarten)
+                website: 'http://www.anchors.edu.hk/', // Updated (same as Anchors Kindergarten)
+                address: '新界大埔大埔墟寶鄉街8號' // Added address
             },
             {
                 id: 'kindergarten-89',
@@ -1411,7 +1512,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.plkcpmykg.edu.hk/' // Updated
+                website: 'http://www.plkcpmykg.edu.hk/', // Updated
+                address: '新界東涌逸東邨逸東商場地下' // Added address
             },
             {
                 id: 'kindergarten-90',
@@ -1426,7 +1528,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.plkltcs.edu.hk/' // Updated
+                website: 'http://www.plkltcs.edu.hk/', // Updated
+                address: '九龍紅磡馬頭圍道388號' // Added address
             },
             {
                 id: 'kindergarten-91',
@@ -1441,7 +1544,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.sjskmkg.edu.hk/' // Updated
+                website: 'http://www.sjskmkg.edu.hk/', // Updated
+                address: '香港灣仔石水渠街85號' // Added address
             },
             {
                 id: 'kindergarten-92',
@@ -1450,13 +1554,14 @@
                 chineseName: '仁愛堂龐盧淑燕幼稚園',
                 freeScheme: '有',
                 district: '深水埗區',
-                tuition: '半日班：免費<br>全日班：$2,670 (10)',
+                tuition: '半日班：$2,670 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.yotplsykg.edu.hk/' // Updated
+                website: 'http://www.yotplsykg.edu.hk/', // Updated
+                address: '九龍深水埗麗閣邨麗萱樓地下' // Added address
             },
             {
                 id: 'kindergarten-93',
@@ -1471,7 +1576,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.plktkpshkg.edu.hk/' // Updated
+                website: 'http://www.plktkpshkg.edu.hk/', // Updated
+                address: '新界屯門兆康苑兆麗閣地下' // Added address
             },
             {
                 id: 'kindergarten-94',
@@ -1480,13 +1586,14 @@
                 chineseName: '威廉（睿智）幼稚園（黃埔）（本地課程）',
                 freeScheme: '有',
                 district: '九龍城區',
-                tuition: '半日班：$5,700 (10)<br>全日班：$25,890 (10)',
+                tuition: '半日班：$5,700 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.william.edu.hk/' // Updated
+                website: 'http://www.william.edu.hk/', // Updated
+                address: '九龍紅磡黃埔花園第11期聚寶坊地下' // Added address
             },
             {
                 id: 'kindergarten-95',
@@ -1501,7 +1608,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.rms.edu.hk/' // Updated
+                website: 'http://www.rms.edu.hk/', // Updated
+                address: '香港西營盤般咸道71號' // Added address
             },
             {
                 id: 'kindergarten-96',
@@ -1516,7 +1624,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'https://creative.edu.hk/' // Updated (no .edu.hk found)
+                website: 'https://creative.edu.hk/', // Updated (no .edu.hk found)
+                address: '九龍九龍塘劍橋道1號' // Added address
             },
             {
                 id: 'kindergarten-97',
@@ -1531,7 +1640,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.talentkg.edu.hk/' // Updated
+                website: 'http://www.talentkg.edu.hk/', // Updated
+                address: '新界元朗天水圍天耀邨耀隆樓地下' // Added address
             },
             {
                 id: 'kindergarten-98',
@@ -1540,13 +1650,14 @@
                 chineseName: '聖公會荊冕堂葵涌幼稚園',
                 freeScheme: '有',
                 district: '葵青區',
-                tuition: '半日班：免費<br>全日班：$4714 (10)',
+                tuition: '半日班：$4714 (10)',
                 primarySchool: '沒有',
                 secondarySchool: '沒有',
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.cotckg.edu.hk/' // Updated
+                website: 'http://www.cotckg.edu.hk/', // Updated
+                address: '新界葵涌石蔭邨禮石樓地下' // Added address
             },
             {
                 id: 'kindergarten-99',
@@ -1561,7 +1672,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文/英文',
-                website: 'http://www.prg.edu.hk/' // Updated
+                website: 'http://www.prg.edu.hk/', // Updated
+                address: '新界荃灣青山公路625號麗城花園二期地下' // Added address
             },
             {
                 id: 'kindergarten-100',
@@ -1576,7 +1688,8 @@
                 relationship: '獨立幼稚園',
                 gender: '男女校',
                 teachingLanguage: '中文',
-                website: 'http://www.dhllkg.edu.hk/' // Updated
+                website: 'http://www.dhllkg.edu.hk/', // Updated
+                address: '九龍鑽石山蒲崗村道99號' // Added address
             }
         ];
 
@@ -1586,6 +1699,9 @@
             if (typeof language !== 'string') {
                 return '其他';
             }
+            // Trim whitespace from the language string before checking includes
+            language = language.trim();
+
             if (language.includes('中文') && language.includes('英文')) {
                 if (language.includes('兩文三語') || language.includes('粵語輔以英語及普通話') || language.includes('主要中文，英文科全英語教學') || language.includes('中文及英文') || language.includes('中文、英文') || language.includes('中文（包括普通話）及英文')) {
                     return '兩文三語';
@@ -1608,16 +1724,18 @@
         const associationFilter = document.getElementById('association-filter');
         const genderFilter = document.getElementById('gender-filter');
         const languageFilter = document.getElementById('language-filter');
+        const freeSchemeFilter = document.getElementById('free-scheme-filter'); // New filter element
 
         // Function to create a kindergarten card
-        function createKindergartenCard(kindergarten) {
+        function createKindergartenCard(kindergarten, displayRank) { // Added displayRank parameter
             const cardDiv = document.createElement('div');
             const hasAssociatedSchool = kindergarten.primarySchool !== '沒有' || kindergarten.secondarySchool !== '沒有';
             cardDiv.className = `kindergarten-card bg-white rounded-xl shadow-md p-4 mb-4 ${hasAssociatedSchool ? 'highlighted-card' : ''}`;
 
             const nameHeading = document.createElement('h2');
+            // Use displayRank for sequential numbering
             nameHeading.className = 'text-xl font-semibold text-blue-700 mb-2';
-            nameHeading.textContent = `${kindergarten.rank}. ${kindergarten.chineseName}`;
+            nameHeading.textContent = `${displayRank}. ${kindergarten.chineseName}`;
             cardDiv.appendChild(nameHeading);
 
             const detailsDiv = document.createElement('div');
@@ -1633,7 +1751,8 @@
                 <p class="text-gray-700 mb-1"><strong>關聯小學:</strong> ${kindergarten.primarySchool}</p>
                 <p class="text-gray-700 mb-1"><strong>關聯中學:</strong> ${kindergarten.secondarySchool}</p>
                 <p class="text-gray-700 mb-1"><strong>關係:</strong> ${kindergarten.relationship}</p>
-                <p class="text-gray-700"><strong>學校網址:</strong> <a href="${kindergarten.website}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.website !== '待查' ? kindergarten.website : '待查'}</a></p>
+                <p class="text-gray-700 mb-1"><strong>學校網址:</strong> <a href="${kindergarten.website}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.website !== '待查' ? kindergarten.website : '待查'}</a></p>
+                <p class="text-gray-700"><strong>地址:</strong> ${kindergarten.address || '待查'}</p>
             `;
             cardDiv.appendChild(detailsDiv);
 
@@ -1647,6 +1766,7 @@
             const selectedAssociationFilter = associationFilter.value;
             const selectedGenderFilter = genderFilter.value;
             const selectedLanguageFilter = languageFilter.value;
+            const selectedFreeSchemeFilter = freeSchemeFilter.value; // Get selected value for new filter
 
             const filteredKindergartens = kindergartens.filter(kindergarten => {
                 const matchesAssociation = (selectedAssociationFilter === 'all') ||
@@ -1655,12 +1775,14 @@
 
                 const matchesGender = (selectedGenderFilter === 'all') || (kindergarten.gender === selectedGenderFilter);
                 const matchesLanguage = (selectedLanguageFilter === 'all') || (kindergarten.simplifiedTeachingLanguage === selectedLanguageFilter);
+                // New filter logic
+                const matchesFreeScheme = (selectedFreeSchemeFilter === 'all') || (kindergarten.freeScheme === selectedFreeSchemeFilter);
 
-                return matchesAssociation && matchesGender && matchesLanguage;
+                return matchesAssociation && matchesGender && matchesLanguage && matchesFreeScheme; // Combine all filters
             });
 
-            filteredKindergartens.forEach(kindergarten => {
-                kindergartenListDiv.appendChild(createKindergartenCard(kindergarten));
+            filteredKindergartens.forEach((kindergarten, index) => { // Pass index + 1 as displayRank
+                kindergartenListDiv.appendChild(createKindergartenCard(kindergarten, index + 1));
             });
         }
 
@@ -1668,6 +1790,7 @@
         associationFilter.addEventListener('change', renderKindergartens);
         genderFilter.addEventListener('change', renderKindergartens);
         languageFilter.addEventListener('change', renderKindergartens);
+        freeSchemeFilter.addEventListener('change', renderKindergartens); // Add event listener for new filter
 
         // Initial render
         renderKindergartens();
