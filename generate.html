@@ -5,7 +5,7 @@
 <script>
 (async () => {
   // 1. 拉取原合并 JSON（含 100 笔、保持原排名顺序）
-  const merged = await fetch('<https://ecictesting.github.io/hong-kong-kindergarten-guide/merged.json>').then(r => r.json());
+  const merged = await fetch('<https://ecictesting.github.io/hong-kong-kindergarten-guide/merged.json').then(r => r.json());
 
   // 2. 拉取官中／官英 CSV
   const fetchCSV = async url => {
@@ -23,9 +23,8 @@
         return obj;
       });
   };
-  const tcRows = await fetchCSV('<http://www.edb.gov.hk/attachment/tc/edu-system/preprimary-kindergarten/free-quality-kg-edu/KGP_2024_tc.csv>');
-  const enRows = await fetchCSV('<
-http://www.edb.gov.hk/attachment/en/edu-system/preprimary-kindergarten/free-quality-kg-edu/KGP_2024_en.csv>');
+  const tcRows = await fetchCSV('http://www.edb.gov.hk/attachment/tc/edu-system/preprimary-kindergarten/free-quality-kg-edu/KGP_2024_tc.csv');
+  const enRows = await fetchCSV('http://www.edb.gov.hk/attachment/en/edu-system/preprimary-kindergarten/free-quality-kg-edu/KGP_2024_en.csv');
 
   // 3. 建索引
   const tcMap = Object.fromEntries(tcRows.map(r => [r.school_name, r]));
