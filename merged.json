@@ -1,0 +1,35 @@
+[
+  {
+    "id": "kindergarten-1",
+    "rank": 1,
+    "englishName": "ST. CATHERINE’S INTERNATIONAL KINDERGARTEN",
+    "chineseName": "國際英文幼稚園",
+    "freeScheme": "沒有",
+    "district": "九龍城區",
+    "tuition": "$70,433 (11)",
+    "primarySchool": "沒有",
+    "secondarySchool": "沒有",
+    "relationship": "獨立幼稚園",
+    "gender": "男女校",
+    "teachingLanguage": "英文",
+    "website": "http://www.stcatherines.edu.hk",
+    "address": "九龍九龍塘羅福道4及6號"
+  },
+  {
+    "id": "kindergarten-2",
+    "rank": 2,
+    "englishName": "SHENG KUNG HUI KINDERGARTEN",
+    "chineseName": "聖公會幼稚園",
+    "freeScheme": "沒有",
+    "district": "灣仔區",
+    "tuition": "$53,000(10)",
+    "primarySchool": "沒有",
+    "secondarySchool": "沒有",
+    "relationship": "獨立幼稚園",
+    "gender": "男女校",
+    "teachingLanguage": "中文/英文",
+    "website": "http://www.skhkg.edu.hk",
+    "address": "香港銅鑼灣東院道7號"
+  }
+  // ... (請繼續以相同格式插入餘下98筆資料)
+]
