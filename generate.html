@@ -5,7 +5,7 @@
 <script>
 (async () => {
   // 1. 拉取原合并 JSON（含 100 笔、保持原排名顺序）
-  const merged = await fetch('<https://ecictesting.github.io/hong-kong-kindergarten-guide/merged.json').then(r => r.json());
+  const merged = await fetch('https://ecictesting.github.io/hong-kong-kindergarten-guide/merged.json').then(r => r.json());
 
   // 2. 拉取官中／官英 CSV
   const fetchCSV = async url => {
