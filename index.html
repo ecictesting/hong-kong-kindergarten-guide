@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="香港幼稚園排名 - 透過教育局最新公開數據即時載入全港百大幼稚園資訊與排名">    
+    <title>香港幼稚園排名 | Hong Kong Kindergarten Rankings</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎓</text></svg>">
+</head>
+<body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="sr-only focus:not-sr-only skip-link">跳到主要內容</a>
+
+    <!-- Header -->
+    <header class="header" role="banner">
+        <div class="container">
+            <div class="header__content">
+                <h1 class="header__title"><span class="header__icon">🎓</span>香港幼稚園排名</h1>
+                <div class="header__controls">
+                    <button id="theme-toggle" class="btn btn--outline theme-toggle" aria-label="切換主題模式" title="切換深淺色模式"><span class="theme-toggle__icon" aria-hidden="true">🌙</span></button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen" aria-hidden="true">
+        <div class="loading-spinner"></div>
+        <p class="loading-text">載入中...</p>
+    </div>
+
+    <!-- Main Content -->
+    <main id="main-content" class="main" role="main">
+        <div class="container">
+            <!-- Search & Filter Controls -->
+            <section class="controls-section" aria-label="搜尋和篩選控制">
+                <div class="search-bar">
+                    <label for="search-input" class="sr-only">搜尋幼稚園</label>
+                    <input type="search" id="search-input" class="form-control search-input" placeholder="搜尋幼稚園名稱..." aria-describedby="search-help">
+                    <button class="search-btn" aria-label="執行搜尋"><span aria-hidden="true">🔍</span></button>
+                </div>
+                <div id="search-help" class="sr-only">輸入幼稚園的中文或英文名稱進行搜尋</div>
+
+                <div class="filters" role="group" aria-label="篩選選項">
+                    <button class="btn btn--outline filter-toggle" id="filter-toggle" aria-expanded="false" aria-controls="filter-panel">篩選條件 <span class="filter-toggle__icon" aria-hidden="true">▼</span></button>
+                    <div class="filter-panel" id="filter-panel" aria-hidden="true">
+                        <div class="filter-grid">
+                            <div class="filter-group">
+                                <label for="district-filter" class="form-label">區域</label>
+                                <select id="district-filter" class="form-control"><option value="">所有區域</option></select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="language-filter" class="form-label">教學語言</label>
+                                <select id="language-filter" class="form-control"><option value="">所有語言</option></select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="gender-filter" class="form-label">性別</label>
+                                <select id="gender-filter" class="form-control"><option value="">所有類型</option></select>
+                            </div>
+                            <div class="filter-group">
+                                <label for="free-scheme-filter" class="form-label">免費幼稚園計劃</label>
+                                <select id="free-scheme-filter" class="form-control"><option value="">全部</option></select>
+                            </div>
+                        </div>
+                        <div class="filter-actions">
+                            <button class="btn btn--outline" id="clear-filters">清除篩選</button>
+                            <button class="btn btn--primary" id="apply-filters">套用篩選</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sort -->
+                <div class="sort-controls">
+                    <label for="sort-select" class="form-label">排序方式：</label>
+                    <select id="sort-select" class="form-control">
+                        <option value="rank">排名 (預設)</option>
+                        <option value="nameAsc">名稱 (A-Z)</option>
+                        <option value="nameDesc">名稱 (Z-A)</option>
+                        <option value="district">區域</option>
+                        <option value="tuitionAsc">學費 (低至高)</option>
+                        <option value="tuitionDesc">學費 (高至低)</option>
+                    </select>
+                </div>
+            </section>
+
+            <!-- Summary -->
+            <section class="results-summary" aria-live="polite">
+                <div class="results-info"><span id="results-count">載入中...</span><button class="btn btn--outline btn--sm" id="export-btn" disabled>匯出結果 📊</button></div>
+            </section>
+
+            <!-- Kindergarten List -->
+            <section class="kindergarten-list" id="kindergarten-list" role="region" aria-label="幼稚園列表">
+                <div class="skeleton-container" id="skeleton-container">
+                    <div class="skeleton-card" aria-hidden="true"><div class="skeleton-header"></div><div class="skeleton-content"></div><div class="skeleton-footer"></div></div>
+                    <div class="skeleton-card" aria-hidden="true"><div class="skeleton-header"></div><div class="skeleton-content"></div><div class="skeleton-footer"></div></div>
+                    <div class="skeleton-card" aria-hidden="true"><div class="skeleton-header"></div><div class="skeleton-content"></div><div class="skeleton-footer"></div></div>
+                </div>
+                <div class="kindergarten-grid" id="kindergarten-grid"></div>
+            </section>
+
+            <!-- No Results -->
+            <div class="no-results" id="no-results" role="alert" aria-live="assertive" style="display:none;">
+                <div class="no-results__content"><span class="no-results__icon" aria-hidden="true">😔</span><h3>沒有找到符合條件的幼稚園</h3><p>請嘗試調整搜尋或篩選設定</p><button class="btn btn--primary" id="reset-search">重設搜尋</button></div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer" role="contentinfo">
+        <div class="container">
+            <div class="footer__content">
+                <div class="footer__info">
+                    <p>&copy; 2025 香港幼稚園排名. 所有資料僅供參考。</p>
+                    <p class="footer__performance">最後更新：<span id="last-updated">--</span> | 載入時間: <span id="load-time">--</span>ms | 顯示項目: <span id="display-count">--</span></p>
+                </div>
+                <div class="footer__links">
+                    <a href="#" target="_blank" rel="noopener noreferrer">關於我們</a>
+                    <a href="#" target="_blank" rel="noopener noreferrer">聯絡我們</a>
+                    <a href="#" target="_blank" rel="noopener noreferrer">私隱政策</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Detail Modal -->
+    <div class="modal hidden" id="detail-modal" role="dialog" aria-labelledby="modal-title" aria-modal="true">
+        <div class="modal__backdrop" data-close-modal></div>
+        <div class="modal__content">
+            <div class="modal__header"><h2 id="modal-title" class="modal__title"></h2><button class="modal__close" data-close-modal aria-label="關閉"><span aria-hidden="true">×</span></button></div>
+            <div class="modal__body" id="modal-body"></div>
+            <div class="modal__footer"><button class="btn btn--outline" data-close-modal>關閉</button><button class="btn btn--primary" id="bookmark-btn"><span class="bookmark-icon">⭐</span> 收藏</button></div>
+        </div>
+    </div>
+
+    <!-- Error Boundary -->
+    <div class="error-boundary hidden" id="error-boundary" role="alert">
+        <div class="error-content">
+            <h2>發生錯誤</h2>
+            <p id="error-message">抱歉，載入資料時發生問題。</p>
+            <button class="btn btn--primary" id="retry-btn">重新載入</button>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toast-container" aria-live="polite"></div>
+
+    <!-- Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
