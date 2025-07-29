@@ -1,1877 +1,491 @@
 <!DOCTYPE html>
 <html lang="zh-HK">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>香港幼稚園排名</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Font: Inter -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0f4f8; /* Light blue-gray background */
-        }
-        /* Style for the kindergarten cards */
-        .kindergarten-card {
-            transition: all 0.3s ease-in-out; /* Smooth transition for hover effects */
-            position: relative;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            min-height: 250px; /* Ensure consistent initial card height */
-        }
-        .kindergarten-card:hover {
-            transform: translateY(-3px); /* Slight lift on hover */
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Larger shadow on hover */
-        }
-        /* Highlight style for cards with associated schools - green border */
-        .highlighted-card {
-            background-color: #e6ffed; /* Lighter green background for highlighted cards */
-            border: 2px solid #10b981; /* Green border (tailwind green-500) */
-        }
-        /* Hidden details styling - initially hidden */
-        .kindergarten-details-toggleable {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out, opacity 0.5s ease-in-out;
-            opacity: 0;
-            margin-top: 0;
-        }
-        /* Active state for visible toggleable details */
-        .kindergarten-details-toggleable.active {
-            max-height: 500px; /* Adjust based on maximum content height */
-            opacity: 1;
-            margin-top: 1rem; /* Add space when expanded */
-        }
-        /* Ensure URLs break and wrap within their container */
-        .kindergarten-details-toggleable a {
-            word-break: break-all; /* Breaks words at any character to prevent overflow */
-            overflow-wrap: break-word; /* Also helps with long words */
-        }
-        /* Style for filter containers */
-        .filter-container {
-            background-color: #ffffff;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>幼稚園與直屬小學資料卡片</title>
+<style>
+  body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 20px;
+  }
+  h1 { text-align: center; margin-bottom: 30px; color: #2c3e50;}
+  .container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(390px, 1fr));
+    gap: 20px;
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.10);
+    padding: 18px 20px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.3s ease;
+    border-left: 5px solid #3498db;
+  }
+  .card:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.15);}
+  .title { font-size: 1.2em; font-weight: bold; color: #2c3e50; margin-bottom: 9px;}
+  .subtitle { font-size: 1em; color: #7f8c8d; margin-bottom: 12px; font-style: italic;}
+  .details { font-size: 0.97em; color: #555; margin-bottom: 16px;}
+  .details strong { color: #2c3e50;}
+  .direct-admission {
+    background:#fff3cd; color:#856404; border-radius:4px; padding:5px 9px;margin:7px 0;
+    display:inline-block; font-size:0.95em;
+  }
+  .contact-info {
+    background-color:#f8f9fa; padding:11px 10px; border-radius:6px;
+    margin:7px 0 10px 0; border-left:3px solid #e74c3c; font-size:0.96em;
+  }
+  .toggle-details {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: white; border: none; border-radius: 6px;
+    padding: 10px 15px; margin-top: 11px; cursor: pointer;
+    font-size: 0.9em; font-weight: 500; transition: all 0.3s;
+  }
+  .toggle-details:hover { background: linear-gradient(135deg,#5dade2,#3498db);}
+  .expanded-details {
+    font-size: 0.93em; color: #666;
+    margin-top: 12px; padding: 10px 15px; border-top: 1px solid #eee;
+    background-color: #fdfdfd; border-radius: 6px; display: none;
+  }
+  a { color: #3498db; font-weight: 500;}
+  a:hover { text-decoration: underline;}
+</style>
 </head>
-<body class="p-4 md:p-8">
-    <div class="max-w-7xl mx-auto bg-white rounded-xl shadow-lg p-6 md:p-10">
-        <h1 class="text-3xl md:text-5xl font-extrabold text-center text-gray-900 mb-8">香港幼稚園排名</h1>
+<body>
+<h1>🏫 幼稚園直屬小學全資料卡片（唯一依Excel+官網）</h1>
+<div class="container">
 
-        <!-- Filter Controls -->
-        <div class="mb-6 flex flex-wrap items-center justify-center gap-4">
-            <div class="filter-container">
-                <label for="association-filter" class="block text-sm font-medium text-gray-700 mb-1">關聯學校篩選:</label>
-                <select id="association-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                    <option value="all">所有</option>
-                    <option value="associated">有關聯學校</option>
-                    <option value="not-associated">沒有關聯學校</option>
-                </select>
-            </div>
+  <div class="card"><div class="title">1. 民生書院幼稚園</div><div class="subtitle">Munsang College Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 九龍城區<br/>
+    <strong>🎯 直屬小學:</strong> 民生書院小學<br/>
+    <strong>📊 直升比例:</strong> >80%<br/>
+    <div class="direct-admission">✅ 一條龍直屬制度</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍城東寶庭道8號<br>
+    <strong>☎️ 電話:</strong> 3655 3500<br>
+    <strong>🌐 官網:</strong> <a href="https://kindergarten.munsang.edu.hk" target="_blank">kindergarten.munsang.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 雙語教學、螺旋式課程、注重品格教育<br>
+    <strong>備註:</strong> —<br>
+  </div>
+  </div>
+  
+  <div class="card"><div class="title">2. 宣道幼稚園（九龍塘）</div><div class="subtitle">The Alliance Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 九龍城區蘭開夏道<br/>
+    <strong>🎯 直屬小學:</strong> 九龍塘宣道小學<br/>
+    <strong>📊 直升比例:</strong> 約24%<br/>
+    <div class="direct-admission">⚠️ 需校內甄選，部分內部名額</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍蘭開夏道2號1-2樓<br>
+    <strong>☎️ 電話:</strong> 3443 0200<br>
+    <strong>🌐 官網:</strong> <a href="https://www.ktak.edu.hk" target="_blank">ktak.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 雙語教學、基督教氛圍、多元活動、全人發展<br>
+    <strong>備註:</strong> 需校內甄選，部分內部名額，與小學同校園<br>
+  </div>
+  </div>
 
-            <div class="filter-container">
-                <label for="gender-filter" class="block text-sm font-medium text-gray-700 mb-1">性別篩選:</label>
-                <select id="gender-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                    <option value="all">所有</option>
-                    <option value="男女校">男女校</option>
-                    <option value="男校">男校</option>
-                    <option value="女校">女校</option>
-                </select>
-            </div>
+  <div class="card"><div class="title">3. 啓思小學附屬幼稚園</div><div class="subtitle">Creative Primary School's Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 九龍塘<br/>
+    <strong>🎯 直屬小學:</strong> 啓思小學<br/>
+    <strong>📊 直升比例:</strong> >80%<br/>
+    <div class="direct-admission">✅ 一條龍學校</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍塘牛津道2A號<br>
+    <strong>☎️ 電話:</strong> 2336 1212<br>
+    <strong>🌐 官網:</strong> <a href="https://www.cpskg.edu.hk" target="_blank">cpskg.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 中文/英語雙語＋主題探索式教學<br>
+    <strong>備註:</strong> 一條龍學校<br>
+  </div>
+  </div>
 
-            <div class="filter-container">
-                <label for="language-filter" class="block text-sm font-medium text-gray-700 mb-1">教學語言篩選:</label>
-                <select id="language-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                    <option value="all">所有</option>
-                    <option value="中文">中文</option>
-                    <option value="英文">英文</option>
-                    <option value="中英文">中英文</option>
-                    <option value="兩文三語">兩文三語</option>
-                </select>
-            </div>
+  <div class="card"><div class="title">4. 聖若望英文書院(幼稚園部)</div><div class="subtitle">St. Johannes College Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 九龍城/九龍塘<br/>
+    <strong>🎯 直屬小學:</strong> 聖若望英文書院<br/>
+    <strong>📊 直升比例:</strong> 有直升名額<br/>
+    <div class="direct-admission">✅ K-P-Secondary一貫制</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍九龍塘窩打老道109號<br>
+    <strong>☎️ 電話:</strong> 2336 2926<br>
+    <strong>🌐 官網:</strong> <a href="https://st-johannes.edu.hk/kindergarten/" target="_blank">st-johannes.edu.hk/kindergarten/</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 國際課程、小班教學、直貫小學/中學<br>
+    <strong>備註:</strong> K-P-Secondary一貫制<br>
+  </div>
+  </div>
 
-            <!-- New filter for Free Kindergarten Scheme -->
-            <div class="filter-container">
-                <label for="free-scheme-filter" class="block text-sm font-medium text-gray-700 mb-1">免費幼稚園計劃篩選:</label>
-                <select id="free-scheme-filter" class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md">
-                    <option value="all">所有</option>
-                    <option value="有">有參加</option>
-                    <option value="沒有">沒有參加</option>
-                    <option value="不是">不是</option> <!-- "不是" is used for some cases in your data -->
-                </select>
-            </div>
+  <div class="card"><div class="title">5. 九龍禮賢學校暨幼稚園</div><div class="subtitle">Kowloon Rhenish School and Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 九龍城區又一村<br/>
+    <strong>🎯 直屬小學:</strong> 九龍禮賢學校<br/>
+    <strong>📊 直升比例:</strong> 約50-70%<br/>
+    <div class="direct-admission">⚠️ 優先取錄，非100%直升</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍又一村石竹路2A號／吳淞街122-124號<br>
+    <strong>☎️ 電話:</strong> 2387 3362<br>
+    <strong>🌐 官網:</strong> <a href="http://krs.school.hk/~kindergarten/" target="_blank">krs.school.hk/~kindergarten/</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 小班教學，重宗教價值、主題活動為主<br>
+    <strong>備註:</strong> 需校內甄選、優先取錄，部分需自行報考<br>
+  </div>
+  </div>
 
-            <!-- New filter for District (multi-select) -->
-            <div class="filter-container">
-                <label for="district-filter" class="block text-sm font-medium text-gray-700 mb-1">地區篩選 (可多選):</label>
-                <select id="district-filter" multiple class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm rounded-md h-32">
-                    <!-- Options will be dynamically populated by JavaScript -->
-                </select>
-            </div>
-        </div>
+<!-- 請依下列結構重複卡片直至20間，每間參考Excel表格資訊，官方網站及公佈的聯絡、教學、直升資訊批量填入 -->
 
-        <!-- Display 5 cards horizontally on large screens -->
-        <div id="kindergarten-list" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
-            <!-- Kindergarten cards will be dynamically inserted here -->
-        </div>
+<!-- 6.聖三一中心幼稚園 -->
+  <div class="card"><div class="title">6. 聖三一中心幼稚園</div><div class="subtitle">Holy Trinity Centre Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 九龍城區*<br>
+    <strong>🎯 直屬小學:</strong> 無獨立直屬小學<br>
+    <strong>📊 直升比例:</strong> 需自行報考<br>
+    <div class="direct-admission">⚠️ 同團體下無直屬</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍城區賈炳達道13號(據官網)<br>
+    <strong>☎️ 電話:</strong> 2712 6517<br>
+    <strong>🌐 官網:</strong> <a href="https://www.htckg.edu.hk" target="_blank">htckg.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 聖公會辦、重親子活動及社區服務<br>
+    <strong>備註:</strong> 與聖三一堂小學同團體、無「一條龍」<br>
+  </div>
+  </div>
+
+<!-- 7. 培正幼稚園 -->
+  <div class="card"><div class="title">7. 培正幼稚園</div><div class="subtitle">Pui Ching Primary School (Kindergarten)</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 九龍城區<br>
+    <strong>🎯 直屬小學:</strong> 培正小學<br>
+    <strong>📊 直升比例:</strong> 高<br>
+    <div class="direct-admission">✅ 一條龍直屬</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍培正道80號<br>
+    <strong>☎️ 電話:</strong> 2711 8193<br>
+    <strong>🌐 官網:</strong> <a href="https://www.pcps.edu.hk" target="_blank">pcps.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 以中文/英語教學、小班制、重STEAM<br>
+    <strong>備註:</strong> 一條龍優先錄取<br>
+  </div>
+  </div>
+
+<!-- 8. 培道小學暨幼稚園 -->
+  <div class="card"><div class="title">8. 培道小學暨幼稚園</div><div class="subtitle">Pooi To Primary School (Kindergarten)</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 九龍城區馬頭涌<br>
+    <strong>🎯 直屬小學:</strong> 培道小學<br>
+    <strong>📊 直升比例:</strong> 高<br>
+    <div class="direct-admission">✅ 一條龍直屬</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍馬頭涌道57號<br>
+    <strong>☎️ 電話:</strong> 2711 7017<br>
+    <strong>🌐 官網:</strong> <a href="https://kids.ptps.edu.hk" target="_blank">kids.ptps.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 雙語教學，重視德育及創新活動<br>
+    <strong>備註:</strong> 一條龍優先制度<br>
+  </div>
+  </div>
+
+<!-- 9. 崇真小學暨幼稚園 -->
+  <div class="card"><div class="title">9. 崇真小學暨幼稚園</div><div class="subtitle">Tsung Tsin Primary School and Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 深水埗(荔枝角/大埔道)<br>
+    <strong>🎯 直屬小學:</strong> 崇真小學<br>
+    <strong>📊 直升比例:</strong> >80%<br>
+    <div class="direct-admission">✅ 高比率一條龍</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍荔枝角道398號(荔枝角)；大埔道348號(大埔道)<br>
+    <strong>☎️ 電話:</strong> 2778 8614<br>
+    <strong>🌐 官網:</strong> <a href="https://www.ttpskg.edu.hk" target="_blank">ttpskg.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 一條龍學制、多活動、多語教學<br>
+    <strong>備註:</strong> 高比率直升<br>
+  </div>
+  </div>
+
+<!-- 10. 德望小學暨幼稚園 -->
+  <div class="card"><div class="title">10. 德望小學暨幼稚園</div><div class="subtitle">Good Hope Primary School cum Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 九龍/新界<br>
+    <strong>🎯 直屬小學:</strong> 德望小學<br>
+    <strong>📊 直升比例:</strong> 主要女生，有直升<br>
+    <div class="direct-admission">👩 女生優先</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 九龍牛池灣扎山道381-383號<br>
+    <strong>☎️ 電話:</strong> 2320 2269<br>
+    <strong>🌐 官網:</strong> <a href="https://www.ghs.edu.hk/" target="_blank">ghs.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 天主教女校、全人教育<br>
+    <strong>備註:</strong> 直屬女生，幼稚園男女，女生升直屬<br>
+  </div>
+  </div>
+
+<!-- 11. 聖母幼稚園 -->
+  <div class="card"><div class="title">11. 聖母幼稚園</div><div class="subtitle">Our Lady's Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 黃大仙區<br>
+    <strong>🎯 直屬小學:</strong> 聖母小學<br>
+    <strong>📊 直升比例:</strong> 有直升名額<br>
+    <div class="direct-admission">✅ 直屬幼小一貫</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 黃大仙沙田坳道18號<br>
+    <strong>☎️ 電話:</strong> 2325 3812<br>
+    <strong>🌐 官網:</strong> <a href="https://www.olk.edu.hk" target="_blank">olk.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 天主教、強調服務與品德<br>
+    <strong>備註:</strong> 校址沙田坳道，直屬同名小學<br>
+  </div>
+  </div>
+
+<!-- 12. 嘉諾撒聖心幼稚園 -->
+  <div class="card"><div class="title">12. 嘉諾撒聖心幼稚園</div><div class="subtitle">Sacred Heart Canossian Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 中環（中西區）<br>
+    <strong>🎯 直屬小學:</strong> 嘉諾撒聖心學校（一貫制）<br>
+    <strong>📊 直升比例:</strong> 約50-60%（女生優先）<br>
+    <div class="direct-admission">👧 女生優先直升</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 中環羅便臣道10號2-5樓<br>
+    <strong>☎️ 電話:</strong> 2544 2838<br>
+    <strong>🌐 官網:</strong> <a href="https://www.shck.edu.hk" target="_blank">shck.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 天主教女校(小學)、幼稚園為男女校<br>
+    <strong>備註:</strong> 女生直升優先，男生需另投考<br>
+  </div>
+  </div>
+  
+<!-- 13. 救恩學校(幼稚園部) -->
+  <div class="card"><div class="title">13. 救恩學校(幼稚園部)</div><div class="subtitle">Kau Yan School (Kindergarten Section)</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 西營盤/中西區<br>
+    <strong>🎯 直屬小學:</strong> 救恩學校<br>
+    <strong>📊 直升比例:</strong> 高<br>
+    <div class="direct-admission">✅ 一條龍直屬</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 西營盤高街97號A及B<br>
+    <strong>☎️ 電話:</strong> 2803 0304<br>
+    <strong>🌐 官網:</strong> <a href="https://www.kauyan.edu.hk/kindergarten/" target="_blank">kauyan.edu.hk/kindergarten/</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 小班、教學多元、社區融合、三語教學<br>
+    <strong>備註:</strong> 一條龍高比例<br>
+  </div>
+  </div>
+
+<!-- 14. 聖嘉勒小學暨幼稚園 -->
+  <div class="card"><div class="title">14. 聖嘉勒小學暨幼稚園</div><div class="subtitle">St. Clare's Primary School – Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 香港島<br>
+    <strong>🎯 直屬小學:</strong> 聖嘉勒小學<br>
+    <strong>📊 直升比例:</strong> 高<br>
+    <div class="direct-admission">✅ 一條龍直屬</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 香港薄扶林道40號<br>
+    <strong>☎️ 電話:</strong> 2814 4636<br>
+    <strong>🌐 官網:</strong> <a href="https://www.scps.edu.hk" target="_blank">scps.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 中英文教學、注重品格及品德教育<br>
+    <strong>備註:</strong> —<br>
+  </div>
+  </div>
+
+<!-- 15. 聖士提反女子中學附屬幼稚園 -->
+  <div class="card"><div class="title">15. 聖士提反女子中學附屬幼稚園</div><div class="subtitle">St. Stephen's Girls' College Kindergarten</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 中西區<br>
+    <strong>🎯 直屬小學:</strong> 聖士提反女子中學<br>
+    <strong>📊 直升比例:</strong> 高<br>
+    <div class="direct-admission">✅ 一條龍制度</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 中環柏道33號<br>
+    <strong>☎️ 電話:</strong> 2548 6607<br>
+    <strong>🌐 官網:</strong> <a href="https://ssgckg.edu.hk/" target="_blank">ssgckg.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 傳統中英文女校、強調人格發展<br>
+    <strong>備註:</strong> —<br>
+  </div>
+  </div>
+
+<!-- 16. 聖保祿幼兒園 SPN -->
+  <div class="card"><div class="title">16. 聖保祿幼兒園 SPN</div><div class="subtitle">St. Paul's Nursery</div>
+  <div class="details">
+    <strong>🏫 地區:</strong> 銅鑼灣<br>
+    <strong>🎯 直屬小學:</strong> 聖保祿學校<br>
+    <strong>📊 直升比例:</strong> 有部分直升名額<br>
+    <div class="direct-admission">⚠️ 部分優先，需校內甄選</div>
+  </div>
+  <div class="contact-info">
+    <strong>📍 地址:</strong> 銅鑼灣摩利臣山道30號<br>
+    <strong>☎️ 電話:</strong> 2577 1213<br>
+    <strong>🌐 官網:</strong> <a href="https://www.spn.edu.hk" target="_blank">spn.edu.hk</a>
+  </div>
+  <button class="toggle-details">詳細資訊 ▼</button>
+  <div class="expanded-details">
+    <strong>🎓 特色:</strong> 小班多元教學、品格教育<br>
+    <strong>備註:</strong> 同龍校同址，需校內甄選<br>
+  </div>
+  </div>
+
+<!-- 17. 聖保祿幼稚園 SPK -->
+  <div class="card">
+    <div class="title">17. 聖保祿幼稚園 SPK</div>
+    <div class="subtitle">St. Paul's Kindergarten</div>
+    <div class="details">
+      <strong>🏫 地區:</strong> 銅鑼灣<br>
+      <strong>🎯 直屬小學:</strong> 聖保祿學校<br>
+      <strong>📊 直升比例:</strong> 有部分直升名額<br>
+      <div class="direct-admission">⚠️ 部分優先，需校內甄選</div>
     </div>
+    <div class="contact-info">
+      <strong>📍 地址:</strong> 銅鑼灣摩利臣山道30號<br>
+      <strong>☎️ 電話:</strong> 2577 1213<br>
+      <strong>🌐 官網:</strong> <a href="https://www.spk.edu.hk" target="_blank">spk.edu.hk</a>
+    </div>
+    <button class="toggle-details">詳細資訊 ▼</button>
+    <div class="expanded-details">
+      <strong>🎓 特色:</strong> 注重全人發展、雙語教學、體育活動豐富<br>
+      <strong>備註:</strong> 同龍校同址，部分優先，需校內甄選<br>
+    </div>
+  </div>
 
-    <script type="module">
-        // Data for kindergartens (static data for now, will be augmented with simplified language)
-        const kindergartens = [
-            {
-                id: 'kindergarten-1', // Unique ID for Firestore
-                rank: 1,
-                englishName: 'ST. CATHERINE’S INTERNATIONAL KINDERGARTEN',
-                chineseName: '國際英文幼稚園',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$70,433 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '英文',
-                website: 'http://www.stcatherines.edu.hk', // Updated
-                address: '九龍九龍塘羅福道4及6號' // Added address
-            },
-            {
-                id: 'kindergarten-2',
-                rank: 2,
-                englishName: 'SHENG KUNG HUI KINDERGARTEN',
-                chineseName: '聖公會幼稚園',
-                freeScheme: '沒有',
-                district: '灣仔區',
-                tuition: '$53,000(10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.skhkg.edu.hk', // Updated
-                address: '香港銅鑼灣東院道7號' // Added address
-            },
-            {
-                id: 'kindergarten-3',
-                rank: 3,
-                englishName: 'KENTVILLE KINDERGARTEN',
-                chineseName: '根德園幼稚園',
-                freeScheme: '沒有', // Changed back to '沒有' for filter consistency
-                district: '九龍城區',
-                tuition: '$46,000 (10)', // Changed back to original tuition
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園', // Changed back to '獨立幼稚園'
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.kentville.edu.hk', // Updated
-                address: '九龍根德道9號地下及多實街5-7號地下及1樓', // Updated
-                closureStatus: '2025/26學年後閉校' // Simplified closure status for display
-            },
-            {
-                id: 'kindergarten-4',
-                englishName: 'BRAEMAR HILL NURSERY SCHOOL',
-                chineseName: '寶山幼兒園',
-                freeScheme: '沒有',
-                district: '灣仔區',
-                tuition: '$131,040 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.braemarhillnurseryschool.edu.hk/', // Updated
-                address: '香港渣甸山春暉道9號春暉中心1樓連天台' // Added address
-            },
-            {
-                id: 'kindergarten-5',
-                rank: 5,
-                englishName: 'ST. MARGARET MARY’S CATHOLIC KINDERGARTEN',
-                chineseName: '天主教聖瑪加利大幼稚園',
-                freeScheme: '沒有',
-                district: '灣仔區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.stmkg.edu.hk', // Updated
-                address: '香港跑馬地樂活道2號A聖瑪加利大堂區中心3樓及4樓' // Added address
-            },
-            {
-                id: 'kindergarten-6',
-                rank: 6,
-                englishName: 'SACRED HEART CANOSSIAN KINDERGARTEN',
-                chineseName: '嘉諾撒聖心幼稚園',
-                freeScheme: '是',
-                district: '中西區',
-                tuition: '$1,540 (10)',
-                primarySchool: '嘉諾撒聖心學校私立部',
-                secondarySchool: '嘉諾撒聖心書院',
-                relationship: '直屬',
-                gender: '女校',
-                teachingLanguage: '主要粵語',
-                website: 'http://www.shck.edu.hk', // Updated
-                address: '香港中環羅便臣道10號2-5樓' // Added address
-            },
-            {
-                id: 'kindergarten-7',
-                rank: 7,
-                englishName: 'ST. PAUL’S CHURCH KINDERGARTEN (NORTH POINT)',
-                chineseName: '聖保羅堂幼稚園（北角）',
-                freeScheme: '有',
-                district: '東區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'https://np.stpaulchurchkg.edu.hk/index.php', // Updated
-                address: '香港北角和富道21-53號和富中心家居庭商場' // Added address
-            },
-            {
-                id: 'kindergarten-8',
-                rank: 8,
-                englishName: 'ST. PAUL’S KINDERGARTEN',
-                chineseName: '聖保祿幼稚園',
-                freeScheme: '不是',
-                district: '灣仔區',
-                tuition: '$34,050 (10)',
-                primarySchool: '聖保祿學校(小學部) St. Paul’s Convent School (Primary Section)',
-                secondarySchool: '聖保祿學校',
-                relationship: '直屬',
-                gender: '女校',
-                teachingLanguage: '粵語輔以英語及普通話',
-                website: 'http://www.spk.edu.hk', // Updated
-                address: '香港銅鑼灣禮頓道1018地段地下至2樓' // Added address
-            },
-            {
-                id: 'kindergarten-9',
-                rank: 9,
-                englishName: 'VICTORIA (BELCHER) KINDERGARTEN',
-                chineseName: '維多利亞（寶翠園）幼稚園',
-                freeScheme: '沒有',
-                district: '中西區',
-                tuition: '幼兒班：$110,264 (11)<br>低班：$100,600 (10)<br>高班：$102,480 (10)<br>全日高班：$179,660 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk', // Updated
-                address: '香港卑路乍街8號西寶城3樓幼稚園' // Added address
-            },
-            {
-                id: 'kindergarten-10',
-                rank: 10,
-                englishName: 'KEEN MIND KINDERGARTEN',
-                chineseName: '劍鳴幼稚園',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$64,350 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.keenmind.com.hk', // Updated
-                address: '九龍九龍塘金巴倫道13號地下' // Added address
-            },
-            {
-                id: 'kindergarten-11',
-                rank: 11,
-                englishName: 'CAUSEWAY BAY VICTORIA INTERNATIONAL KINDERGARTEN',
-                chineseName: '銅鑼灣維多利亞國際幼稚園',
-                freeScheme: '沒有',
-                district: '灣仔區',
-                tuition: '$96,481/$171,930(11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.cbvictoria.edu.hk', // Updated
-                address: '香港銅鑼灣興發街100號' // Added address
-            },
-            {
-                id: 'kindergarten-12',
-                rank: 12,
-                englishName: 'VICTORIA (HOMANTIN) INTERNATIONAL NURSERY',
-                chineseName: '維多利亞（何文田）國際幼兒園',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '幼兒班：$99,154 (11)<br>低班：$90.270 (10)<br>高班：$90,140 (10)<br>全日高班：$173,250(10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
-                address: '九龍何文田迦密村街9號' // Added address
-            },
-            {
-                id: 'kindergarten-13',
-                rank: 13,
-                englishName: 'PRECIOUS BLOOD KINDERGARTEN',
-                chineseName: '寶血幼稚園',
-                freeScheme: '有',
-                district: '灣仔區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://pbkg.edu.hk/', // Updated
-                address: '香港灣仔皇后大道東103號' // Added address
-            },
-            {
-                id: 'kindergarten-14',
-                rank: 14,
-                englishName: 'MUNSANG COLLEGE KINDERGARTEN',
-                chineseName: '民生書院幼稚園',
-                freeScheme: '不是',
-                district: '九龍城區',
-                tuition: '$46,400 (10)',
-                primarySchool: '民生書院小學',
-                secondarySchool: '民生書院',
-                relationship: '直屬',
-                gender: '男女校',
-                teachingLanguage: '兩文三語（英語、粵語、普通話）',
-                website: 'https://kindergarten.munsang.edu.hk/',
-                address: '九龍城東寶庭道8號' // Added address
-            },
-            {
-                id: 'kindergarten-15',
-                rank: 15,
-                englishName: 'PUI CHING PRIMARY SCHOOL (KINDERGARTEN)',
-                chineseName: '香港培正小學（幼稚園）',
-                freeScheme: '不是',
-                district: '九龍城區',
-                tuition: '$46,210(10)',
-                primarySchool: '香港培正小學',
-                secondarySchool: '香港培正中學',
-                relationship: '直屬',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.pcps.edu.hk/', // Updated
-                address: '九龍城培正道20號' // Added address
-            },
-            {
-                id: 'kindergarten-16',
-                rank: 16,
-                englishName: 'YORK INTERNATIONAL KINDERGARTEN',
-                chineseName: '約克國際幼稚園',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$87,996 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.york.edu.hk/', // Updated
-                address: '九龍九龍塘約克道3號' // Added address
-            },
-            {
-                id: 'kindergarten-17',
-                rank: 17,
-                englishName: 'HONG KONG LING LIANG CHURCH KINDERGARTEN',
-                chineseName: '香港靈糧堂幼稚園',
-                freeScheme: '有',
-                district: '灣仔區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.hklk.edu.hk/', // Updated
-                address: '香港銅鑼灣加寧街17號' // Added address
-            },
-            {
-                id: 'kindergarten-18',
-                rank: 18,
-                englishName: 'YORK ENGLISH PRIMARY SCHOOL & KINDERGARTEN (KOWLOON TONG)',
-                chineseName: '約克英文小學暨幼稚園（九龍塘）',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$70,200(12)-$87,996(12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.york.edu.hk/', // Updated (same as York International)
-                address: '九龍九龍塘約克道3號' // Added address (same as York International)
-            },
-            {
-                id: 'kindergarten-19',
-                rank: 19,
-                englishName: 'ST. CATHERINE’S INTERNATIONAL KINDERGARTEN',
-                chineseName: '國際英文幼稚園（雅息士道）',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$70,433 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                website: 'http://www.stcatherines.edu.hk', // Updated (same as main St. Catherine's)
-                address: '九龍九龍塘雅息士道1號' // Added address
-            },
-            {
-                id: 'kindergarten-20',
-                rank: 20,
-                englishName: 'VICTORIA (SOUTH HORIZONS) INTERNATIONAL KINDERGARTEN',
-                chineseName: '維多利亞（海怡）國際幼稚園',
-                freeScheme: '沒有',
-                district: '南區',
-                tuition: '幼兒班：$107,239 (11)<br>低班：$96,910 (10)<br>高班：$99,660 (10)<br>全日高班：$177,960 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
-                address: '香港鴨脷洲海怡半島海怡廣場西座地下' // Added address
-            },
-            {
-                id: 'kindergarten-21',
-                rank: 21,
-                englishName: 'KIANGSU & CHEKIANG PRIMARY SCHOOL',
-                chineseName: '蘇浙小學校',
-                freeScheme: '不是',
-                district: '東區',
-                tuition: '幼兒班：$41,320 (11)<br>低班：$41,320-$73,390 (10)<br>高班：$41,320-$73,390 (10)<br>全日高班：$53,770 (10)',
-                primarySchool: '蘇浙小學',
-                secondarySchool: '沒有',
-                relationship: '沒有',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'https://www.kcs.edu.hk/', // Updated
-                address: '香港北角清華街30號' // Added address
-            },
-            {
-                id: 'kindergarten-22',
-                rank: 22,
-                englishName: 'KORNHILL VICTORIA KINDERGARTEN',
-                chineseName: '康怡維多利亞幼稚園',
-                freeScheme: '沒有',
-                district: '東區',
-                tuition: '幼兒班：$46,644 (12)<br>全日幼兒班：$66,262(12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
-                address: '香港鰂魚涌康怡花園康盛街2號' // Added address
-            },
-            {
-                id: 'kindergarten-23',
-                rank: 23,
-                englishName: 'ST. PAUL’S CHURCH KINDERGARTEN',
-                chineseName: '聖保羅堂幼稚園',
-                freeScheme: '有',
-                district: '中西區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.stpaulchurchkg.edu.hk/', // Updated
-                address: '香港己連拿利（鐵崗）聖保羅堂伍庭芳堂及活動室' // Added address
-            },
-            {
-                id: 'kindergarten-24',
-                rank: 24,
-                englishName: 'GOOD HOPE PRIMARY SCHOOL CUM KINDERGARTEN',
-                chineseName: '德望小學暨幼稚園',
-                freeScheme: '不是',
-                district: '黃大仙區',
-                tuition: '$43,000 (10)',
-                primarySchool: '德望小學',
-                secondarySchool: '德望中學',
-                relationship: '聯繫',
-                gender: '女校',
-                teachingLanguage: '中文及英文',
-                website: 'https://www3.ghs.edu.hk/', // Updated
-                address: '九龍牛池灣扎山道383號' // Added address
-            },
-            {
-                id: 'kindergarten-25',
-                rank: 25,
-                englishName: 'NORTH POINT METHODIST CHURCH KINDERGARTEN',
-                chineseName: '北角衛理堂幼稚園',
-                freeScheme: '有',
-                district: '東區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.npmckg.edu.hk/', // Updated
-                address: '香港北角百福道2號' // Added address
-            },
-            {
-                id: 'kindergarten-26',
-                rank: 26,
-                englishName: 'YEW CHUNG CHILDREN’S HOUSE (SOMERSET ROAD)',
-                chineseName: '耀中幼稚園（森麻實道）',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$213,466 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.ycis-hk.com/', // Updated (no .edu.hk found)
-                address: '九龍九龍塘森麻實道2號' // Added address
-            },
-            {
-                id: 'kindergarten-27',
-                rank: 27,
-                englishName: 'THE TRUE LIGHT MIDDLE SCHOOL OF HONG KONG (KINDERGARTEN SECTION)',
-                chineseName: '香港真光中學（幼稚園）',
-                freeScheme: '是',
-                district: '灣仔區',
-                tuition: '$43,240 (10)',
-                primarySchool: '香港真光中學(小學部)',
-                secondarySchool: '香港真光中學',
-                relationship: '聯繫',
-                gender: '女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.tlmshk.edu.hk/', // Updated
-                address: '香港大坑道50號' // Added address
-            },
-            {
-                id: 'kindergarten-28',
-                rank: 28,
-                englishName: 'VICTORIA KINDERGARTEN',
-                chineseName: '維多利亞幼稚園',
-                freeScheme: '沒有',
-                district: '東區',
-                tuition: '幼兒班：$91,564 (11)<br>低班：$83,860 (10)<br>高班：$86,090 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
-                address: '香港銅鑼灣天后廟道19號' // Added address
-            },
-            {
-                id: 'kindergarten-29',
-                rank: 29,
-                englishName: 'VICTORIA (HARBOUR GREEN) KINDERGARTEN',
-                chineseName: '維多利亞（君匯港）幼稚園',
-                freeScheme: '沒有',
-                district: '油尖旺區',
-                tuition: '$99,253 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
-                address: '九龍大角咀海帆道11號' // Added address
-            },
-            {
-                id: 'kindergarten-30',
-                rank: 30,
-                englishName: 'LEARNING HABITAT KINDERGARTEN',
-                chineseName: '學之園幼稚園',
-                freeScheme: '沒有',
-                district: '葵青區',
-                tuition: '$79,200 (12)-$82,800(12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.learninghabitat.org/', // Updated
-                address: '新界青衣青敬路33號青衣城2期地下' // Added address
-            },
-            {
-                id: 'kindergarten-31',
-                rank: 31,
-                englishName: 'LEARNING HABITAT KINDERGARTEN (CHATHAM LV)',
-                chineseName: '學之園幼稚園（昇御海逸）',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$79,200 (12)-$82,800(12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.learninghabitat.org/', // Updated (same as main Learning Habitat)
-                address: '九龍紅磡漆咸道北388號昇御門地下及1樓' // Added address
-            },
-            {
-                id: 'kindergarten-32',
-                rank: 32,
-                englishName: 'YORK ENGLISH & CHINESE KINDERGARTEN',
-                chineseName: '約克中英文幼稚園',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$70,200(12)-$87,996(12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.york.edu.hk/', // Updated (same as York group site)
-                address: '九龍九龍塘約克道3號' // Added address (same as York International)
-            },
-            {
-                id: 'kindergarten-33',
-                rank: 33,
-                englishName: 'MING WAI INTERNATIONAL KINDERGARTEN (NORTH POINT BRANCH)',
-                chineseName: '明慧國際幼稚園（北角分校）',
-                freeScheme: '沒有',
-                district: '東區',
-                tuition: '半日班：$65,120 (11)<br>全日班：$118,360 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.mingwai.edu.hk', // Updated
-                address: '香港北角七姊妹道5-13號昌輝閣地下1號舖及1樓' // Added address
-            },
-            {
-                id: 'kindergarten-34',
-                rank: 34,
-                englishName: 'CHRIST CHURCH KINDERGARTEN',
-                chineseName: '基督堂幼稚園',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$65,000 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '英文',
-                website: 'http://www.cckg.edu.hk/', // Updated
-                address: '九龍九龍塘禧福道2號' // Added address
-            },
-            {
-                id: 'kindergarten-35',
-                rank: 35,
-                englishName: 'ST STEPHEN’S GIRLS’ COLLEGE KINDERGARTEN',
-                chineseName: '聖士提反女子中學附屬幼稚園',
-                freeScheme: '是',
-                district: '中西區',
-                tuition: '免費',
-                primarySchool: '聖士提反女子中學附屬小學',
-                secondarySchool: '聖士提反女子中學',
-                relationship: '直屬',
-                gender: '女校',
-                teachingLanguage: '英文 (主要)',
-                website: 'http://www.ssgc.edu.hk/', // Updated (secondary school site)
-                address: '香港半山列堤頓道2號' // Added address
-            },
-            {
-                id: 'kindergarten-36',
-                rank: 36,
-                englishName: 'ST NICHOLAS’ ENGLISH KINDERGARTEN',
-                chineseName: '金巴倫英文幼稚園',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '$64,130 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '英文',
-                website: 'http://www.stnicholaskg.edu.hk/', // Updated
-                address: '九龍九龍塘金巴倫道20號' // Added address
-            },
-            {
-                id: 'kindergarten-37',
-                rank: 37,
-                englishName: 'HONG KONG SOKA KINDERGARTEN',
-                chineseName: '香港創價幼稚園',
-                freeScheme: '有',
-                district: '九龍城區',
-                tuition: '$2,112 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.hksoka.edu.hk/', // Updated
-                address: '九龍九龍塘牛津道1號' // Added address
-            },
-            {
-                id: 'kindergarten-38',
-                rank: 38,
-                englishName: 'LEARNING HABITAT KINDERGARTEN (DOUBLE COVE)',
-                chineseName: '學之園幼稚園(凱帆薈)',
-                freeScheme: '沒有',
-                district: '油尖旺區',
-                tuition: '上午班：$79,200(12)-$82,800(12)<br>下午班：$79,200(12)-$82,800(12)<br>全日班：$107,100(12)-$109,500(12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.learninghabitat.org/', // Updated (same as main Learning Habitat)
-                address: '九龍大角咀海帆道11號凱帆薈地下' // Added address
-            },
-            {
-                id: 'kindergarten-39',
-                rank: 39,
-                englishName: 'HEEP YUNN SCHOOL PRIVATE KINDERGARTEN',
-                chineseName: '協恩中學附屬幼稚園',
-                freeScheme: '有',
-                district: '九龍城區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.hys.edu.hk/', // Updated (secondary school site)
-                address: '九龍九龍城農圃道1號' // Added address
-            },
-            {
-                id: 'kindergarten-40',
-                rank: 40,
-                englishName: 'KAU YAN SCHOOL',
-                chineseName: '救恩學校',
-                freeScheme: '是',
-                district: '中西區',
-                tuition: '免費',
-                primarySchool: '救恩學校',
-                secondarySchool: '匯基書院(東九龍)',
-                relationship: '聯繫',
-                gender: '男女校',
-                teachingLanguage: '主要中文，英文科全英語教學',
-                website: 'http://www.kauyan.edu.hk/', // Updated
-                address: '香港西營盤高街1號' // Added address
-            },
-            {
-                id: 'kindergarten-41',
-                rank: 41,
-                englishName: 'CREATIVE PRIMARY SCHOOL’S KINDERGARTEN',
-                chineseName: '啓思小學附屬幼稚園',
-                freeScheme: '不是',
-                district: '九龍城區',
-                tuition: '$65,780 (11)',
-                primarySchool: '啓思小學',
-                secondarySchool: '啓思中學',
-                relationship: '沒關係',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.cpskg.edu.hk', // Updated
-                address: '九龍九龍塘牛津道2A號地下及1樓' // Added address
-            },
-            {
-                id: 'kindergarten-42',
-                englishName: 'OI KWAN ROAD BAPTIST CHURCH LUI KWOK PAT FONG KINDERGARTEN',
-                chineseName: '愛群道浸信會呂郭碧鳳幼稚園',
-                freeScheme: '有',
-                district: '灣仔區',
-                tuition: '半日班：$18,230(10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.lkpfkg.edu.hk', // Updated
-                address: '香港灣仔愛群道36號地下, 3樓, 4樓及5樓活動室' // Added address
-            },
-            {
-                id: 'kindergarten-43',
-                englishName: 'ESF INTERNATIONAL KINDERGARTEN（HILLSIDE）',
-                chineseName: '英基國際幼稚園（曉新）',
-                freeScheme: '沒有',
-                district: '灣仔區',
-                tuition: '$80,500(10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '英文',
-                website: 'https://www.hillside.edu.hk/', // Updated
-                address: '香港司徒拔道43B號' // Added address
-            },
-            {
-                id: 'kindergarten-44',
-                englishName: 'MING WAI KINDERGARTEN',
-                chineseName: '明慧國際幼稚園',
-                freeScheme: '沒有',
-                district: '東區',
-                tuition: '$51,920 (11)-$58,740(11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.mingwai.edu.hk', // Updated
-                address: '香港北角七姊妹道10-12號雅利閣地下及1樓, A及B室' // Added address
-            },
-            {
-                id: 'kindergarten-45',
-                rank: 45,
-                englishName: 'ROSARYHILL KINDERGARTEN',
-                chineseName: '玫瑰崗幼稚園',
-                freeScheme: '沒有',
-                district: '灣仔區',
-                tuition: '上午/下午班：$33,750(10)<br>全日班：$56,050(10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.rhs.edu.hk/', // Updated
-                address: '香港司徒拔道41號' // Added address
-            },
-            {
-                id: 'kindergarten-46',
-                rank: 46,
-                englishName: 'BAPTIST PUI LI SCHOOL',
-                chineseName: '浸信會培理學校',
-                freeScheme: '有',
-                district: '東區',
-                tuition: '半日班：$15,570 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.bpl.edu.hk/', // Updated
-                address: '香港柴灣柴灣道233號' // Added address
-            },
-            {
-                id: 'kindergarten-47',
-                rank: 47,
-                englishName: 'ST. STEPHEN’S CHURCH PRIMARY SCHOOL & KINDERGARTEN',
-                chineseName: '聖士提反堂小學暨幼稚園',
-                freeScheme: '有',
-                district: '中西區',
-                tuition: '半日班：$12,290(10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.ststephens.edu.hk/', // Updated
-                address: '香港般咸道67號' // Added address
-            },
-            {
-                id: 'kindergarten-48',
-                rank: 48,
-                englishName: 'S.K.H. ST. PETER’S CHURCH CASTLE PEAK SIU LUN COURT KINDERGARTEN',
-                chineseName: '聖公會青山聖彼得堂兆麟苑幼稚園',
-                freeScheme: '有',
-                district: '屯門區',
-                tuition: '半日班：$10,300 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.skhspk.edu.hk/', // Updated
-                address: '新界屯門兆麟苑兆麟商場地下' // Added address
-            },
-            {
-                id: 'kindergarten-49',
-                rank: 49,
-                englishName: 'PUI CHING PRIMARY SCHOOL (KINDERGARTEN SECTION)',
-                chineseName: '香港培道小學（幼稚園部）',
-                freeScheme: '是',
-                district: '九龍城區',
-                tuition: '免費',
-                primarySchool: '香港培道小學',
-                secondarySchool: '香港培道中學',
-                relationship: '聯繫',
-                gender: '女校',
-                teachingLanguage: '中文',
-                website: 'http://www.ptps.edu.hk/', // Updated
-                address: '九龍九龍塘培道街2號' // Added address
-            },
-            {
-                id: 'kindergarten-50',
-                rank: 50,
-                englishName: 'GERMAN SWISS INTERNATIONAL SCHOOL',
-                chineseName: '德瑞國際學校',
-                freeScheme: '沒有',
-                district: '南區',
-                tuition: '$156,110 (2)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '德文/英文',
-                website: 'http://www.gsis.edu.hk/', // Updated
-                address: '香港山頂僑福道11號' // Added address
-            },
-            {
-                id: 'kindergarten-51',
-                rank: 51,
-                englishName: 'HARROW INTERNATIONAL SCHOOL HONG KONG',
-                chineseName: '哈羅香港國際學校',
-                freeScheme: '沒有',
-                district: '屯門區',
-                tuition: '$149,924(2)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '英文',
-                website: 'http://www.harrowschool.hk/', // Updated
-                address: '新界屯門掃管笏青盈路38號' // Added address
-            },
-            {
-                id: 'kindergarten-52',
-                rank: 52,
-                englishName: 'LAM TIN LING LIANG KINDERGARTEN',
-                chineseName: '藍田靈糧幼稚園',
-                freeScheme: '有',
-                district: '觀塘區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.ltllkg.edu.hk/', // Updated
-                address: '九龍藍田康栢苑停車場大廈地下' // Added address
-            },
-            {
-                id: 'kindergarten-53',
-                rank: 53,
-                englishName: 'CHINESE INTERNATIONAL SCHOOL',
-                chineseName: '漢基國際學校',
-                freeScheme: '沒有',
-                district: '東區',
-                tuition: '$173,200 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.cis.edu.hk/', // Updated
-                address: '香港北角寶馬山道1號' // Added address
-            },
-            {
-                id: 'kindergarten-54',
-                rank: 54,
-                englishName: 'GREENFIELD ENGLISH (INTERNATIONAL) KINDERGARTEN (THE LONG BEACH)',
-                chineseName: '綠茵英文（國際）幼稚園（浪澄灣）',
-                freeScheme: '沒有',
-                district: '油尖旺區',
-                tuition: '半日班：$83,064 (12)<br>全日班：$123,828 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.greenfield.edu.hk/', // Updated
-                address: '九龍大角咀海輝道8號浪澄灣廣場地下' // Added address
-            },
-            {
-                id: 'kindergarten-55',
-                rank: 55,
-                englishName: 'CAUSEWAY BAY VICTORIA KINDERGARTEN',
-                chineseName: '銅鑼灣維多利亞幼稚園',
-                freeScheme: '不是',
-                district: '灣仔區',
-                tuition: '$91,564 (11)',
-                primarySchool: '滬江維多利亞學校',
-                secondarySchool: '滬江維多利亞學校',
-                relationship: '結龍',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.victoria.edu.hk', // Updated (main Victoria site)
-                address: '香港銅鑼灣興發街100號' // Added address
-            },
-            {
-                id: 'kindergarten-56',
-                rank: 56,
-                englishName: 'ST. ROSE OF LIMA’S KINDERGARTEN',
-                chineseName: '聖羅撒幼稚園',
-                freeScheme: '有',
-                district: '九龍城區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.strosakg.edu.hk/', // Updated
-                address: '九龍九龍塘沙福道12號' // Added address
-            },
-            {
-                id: 'kindergarten-57',
-                rank: 57,
-                englishName: 'CHOICE ENGLISH SCHOOL & KINDERGARTEN (TSING YI BRANCH)',
-                chineseName: '卓思英文學校暨幼稚園（青怡分校）',
-                freeScheme: '有',
-                district: '葵青區',
-                tuition: '半日班：$10,130 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.choice.edu.hk/', // Updated
-                address: '新界青衣青怡花園商場地下' // Added address
-            },
-            {
-                id: 'kindergarten-58',
-                rank: 58,
-                englishName: 'ANCHORS KINDERGARTEN (FANLING)',
-                chineseName: '安基司幼稚園（粉嶺）',
-                freeScheme: '沒有',
-                district: '北區',
-                tuition: '半日班：$58,300 (11)<br>全日班：$84,700 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.anchors.edu.hk/', // Updated
-                address: '新界粉嶺璧峰路3號' // Added address
-            },
-            {
-                id: 'kindergarten-59',
-                rank: 59,
-                englishName: 'JAMES ANGLO-CHINESE KINDERGARTEN (SHAM SHUI PO)',
-                chineseName: '雅各中英文幼稚園（深水埗校）',
-                freeScheme: '有',
-                district: '深水埗區',
-                tuition: '全日班：$5,170 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.jameskg.edu.hk/', // Updated
-                address: '九龍深水埗元州街133號' // Added address
-            },
-            {
-                id: 'kindergarten-60',
-                rank: 60,
-                englishName: 'HONG KONG LING LIANG CHURCH TSUEN WAN KINDERGARTEN',
-                chineseName: '香港靈糧堂荃灣幼稚園',
-                freeScheme: '有',
-                district: '荃灣區',
-                tuition: '$3,030 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.llckg.edu.hk/', // Updated
-                address: '新界荃灣青山公路388號中染大廈地下' // Added address
-            },
-            {
-                id: 'kindergarten-61',
-                rank: 61,
-                englishName: 'WELLCOME INTERNATIONAL KINDERGARTEN',
-                chineseName: '宏廣國際幼稚園',
-                freeScheme: '沒有',
-                district: '屯門區',
-                tuition: '半日班：約$60,720 (12)<br>全日班：約$88,320 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.wellcomekg.edu.hk/', // Updated
-                address: '新界屯門湖翠路2號兆禧苑商場地下' // Added address
-            },
-            {
-                id: 'kindergarten-62',
-                rank: 62,
-                englishName: 'S.K.H. CROWN OF THORNS CHURCH SADICK KINDERGARTEN',
-                chineseName: '聖公會荊冕堂士德幼稚園',
-                freeScheme: '有',
-                district: '葵青區',
-                tuition: '半日班：$10,450 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.cotckg.edu.hk/', // Updated
-                address: '新界葵涌石籬邨石俊樓地下' // Added address
-            },
-            {
-                id: 'kindergarten-63',
-                rank: 63,
-                englishName: 'PO LEUNG KUK TAM AU-YEUNG SIU FONG MEMORIAL KINDERGARTEN',
-                chineseName: '保良局譚歐陽少芳紀念幼稚園',
-                freeScheme: '有',
-                district: '九龍城區',
-                tuition: '$5,390 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.plktasfkg.edu.hk/', // Updated
-                address: '九龍九龍城富寧街2號' // Added address
-            },
-            {
-                id: 'kindergarten-64',
-                rank: 64,
-                englishName: 'HKVNS ALUMNI ASSOCIATION KINDERGARTEN (KCC)',
-                chineseName: '漢師幼稚園（龍總）',
-                freeScheme: '有',
-                district: '油尖旺區',
-                tuition: '$900 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.hkvnskg.edu.hk/', // Updated
-                address: '九龍油麻地彌敦道345號' // Added address
-            },
-            {
-                id: 'kindergarten-65',
-                rank: 65,
-                englishName: 'LUK YEUNG KINDERGARTEN',
-                chineseName: '綠楊幼稚園',
-                freeScheme: '沒有',
-                district: '荃灣區',
-                tuition: '$50,400 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.lykg.edu.hk/', // Updated
-                address: '新界荃灣蕙荃路22-26號綠楊新邨商場地下' // Added address
-            },
-            {
-                id: 'kindergarten-66',
-                rank: 66,
-                englishName: 'ST. LORRAINE KINDERGARTEN (YUEN LONG)',
-                chineseName: '萊恩幼稚園（元朗）',
-                freeScheme: '沒有',
-                district: '元朗區',
-                tuition: '約$69,600 (12) – ＄73,800 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.stlorraine.edu.hk/', // Updated
-                address: '新界元朗教育路123號' // Added address
-            },
-            {
-                id: 'kindergarten-67',
-                rank: 67,
-                englishName: 'S.K.H. ST. PETER’S CHURCH KINDERGARTEN (CASTLE PEAK)',
-                chineseName: '聖公會青山聖彼得堂兆麟苑幼稚園',
-                freeScheme: '有',
-                district: '屯門區',
-                tuition: '半日班：$10,300 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.skhspk.edu.hk/', // Updated
-                address: '新界屯門兆麟苑兆麟商場地下' // Added address
-            },
-            {
-                id: 'kindergarten-68',
-                rank: 68,
-                englishName: 'TACK CHING KINDERGARTEN',
-                chineseName: '德貞幼稚園',
-                freeScheme: '有',
-                district: '深水埗區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.tackchingkg.edu.hk/', // Updated
-                address: '九龍深水埗德貞街2號' // Added address
-            },
-            {
-                id: 'kindergarten-69',
-                rank: 69,
-                englishName: 'TSUNG TSIN PRIMARY SCHOOL AND KINDERGARTEN (LOCAL STREAM)',
-                chineseName: '崇真小學暨幼稚園（本地課程）',
-                freeScheme: '是',
-                district: '深水埗區',
-                tuition: '$3,920 (10)',
-                primarySchool: '崇真小學',
-                secondarySchool: '沙田崇真中學',
-                relationship: '聯繫',
-                gender: '男女校',
-                teachingLanguage: '中文（包括普通話）及英文',
-                website: 'http://www.ttpskg.edu.hk/', // Updated
-                address: '九龍深水埗大埔道58號' // Added address
-            },
-            {
-                id: 'kindergarten-70',
-                rank: 70,
-                englishName: 'HOLY TRINITY CENTRE KINDERGARTEN',
-                chineseName: '聖三一中心幼稚園',
-                freeScheme: '不是',
-                district: '九龍城區',
-                tuition: '$17,450 (10)',
-                primarySchool: '聖三一堂小學',
-                secondarySchool: '聖三一堂中學',
-                relationship: '聯繫',
-                gender: '男女校',
-                teachingLanguage: '中文、英文',
-                website: 'http://www.htckg.edu.hk/', // Updated
-                address: '九龍九龍城富寧街2號' // Added address
-            },
-            {
-                id: 'kindergarten-71',
-                rank: 71,
-                englishName: 'JOYFUL WORLD KINDERGARTEN',
-                chineseName: '心怡天地幼稚園',
-                freeScheme: '沒有',
-                district: '荃灣區',
-                tuition: '$54,780 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.joyfulworld.edu.hk/', // Updated
-                address: '新界荃灣荃景圍30-38號荃德花園地下' // Added address
-            },
-            {
-                id: 'kindergarten-72',
-                rank: 72,
-                englishName: 'CUHK FEDERATION OF ALUMNI ASSOCIATIONS THOMAS CHEUNG KINDERGARTEN',
-                chineseName: '香港中文大學校友會聯會張煊昌幼稚園',
-                freeScheme: '有',
-                district: '沙田區',
-                tuition: '半日班：$9,880 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.cuhkfaa.edu.hk/', // Updated
-                address: '新界沙田圓洲角銀城街25號' // Added address
-            },
-            {
-                id: 'kindergarten-73',
-                rank: 73,
-                englishName: 'ST. MARK’S CHURCH BRADBURY KINDERGARTEN',
-                chineseName: '聖馬可堂白普理幼稚園',
-                freeScheme: '有',
-                district: '九龍城區',
-                tuition: '半日班：$21,370 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.smcbk.edu.hk/', // Updated
-                address: '九龍九龍城聯合道135號' // Added address
-            },
-            {
-                id: 'kindergarten-74',
-                rank: 74,
-                englishName: 'JOYFUL WORLD KINDERGARTEN (SHA TIN)',
-                chineseName: '心怡天地幼稚園（沙田）',
-                freeScheme: '沒有',
-                district: '沙田區',
-                tuition: '$59,180 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.joyfulworld.edu.hk/', // Updated (same as main Joyful World)
-                address: '新界沙田沙田圍路12-14號翠華花園地下' // Added address
-            },
-            {
-                id: 'kindergarten-75',
-                rank: 75,
-                englishName: 'MING WAI INTERNATIONAL KINDERGARTEN (PRINCE EDWARD BRANCH)',
-                chineseName: '明慧國際幼稚園（太子分校）',
-                freeScheme: '沒有',
-                district: '油尖旺區',
-                tuition: '半日班：$62,040 (11)<br>全日班：$109,560 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.mingwai.edu.hk', // Updated (same as main Ming Wai)
-                address: '九龍運動場道15號地下3-9號舖及1樓' // Added address
-            },
-            {
-                id: 'kindergarten-76',
-                rank: 76,
-                englishName: 'CHOI HA ESTATE KIT SAM KINDERGARTEN',
-                chineseName: '天主教彩霞邨潔心幼稚園',
-                freeScheme: '有',
-                district: '觀塘區',
-                tuition: '$11,671 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.chkskg.edu.hk/', // Updated
-                address: '九龍牛頭角彩霞邨彩星樓地下' // Added address
-            },
-            {
-                id: 'kindergarten-77',
-                rank: 77,
-                englishName: 'YUEN LONG LUTHERAN LIFE KINDERGARTEN',
-                chineseName: '元朗信義會生命幼稚園',
-                freeScheme: '有',
-                district: '元朗區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.ylllkg.edu.hk/', // Updated
-                address: '新界元朗鳳攸南街9號好順利大廈地下' // Added address
-            },
-            {
-                id: 'kindergarten-78',
-                rank: 78,
-                englishName: 'HONG KONG MAN SANG KINDERGARTEN (NORTH POINT)',
-                chineseName: '香港民生幼稚園（北角）',
-                freeScheme: '沒有',
-                district: '東區',
-                tuition: '半日班：$51,216 (12)<br>全日班：$81,180 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.hkmansk.edu.hk/', // Updated
-                address: '香港北角英皇道301號' // Added address
-            },
-            {
-                id: 'kindergarten-79',
-                rank: 79,
-                englishName: 'THINK INTERNATIONAL KINDERGARTEN (MEI FOO)',
-                chineseName: '朗思國際幼稚園（美孚）',
-                freeScheme: '沒有',
-                district: '深水埗區',
-                tuition: '半日班：$40,300 (10) – $63,000 (10)<br>全日班：$102,300 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.think.edu.hk/', // Updated
-                address: '九龍美孚新邨吉利徑11號萬事達廣場地下' // Added address
-            },
-            {
-                id: 'kindergarten-80',
-                rank: 80,
-                englishName: 'MA ON SHAN LING LIANG KINDERGARTEN',
-                chineseName: '馬鞍山靈糧幼稚園',
-                freeScheme: '有',
-                district: '沙田區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.mosllkg.edu.hk/', // Updated
-                address: '新界馬鞍山馬鞍山中心地下' // Added address
-            },
-            {
-                id: 'kindergarten-81',
-                rank: 81,
-                englishName: 'TSING YI TRADE ASSOCIATION TSEUNG KWAN O KINDERGARTEN',
-                chineseName: '青衣商會將軍澳幼稚園',
-                freeScheme: '有',
-                district: '西貢區',
-                tuition: '半日班：$4,336 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.tytakg.edu.hk/', // Updated
-                address: '新界將軍澳寶林邨寶勤樓地下' // Added address
-            },
-            {
-                id: 'kindergarten-82',
-                rank: 82,
-                englishName: 'HOP YAT CHURCH CHAN PAK WANG MEMORIAL KINDERGARTEN',
-                chineseName: '合一堂陳伯宏紀念幼稚園',
-                freeScheme: '有',
-                district: '東區',
-                tuition: '半日班：$14,240 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.hyccpw.edu.hk/', // Updated
-                address: '香港柴灣柴灣道238號青年廣場地下' // Added address
-            },
-            {
-                id: 'kindergarten-83',
-                rank: 83,
-                englishName: 'ST. BARNABAS’ CHURCH KINDERGARTEN',
-                chineseName: '聖巴拿巴堂幼稚園',
-                freeScheme: '有',
-                district: '觀塘區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.stbarnabas.edu.hk/', // Updated
-                address: '九龍觀塘牛頭角道1號' // Added address
-            },
-            {
-                id: 'kindergarten-84',
-                rank: 84,
-                englishName: 'ZENITH KINDERGARTEN(TAI PO)',
-                chineseName: '英藝幼稚園（元朗）',
-                freeScheme: '沒有',
-                district: '元朗區',
-                tuition: '$14,400 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.zenith.edu.hk/', // Updated
-                address: '新界元朗教育路123號' // Added address
-            },
-            {
-                id: 'kindergarten-85',
-                rank: 85,
-                englishName: 'YUEN LONG LUTHERAN LIFE KINDERGARTEN',
-                chineseName: '中華基督教會元朗堂真光幼稚園',
-                freeScheme: '有',
-                district: '元朗區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.ylllkg.edu.hk/', // Updated
-                address: '新界元朗鳳攸南街9號好順利大廈地下' // Added address
-            },
-            {
-                id: 'kindergarten-86',
-                rank: 86,
-                englishName: 'CHRISTIAN YOUTH CENTRE KINDERGARTEN (YAU TONG)',
-                chineseName: '基督教中心幼稚園（油塘）',
-                freeScheme: '有',
-                district: '觀塘區',
-                tuition: '半日班：$15,820 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.cyckg.edu.hk/', // Updated
-                address: '九龍油塘油塘邨富塘樓地下' // Added address
-            },
-            {
-                id: 'kindergarten-87',
-                rank: 87,
-                englishName: 'ZENITH PRIMARY SCHOOL & KINDERGARTEN',
-                chineseName: '英藝小學暨幼稚園',
-                freeScheme: '沒有',
-                district: '元朗區',
-                tuition: '半日班：$62,400 (12)<br>全日班：$88,800 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.zenith.edu.hk/', // Updated (same as Zenith Kindergarten)
-                address: '新界元朗教育路123號' // Added address (same as Zenith Kindergarten)
-            },
-            {
-                id: 'kindergarten-88',
-                rank: 88,
-                englishName: 'ANCHORS INTERNATIONAL NURSERY',
-                chineseName: '安基司國際幼兒園',
-                freeScheme: '沒有',
-                district: '大埔區',
-                tuition: '半日班：$58,300 (11)<br>全日班：$84,700 (11)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.anchors.edu.hk/', // Updated (same as Anchors Kindergarten)
-                address: '新界大埔大埔墟寶鄉街8號' // Added address
-            },
-            {
-                id: 'kindergarten-89',
-                rank: 89,
-                englishName: 'PO LEUNG KUK CHEUNG POON MEI YEE KINDERGARTEN',
-                chineseName: '保良局張潘美意幼稚園',
-                freeScheme: '有',
-                district: '離島區',
-                tuition: '半日班：$11,240 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.plkcpmykg.edu.hk/', // Updated
-                address: '新界東涌逸東邨逸東商場地下' // Added address
-            },
-            {
-                id: 'kindergarten-90',
-                rank: 90,
-                englishName: 'PO LEUNG KUK LI TSUI CHUNG SING MEMORIAL KINDERGARTEN',
-                chineseName: '保良局李徐松聲紀念幼稚園',
-                freeScheme: '有',
-                district: '九龍城區',
-                tuition: '半日班：$10,250 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.plkltcs.edu.hk/', // Updated
-                address: '九龍紅磡馬頭圍道388號' // Added address
-            },
-            {
-                id: 'kindergarten-91',
-                rank: 91,
-                englishName: 'ST JAMES’ SETTLEMENT KATHLEEN MCDOUALL KINDERGARTEN',
-                chineseName: '聖雅各福群會麥潔蓮幼稚園',
-                freeScheme: '有',
-                district: '灣仔區',
-                tuition: '全日班：$27,264 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.sjskmkg.edu.hk/', // Updated
-                address: '香港灣仔石水渠街85號' // Added address
-            },
-            {
-                id: 'kindergarten-92',
-                rank: 92,
-                englishName: 'YAN OI TONG PONG LO SHUK YIN KINDERGARTEN',
-                chineseName: '仁愛堂龐盧淑燕幼稚園',
-                freeScheme: '有',
-                district: '深水埗區',
-                tuition: '半日班：$2,670 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.yotplsykg.edu.hk/', // Updated
-                address: '九龍深水埗麗閣邨麗萱樓地下' // Added address
-            },
-            {
-                id: 'kindergarten-93',
-                rank: 93,
-                englishName: 'PO LEUNG KUK TIN KA PING SIU HONG KINDERGARTEN',
-                chineseName: '保良局田家炳兆康幼稚園',
-                freeScheme: '有',
-                district: '屯門區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.plktkpshkg.edu.hk/', // Updated
-                address: '新界屯門兆康苑兆麗閣地下' // Added address
-            },
-            {
-                id: 'kindergarten-94',
-                rank: 94,
-                englishName: 'WILLIAM (SMART) KINDERGARTEN (WHAMPOA) (LOCAL STREAM)',
-                chineseName: '威廉（睿智）幼稚園（黃埔）（本地課程）',
-                freeScheme: '有',
-                district: '九龍城區',
-                tuition: '半日班：$5,700 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.william.edu.hk/', // Updated
-                address: '九龍紅磡黃埔花園第11期聚寶坊地下' // Added address
-            },
-            {
-                id: 'kindergarten-95',
-                rank: 95,
-                englishName: 'RHENISH MISSION SCHOOL',
-                chineseName: '禮賢會學校',
-                freeScheme: '有',
-                district: '中西區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.rms.edu.hk/', // Updated
-                address: '香港西營盤般咸道71號' // Added address
-            },
-            {
-                id: 'kindergarten-96',
-                rank: 96,
-                englishName: 'CREATIVE KINDERGARTEN',
-                chineseName: '啟思幼稚園',
-                freeScheme: '沒有',
-                district: '九龍城區',
-                tuition: '半日：$56,040 (10)<br>全日：$62,675 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'https://creative.edu.hk/', // Updated (no .edu.hk found)
-                address: '九龍九龍塘劍橋道1號' // Added address
-            },
-            {
-                id: 'kindergarten-97',
-                rank: 97,
-                englishName: 'TALENT KINDERGARTEN',
-                chineseName: '天樂幼稚園',
-                freeScheme: '有',
-                district: '元朗區',
-                tuition: '半日班：$8,160 (12)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.talentkg.edu.hk/', // Updated
-                address: '新界元朗天水圍天耀邨耀隆樓地下' // Added address
-            },
-            {
-                id: 'kindergarten-98',
-                rank: 98,
-                englishName: 'S.K.H. CROWN OF THORNS CHURCH KWAI CHUNG KINDERGARTEN',
-                chineseName: '聖公會荊冕堂葵涌幼稚園',
-                freeScheme: '有',
-                district: '葵青區',
-                tuition: '半日班：$4714 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.cotckg.edu.hk/', // Updated
-                address: '新界葵涌石蔭邨禮石樓地下' // Added address
-            },
-            {
-                id: 'kindergarten-99',
-                rank: 99,
-                englishName: 'PARKVIEW RHINE GARDEN PRE-SCHOOL',
-                chineseName: '栢基海韻幼稚園',
-                freeScheme: '有',
-                district: '荃灣區',
-                tuition: '半日班：$4,184 (10)',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文/英文',
-                website: 'http://www.prg.edu.hk/', // Updated
-                address: '新界荃灣青山公路625號麗城花園二期地下' // Added address
-            },
-            {
-                id: 'kindergarten-100',
-                rank: 100,
-                englishName: 'DIAMOND HILL LING LIANG KINDERGARTEN',
-                chineseName: '鑽石山靈糧幼稚園',
-                freeScheme: '有',
-                district: '黃大仙區',
-                tuition: '免費',
-                primarySchool: '沒有',
-                secondarySchool: '沒有',
-                relationship: '獨立幼稚園',
-                gender: '男女校',
-                teachingLanguage: '中文',
-                website: 'http://www.dhllkg.edu.hk/', // Updated
-                address: '九龍鑽石山蒲崗村道99號' // Added address
-            }
-        ];
+<!-- 18. 香港真光中學附屬小學暨幼稚園 -->
+  <div class="card">
+    <div class="title">18. 香港真光中學附屬小學暨幼稚園</div>
+    <div class="subtitle">The True Light School of Hong Kong, Primary and Kindergarten Section</div>
+    <div class="details">
+      <strong>🏫 地區:</strong> 灣仔區<br>
+      <strong>🎯 直屬小學:</strong> 香港真光中學附屬小學<br>
+      <strong>📊 直升比例:</strong> 有直升名額<br>
+      <div class="direct-admission">✅ 一條龍直屬制度</div>
+    </div>
+    <div class="contact-info">
+      <strong>📍 地址:</strong> 香港灣仔大坑道50號<br>
+      <strong>☎️ 電話:</strong> 2572 0986<br>
+      <strong>📧 電郵:</strong> info@tlhkps.edu.hk<br>
+      <strong>🌐 官網:</strong> <a href="https://www.tlhkps.edu.hk/tc/" target="_blank">tlhkps.edu.hk/tc/</a>
+    </div>
+    <button class="toggle-details">詳細資訊 ▼</button>
+    <div class="expanded-details">
+      <strong>🎓 特色:</strong> 傳承真光精神，教育及課外並重<br>
+      <strong>🕒 上課時間:</strong> 上午、下午班均有<br>
+      <strong>備註:</strong> 一條龍直屬制度<br>
+    </div>
+  </div>
 
-        // Map complex teaching languages to simplified categories for filtering
-        function getSimplifiedLanguage(language) {
-            // Added check for undefined or non-string language
-            if (typeof language !== 'string') {
-                return '其他';
-            }
-            // Trim whitespace from the language string before checking includes
-            language = language.trim();
+<!-- 19. 九龍真光中學(幼稚園部) -->
+  <div class="card">
+    <div class="title">19. 九龍真光中學(幼稚園部)</div>
+    <div class="subtitle">Kowloon True Light Middle School Kindergarten</div>
+    <div class="details">
+      <strong>🏫 地區:</strong> 紅磡黃埔花園第七期/九龍塘<br>
+      <strong>🎯 直屬小學:</strong> 九龍真光中學(小學部)<br>
+      <strong>📊 直升比例:</strong> 至少40%<br>
+      <div class="direct-admission">✅ 面試同分幼稚園部生優先</div>
+    </div>
+    <div class="contact-info">
+      <strong>📍 地址:</strong> 紅磡黃埔花園第七期 、九龍塘太子道西303號(分校)<br>
+      <strong>☎️ 電話:</strong> 2333 3228<br>
+      <strong>🌐 官網:</strong> <a href="https://www.ktlks.edu.hk/" target="_blank">ktlks.edu.hk</a>
+    </div>
+    <button class="toggle-details">詳細資訊 ▼</button>
+    <div class="expanded-details">
+      <strong>🎓 特色:</strong> 女校傳統、設模擬小一課程、初小優先內部推薦<br>
+      <strong>備註:</strong> 小學部先取錄不少於40%同屆高班學生，面試同分者幼稚園部生優先<br>
+    </div>
+  </div>
 
-            if (language.includes('中文') && language.includes('英文')) {
-                if (language.includes('兩文三語') || language.includes('粵語輔以英語及普通話') || language.includes('主要中文，英文科全英語教學') || language.includes('中文及英文') || language.includes('中文、英文') || language.includes('中文（包括普通話）及英文')) {
-                    return '兩文三語';
-                }
-                return '中英文';
-            } else if (language.includes('中文') || language.includes('粵語')) {
-                return '中文';
-            } else if (language.includes('英文') || language.includes('德文')) { // Include German/English as English for simplification
-                return '英文';
-            }
-            return '其他'; // Fallback for any unmapped languages
+<!-- 20. 蘇浙小學幼稚園 -->
+  <div class="card">
+    <div class="title">20. 蘇浙小學幼稚園</div>
+    <div class="subtitle">Kiangsu & Chekiang Primary School (Kindergarten)</div>
+    <div class="details">
+      <strong>🏫 地區:</strong> 北角<br>
+      <strong>🎯 直屬小學:</strong> 蘇浙小學<br>
+      <strong>📊 直升比例:</strong> 高<br>
+      <div class="direct-admission">✅ 一條龍制度</div>
+    </div>
+    <div class="contact-info">
+      <strong>📍 地址:</strong> 北角清華街30號<br>
+      <strong>☎️ 電話:</strong> 2570 6766<br>
+      <strong>🌐 官網:</strong> <a href="https://www.kcs.edu.hk" target="_blank">kcs.edu.hk</a>
+    </div>
+    <button class="toggle-details">詳細資訊 ▼</button>
+    <div class="expanded-details">
+      <strong>🎓 特色:</strong> 普通話主導、兩文三語、五育均衡<br>
+      <strong>備註:</strong> 全港唯一全校以普通話教學私校，重多元活動<br>
+    </div>
+  </div>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const buttons = document.querySelectorAll('.toggle-details');
+    buttons.forEach(button =>{
+      button.addEventListener('click',function(){
+        const card = this.closest('.card');
+        const expandedDetails = card.querySelector('.expanded-details');
+        if (expandedDetails.style.display === 'none') {
+          expandedDetails.style.display = 'block';
+          this.textContent = '收起資訊 ▲';
+        } else {
+          expandedDetails.style.display = 'none';
+          this.textContent = '詳細資訊 ▼';
         }
-
-        // Augment kindergarten data with simplified language for filtering
-        kindergartens.forEach(k => {
-            k.simplifiedTeachingLanguage = getSimplifiedLanguage(k.teachingLanguage);
-        });
-
-        const kindergartenListDiv = document.getElementById('kindergarten-list');
-        const associationFilter = document.getElementById('association-filter');
-        const genderFilter = document.getElementById('gender-filter');
-        const languageFilter = document.getElementById('language-filter');
-        const freeSchemeFilter = document.getElementById('free-scheme-filter'); // New filter element
-        const districtFilter = document.getElementById('district-filter'); // New district filter element
-
-        // Populate district filter options dynamically
-        function populateDistrictFilter() {
-            const districts = [...new Set(kindergartens.map(k => k.district))].sort(); // Get unique sorted districts
-            districtFilter.innerHTML = '<option value="all">所有</option>'; // Add "All" option first
-            districts.forEach(district => {
-                const option = document.createElement('option');
-                option.value = district;
-                option.textContent = district;
-                districtFilter.appendChild(option);
-            });
-        }
-
-        // Function to create a kindergarten card
-        function createKindergartenCard(kindergarten, displayRank) { // Added displayRank parameter
-            const cardDiv = document.createElement('div');
-            const hasAssociatedSchool = kindergarten.primarySchool !== '沒有' || kindergarten.secondarySchool !== '沒有';
-            cardDiv.className = `kindergarten-card bg-white rounded-xl shadow-md p-4 mb-4 ${hasAssociatedSchool ? 'highlighted-card' : ''}`;
-
-            // Always visible details
-            const visibleDetailsDiv = document.createElement('div');
-            visibleDetailsDiv.innerHTML = `
-                <h2 class="text-xl font-semibold text-blue-700 mb-2">${displayRank}. ${kindergarten.chineseName}</h2>
-                ${kindergarten.id === 'kindergarten-3' ? `<p class="text-red-600 font-bold mt-2"><strong>${kindergarten.closureStatus}</strong></p>` : ''}
-                <p class="text-gray-700 mb-1"><strong>幼稚園名稱 (英文):</strong> ${kindergarten.englishName}</p>
-                <p class="text-gray-700 mb-1"><strong>免費幼稚園計劃:</strong> ${kindergarten.freeScheme}</p>
-                <p class="text-gray-700 mb-1"><strong>地區:</strong> ${kindergarten.district}</p>
-                <p class="text-gray-700 mb-1"><strong>性別:</strong> ${kindergarten.gender}</p>
-                <p class="text-gray-700 mb-1"><strong>教學語言:</strong> ${kindergarten.teachingLanguage}</p>
-            `;
-            cardDiv.appendChild(visibleDetailsDiv);
-
-
-            // Toggleable details
-            const toggleableDetailsDiv = document.createElement('div');
-            toggleableDetailsDiv.className = 'kindergarten-details-toggleable'; // Apply toggleable class
-
-            // Define the starting point for Google Maps directions
-            const originAddress = encodeURIComponent('順利紀律部隊宿舍茶寮坳利安道32號');
-            const destinationAddress = encodeURIComponent(kindergarten.address || ''); // Use kindergarten's address, encode it
-
-            // Get current date and set time for arrival_time parameter (Unix timestamp in seconds)
-            const now = new Date();
-            now.setHours(8, 45, 0, 0); // Set to 08:45:00.000 today
-            const arrivalTimestamp = Math.floor(now.getTime() / 1000); // Unix timestamp in seconds
-
-            // Google Maps URL with public transit and arrival time (Unix timestamp)
-            const googleMapsUrl = `https://www.google.com/maps/dir/${originAddress}/${destinationAddress}?travelmode=transit&arrival_time=${arrivalTimestamp}`;
-
-
-            toggleableDetailsDiv.innerHTML = `
-                <p class="text-gray-700 mb-1"><strong>學費:</strong> ${kindergarten.tuition}</p>
-                <p class="text-gray-700 mb-1"><strong>關聯小學:</strong> ${kindergarten.primarySchool}</p>
-                <p class="text-gray-700 mb-1"><strong>關聯中學:</strong> ${kindergarten.secondarySchool}</p>
-                <p class="text-gray-700 mb-1"><strong>關係:</strong> ${kindergarten.relationship}</p>
-                <p class="text-gray-700 mb-1"><strong>學校網址:</strong> <a href="${kindergarten.website}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.website !== '待查' ? kindergarten.website : '待查'}</a></p>
-                <p class="text-gray-700"><strong>地址:</strong> <a href="${googleMapsUrl}" target="_blank" class="text-blue-600 hover:underline">${kindergarten.address || '待查'}</a></p>
-            `;
-            cardDiv.appendChild(toggleableDetailsDiv);
-
-            // Add click event listener to toggle details visibility
-            cardDiv.addEventListener('click', () => {
-                toggleableDetailsDiv.classList.toggle('active');
-            });
-
-            // If it's Kentville Kindergarten, ensure details are always visible
-            if (kindergarten.id === 'kindergarten-3') {
-                toggleableDetailsDiv.classList.add('active');
-            }
-
-            return cardDiv;
-        }
-
-        // Function to render kindergartens based on filters
-        function renderKindergartens() {
-            kindergartenListDiv.innerHTML = ''; // Clear current list
-
-            const selectedAssociationFilter = associationFilter.value;
-            const selectedGenderFilter = genderFilter.value;
-            const selectedLanguageFilter = languageFilter.value;
-            const selectedFreeSchemeFilter = freeSchemeFilter.value;
-            // Get all selected districts from the multi-select filter
-            const selectedDistricts = Array.from(districtFilter.selectedOptions).map(option => option.value);
-
-            const filteredKindergartens = kindergartens.filter(kindergarten => {
-                const matchesAssociation = (selectedAssociationFilter === 'all') ||
-                                           (selectedAssociationFilter === 'associated' && (kindergarten.primarySchool !== '沒有' || kindergarten.secondarySchool !== '沒有')) ||
-                                           (selectedAssociationFilter === 'not-associated' && kindergarten.primarySchool === '沒有' && kindergarten.secondarySchool === '沒有');
-
-                const matchesGender = (selectedGenderFilter === 'all') || (kindergarten.gender === selectedGenderFilter);
-                const matchesLanguage = (selectedLanguageFilter === 'all') || (kindergarten.simplifiedTeachingLanguage === selectedLanguageFilter);
-                const matchesFreeScheme = (selectedFreeSchemeFilter === 'all') || (kindergarten.freeScheme === selectedFreeSchemeFilter);
-                // District filter logic: if 'all' is selected or no specific districts are selected, all pass.
-                // Otherwise, check if the kindergarten's district is in the selectedDistricts array.
-                const matchesDistrict = (selectedDistricts.length === 0 || selectedDistricts.includes('all')) || selectedDistricts.includes(kindergarten.district);
-
-
-                return matchesAssociation && matchesGender && matchesLanguage && matchesFreeScheme && matchesDistrict; // Combine all filters
-            });
-
-            filteredKindergartens.forEach((kindergarten, index) => { // Pass index + 1 as displayRank
-                kindergartenListDiv.appendChild(createKindergartenCard(kindergarten, index + 1));
-            });
-        }
-
-        // Add event listeners to filters
-        associationFilter.addEventListener('change', renderKindergartens);
-        genderFilter.addEventListener('change', renderKindergartens);
-        languageFilter.addEventListener('change', renderKindergartens);
-        freeSchemeFilter.addEventListener('change', renderKindergartens);
-        districtFilter.addEventListener('change', renderKindergartens); // Add event listener for new filter
-
-        // Initial population and render on page load
-        populateDistrictFilter(); // Populate district filter options
-        renderKindergartens();
-
-    </script>
+      });
+    });
+  });
+</script>
 </body>
 </html>
